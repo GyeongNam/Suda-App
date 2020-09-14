@@ -1,7 +1,6 @@
 package com.cookandroid.ccit_suda;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 
 public class sign_up extends AppCompatActivity {
