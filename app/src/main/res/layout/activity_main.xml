@@ -20,7 +20,8 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="게시판가기"
+        android:onClick="moveParentActivity"
         tools:layout_editor_absoluteX="58dp"
         tools:layout_editor_absoluteY="148dp" />
 
