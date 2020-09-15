@@ -12,7 +12,8 @@
         android:layout_height="80dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="ID"
+        android:text=""
+        android:hint="ID"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,7 +26,8 @@
         android:layout_height="80dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="PW"
+        android:hint="PW"
+        android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +36,7 @@
 
 
     <Button
-        android:id="@+id/button11"
+        android:id="@+id/Login"
         android:layout_width="350dp"
         android:layout_height="60dp"
         android:text="로그인"
@@ -45,7 +47,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
-        android:id="@+id/button12"
+        android:id="@+id/Register"
         android:layout_width="350dp"
         android:layout_height="60dp"
         android:text="회원가입"
@@ -54,7 +56,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button11"
+        app:layout_constraintTop_toBottomOf="@+id/Login"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
@@ -69,4 +71,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.475" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
