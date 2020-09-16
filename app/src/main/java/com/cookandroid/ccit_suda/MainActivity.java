@@ -29,17 +29,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-//        Button btn1 = (Button) findViewById(R.id.Register);
+        Button btn1 = (Button) findViewById(R.id.Register);
         Button btn2 = (Button) findViewById(R.id.Login);
-//
-//
-//        btn1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getApplicationContext(), sign_up.class);
-//                startActivity(intent);
-//            }
-//        });
+
+
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), sign_up.class);
+                startActivity(intent);
+            }
+        });
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
