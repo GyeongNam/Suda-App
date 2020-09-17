@@ -329,8 +329,8 @@ public class sign_up extends AppCompatActivity {
                 String pwd = inputpwd.getText().toString();
                 String phone = intputphone.getText().toString();
                 params.put("id", id);
-                params.put("password", phone);
-                params.put("phone", pwd);
+                params.put("phone", phone);
+                params.put("password", pwd);
                 return params;
             }
 
@@ -347,7 +347,7 @@ public class sign_up extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
     public void Certification() {       // 인증번호 보내기
-        String url = "http://ccit2020.cafe24.com:8082/SendMessage"; // 인증번호 보내는 링크"http://ccit2020.cafe24.com:8082/sms_send";
+        String url = "http://ccit2020.cafe24.com:8082/SendMessage"; // 인증번호 보내는 링크
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
