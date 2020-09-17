@@ -22,7 +22,6 @@
             android:name=".PostUploadActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".PostListActivity" />
-        <activity android:name=".SignUpActivity" />
         <activity android:name=".boardActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -31,6 +30,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".sign_up" />
     </application>
 
 </manifest>
