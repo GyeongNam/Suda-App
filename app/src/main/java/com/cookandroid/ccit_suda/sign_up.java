@@ -20,6 +20,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import org.apache.http.params.HttpConnectionParams;
+
+import org.apache.http.params.HttpParams;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,7 +83,7 @@ public class sign_up extends AppCompatActivity {
                 }
                 else {
                     if(!err){
-//                  register();               // 아래에 함수있고 회원가입 통신부분
+                        register();               // 아래에 함수있고 회원가입 통신부분
                     }
                 }
             }
@@ -103,8 +110,7 @@ public class sign_up extends AppCompatActivity {
                         Randomnum2 = Randomnum2.concat(Integer.toString(j));
                     }
                     Randomnum = Randomnum2;
-//                    Certification();            // 아래 함수 있고 인증번호 보내는 서버통신
-                    Toast.makeText(getApplicationContext(), "문자로 인증번호를 발송했습니다.", Toast.LENGTH_SHORT).show();
+                    Certification();            // 아래 함수 있고 인증번호 보내는 서버통신
                 }
             }
         });
@@ -341,22 +347,22 @@ public class sign_up extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
     public void Certification() {       // 인증번호 보내기
-        String url = "http://10.0.2.2/???????????????"; // 인증번호 보내는 링크
+        String url = "http://ccit2020.cafe24.com:8082/SendMessage"; // 인증번호 보내는 링크"http://ccit2020.cafe24.com:8082/sms_send";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+                        String in = response;
+
+                        Toast.makeText(getApplicationContext(), "응답->" + in, Toast.LENGTH_SHORT).show();
 //                        Log.v("TAG",response.equals("1"));
-                        if(response.equals("1")){
-                            Toast.makeText(getApplicationContext(), "인증번호 전송 성공", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(intent);
+                        if(response.equals("success")){
+                            Toast.makeText(getApplicationContext(), "전화번호로 인증번호 문자를 발송했습니다.", Toast.LENGTH_SHORT).show();
                         }
                         else{
-                            Toast.makeText(getApplicationContext(), "인증번호 전송 실패", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "인증문자 전송 실패", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -374,7 +380,7 @@ public class sign_up extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 final EditText intputphone = (EditText) findViewById(R.id.et_phone);   // 전화번호 입력창
                 String phone = intputphone.getText().toString();
-                params.put("password", phone);
+                params.put("phone", phone);
                 params.put("random", Randomnum);
                 return params;
             }
