@@ -12,44 +12,67 @@
         android:layout_width="397dp"
         android:layout_height="49dp"
         android:ems="10"
-        android:hint="글 제목"
+        android:hint="최대 20글자까지 작성 가능합니다."
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="@+id/et_postcontent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintVertical_bias="0.141" />
 
     <EditText
         android:id="@+id/et_postcontent"
-        android:layout_width="398dp"
-        android:layout_height="225dp"
+        android:layout_width="395dp"
+        android:layout_height="168dp"
         android:ems="10"
         android:gravity="start|top"
-        android:hint="내용입력칸"
+        android:hint="최소20~최대200자 까지 작성 가능합니다"
         android:inputType="textMultiLine"
         android:maxLines="20"
         android:minLines="1"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.538"
+        app:layout_constraintHorizontal_bias="0.562"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.383" />
+        app:layout_constraintVertical_bias="0.462" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="122dp"
-        android:layout_height="119dp"
-        android:background="#009688"
+    <TextView
+        android:id="@+id/et_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="게시판 카테고리"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.058"
-        app:layout_constraintStart_toEndOf="@+id/imageButton"
+        app:layout_constraintHorizontal_bias="0.022"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.814"
-        app:srcCompat="@android:drawable/ic_menu_camera" />
+        app:layout_constraintVertical_bias="0.165" />
+
+    <Spinner
+        android:id="@+id/spinner_cate"
+        android:layout_width="401dp"
+        android:layout_height="65dp"
+        android:backgroundTint="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.23" />
+
+    <TextView
+        android:id="@+id/et_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="내용입력"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.025"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.326" />
 
     <TextView
         android:id="@+id/textView2"
@@ -87,27 +110,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.971" />
 
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="128dp"
-        android:layout_height="129dp"
+    <TextView
+        android:id="@+id/et_posttitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="글 제목"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.024"
+        app:layout_constraintHorizontal_bias="0.018"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.82"
-        app:srcCompat="@android:drawable/ic_menu_add" />
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="401dp"
-        android:layout_height="65dp"
-        android:backgroundTint="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.133" />
+        app:layout_constraintVertical_bias="0.046" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
