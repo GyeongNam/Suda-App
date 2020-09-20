@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 public class PostUploadActivity extends AppCompatActivity {
 
     boolean err = false;
-    boolean iderr = true;
+    boolean chk = true;
     String Randomnum = "0";
 
     @Override
@@ -57,12 +57,36 @@ public class PostUploadActivity extends AppCompatActivity {
                 String postContent = InputPostContent.getText().toString();
                 String text = spinner.getSelectedItem().toString();
 
-                sendPost();
+
+                check(postName, postContent, text);
+                if(chk){
+                    Toast.makeText(getApplicationContext(), "글 작성을 다시 해주세요", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    if(!err){
+                        sendPost();               // 글 업로드 통신부분
+                    }
+                }
             }
         });
+    }
+    public void check(String postName, String postContent, String text) {
+        if(postName.equals("") || postContent.equals("") || text.equals("")){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("ERR");
+            builder.setMessage("공백인 항목이 있습니다. 공백은 입력할 수 없습니다.");
+            builder.setCancelable(false);
 
-        if (AppHelper.requestQueue == null) {
-            AppHelper.requestQueue = Volley.newRequestQueue(getApplicationContext());
+            builder.setPositiveButton("확인",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            err = true;
+                        }
+                    });
+            builder.show();
+        }
+        else {
+            err = false;
         }
     }
     public void sendPost() {
