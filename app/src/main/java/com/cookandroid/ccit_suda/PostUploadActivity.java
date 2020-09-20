@@ -77,7 +77,7 @@ public class PostUploadActivity extends AppCompatActivity {
 //                        Log.v("TAG",response.equals("1"));
                         if(response.equals("1")){
                             Toast.makeText(getApplicationContext(), "글쓰기 성공", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
                             startActivity(intent);
                         }
                         else{
@@ -100,12 +100,12 @@ public class PostUploadActivity extends AppCompatActivity {
                 final EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
                 final EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);  // 글 내용 입력창
                 final Spinner SelectCate = (Spinner) findViewById(R.id.spinner_cate);   // 카테고리 선택
-                String Name = InputPostName.getText().toString();
-                String Content = InputPostContent.getText().toString();
-                String Select = SelectCate.getSelectedItem().toString();
-                params.put("Name", Name);
-                params.put("Content", Content);
-                params.put("Select", Select);
+                String name = InputPostName.getText().toString();
+                String content = InputPostContent.getText().toString();
+                String select = SelectCate.getSelectedItem().toString();
+                params.put("Kategorie", select);
+                params.put("Text", content);
+                params.put("Title", name);
                 return params;
             }
 
