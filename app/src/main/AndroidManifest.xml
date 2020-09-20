@@ -32,6 +32,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".sign_up" />
+        <service android:name=".ForcedTerminationService"/>
     </application>
 
 </manifest>

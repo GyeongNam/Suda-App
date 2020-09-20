@@ -2,11 +2,14 @@ package com.cookandroid.ccit_suda;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -17,20 +20,25 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        startService(new Intent(this, ForcedTerminationService.class));
         Button btn1 = (Button) findViewById(R.id.Register);
         Button btn2 = (Button) findViewById(R.id.Login);
+        SharedPreferences sharedPreferences = getSharedPreferences("File",0);
+        String userinfo = sharedPreferences.getString("userinfo","");
 
 
         btn1.setOnClickListener(new View.OnClickListener() {
@@ -48,10 +56,13 @@ public class MainActivity extends AppCompatActivity {
                 sendRequest();
             }
         });
-
-
         if (AppHelper.requestQueue == null) {
             AppHelper.requestQueue = Volley.newRequestQueue(getApplicationContext());
+        }
+        if(!(userinfo.equals(""))){
+            Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+
+            startActivity(intent);
         }
 
 
@@ -65,14 +76,31 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        CheckBox checkBox = (CheckBox) findViewById(R.id.cb_save) ;
                         Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
-//                        Log.v("TAG",response.equals("1"));
-                        if(response.equals("1")){
+                        Log.v("TAG", response);
+
+                        if (response.equals("1")) {
+                            SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            EditText userid = (EditText) findViewById(R.id.ID);
+                            String userinfo = userid.getText().toString();
+                            if (checkBox.isChecked()) {
+                                Log.v("TAG", "체크됨");
+                                editor.putString("userinfo",userinfo);
+                                editor.putString("login_check",String.valueOf(checkBox.isChecked()));
+                                editor.commit();
+                                Log.v("TAG", String.valueOf(checkBox.isChecked()));
+                            }
+                            else{
+                                editor.putString("userinfo",userinfo);
+                                editor.putString("login_check",String.valueOf(checkBox.isChecked()));
+                                editor.commit();
+                            }
                             Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                             startActivity(intent);
                             Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
-                        }
-                        else{
+                        } else {
                             Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
                         }
 
@@ -112,5 +140,6 @@ public class MainActivity extends AppCompatActivity {
         AppHelper.requestQueue.add(request);
         Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
+
 
 }
