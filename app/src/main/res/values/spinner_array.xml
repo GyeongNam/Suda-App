@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="my_array">
+        <item>자유게시판</item>
+        <item>학생게시판</item>
+        <item>직장인게시판</item>
+        <item>게임게시판</item>
+        <item>야구게시판</item>
+    </string-array>
+</resources>

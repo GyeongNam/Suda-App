@@ -6,10 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".PostListActivity">
 
-    <ListView
-        android:id="@+id/Postlist"
-        android:layout_width="409dp"
-        android:layout_height="90dp"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp" />
+    <Button
+        android:id="@+id/testgo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="46dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
