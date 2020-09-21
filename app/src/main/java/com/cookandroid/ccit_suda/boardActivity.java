@@ -36,12 +36,18 @@ import java.util.Map;
 
 public class boardActivity extends AppCompatActivity {
     private long backBtnTime = 0;
-    private ListView listView;
+    private ListView listView1,listView2,listView3;
     private DrawerLayout drawerLayout;
     private View drawerView;
     //    String postlist[];?? check
-    ArrayAdapter<String> adapter;
-    List<String> data = new ArrayList<>();
+    ArrayAdapter<String> freepost;
+    ArrayAdapter<String> secretpost;
+    ArrayAdapter<String> dailypost;
+    ArrayAdapter<String> mypost;
+
+    List<String> data1 = new ArrayList<>(3);
+    List<String> data2 = new ArrayList<>(3);
+    List<String> data3 = new ArrayList<>(3);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +55,10 @@ public class boardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_board);
         drawerLayout = (DrawerLayout) findViewById(R.id.activity_board);
         drawerView = (View) findViewById(R.id.drawer);
-        listView = (ListView) findViewById(R.id.freeboard);
+        listView1 = (ListView) findViewById(R.id.freeboard);
+        listView2 = (ListView) findViewById(R.id.dailypost);
+        listView3 = (ListView) findViewById(R.id.mypost);
+
 
 
         ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
@@ -91,11 +100,14 @@ public class boardActivity extends AppCompatActivity {
             }
         }));
         sendRequest();
-        ListView listview = (ListView) findViewById(R.id.freeboard);
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, data);
+        freepost = new ArrayAdapter(this, android.R.layout.simple_list_item_1, data1);
+//        secretpost = new ArrayAdapter(this,android.R.layout.simple_list_item_1,);
+        dailypost = new ArrayAdapter(this,android.R.layout.simple_list_item_1,data2);
+        mypost = new ArrayAdapter(this,android.R.layout.simple_list_item_1,data3);
 
-
-        listview.setAdapter(adapter);
+        listView3.setAdapter(mypost);
+        listView2.setAdapter(dailypost);
+        listView1.setAdapter(freepost);
     }
 
     DrawerLayout.DrawerListener listener = new DrawerLayout.DrawerListener() {
@@ -139,19 +151,30 @@ public class boardActivity extends AppCompatActivity {
                         Log.v("TAG", response);
                         try {
                             JSONArray jsonArray = new JSONArray(response);
+                            Log.v("TAG", "zz"+jsonArray);
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                data.add(jsonObject.getString("id"));
-                                Log.v("TAG", jsonObject.getString("id"));
-                                Log.v("TAG", jsonObject.getString("password"));
-                                adapter.notifyDataSetChanged();
+                                Log.v("TAG","원하는 json 배열 얻기" + jsonObject.getString("Kategorie").indexOf("비밀게시판"));
+                                if(jsonObject.getString("Kategorie").indexOf("자유게시판")==0){
+                                    data1.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                                }
+                                if(jsonObject.getString("Kategorie").indexOf("일상게시판")==0){
+                                    data2.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                                }
+                                if(jsonObject.getString("writer").indexOf(userinfo)==0){
+                                    data3.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                                }
+//                                data1.add(jsonObject.getString("Title"));
+//                                Log.v("TAG", jsonObject.getString("Title"));
+//                                Log.v("TAG", jsonObject.getString("Kategorie"));
+                                freepost.notifyDataSetChanged();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
 
-                        Log.v("TAG", "json데이터 배열담기" + data);
+                        Log.v("TAG", "json데이터 배열담기" + data1);
                     }
                 },
                 new Response.ErrorListener() {

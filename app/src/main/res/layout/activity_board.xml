@@ -95,8 +95,12 @@
                 android:background="@drawable/round_border"
                 android:orientation="vertical">
                 <ListView
+                    android:id="@+id/dailypost"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:divider="@android:color/transparent"
+                    android:listSelector="@android:color/transparent"
+                    />
             </LinearLayout>
 
 
@@ -118,7 +122,11 @@
                 android:orientation="vertical">
             <ListView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:divider="@android:color/transparent"
+                android:listSelector="@android:color/transparent"
+                android:id="@+id/mypost"
+                />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
