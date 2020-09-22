@@ -309,7 +309,7 @@ public class sign_up extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
     public void register() {
-        String url = "c"; // 회원가입하는 링크
+        String url = "http://ccit2020.cafe24.com:8082/signup"; // 회원가입하는 링크
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
