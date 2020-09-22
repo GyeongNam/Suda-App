@@ -91,7 +91,23 @@ public class sign_up extends AppCompatActivity {
         id_check.setOnClickListener(new View.OnClickListener() {         // 아이디 중복확인 버튼
             @Override
             public void onClick(View view) {
-                idcheck();
+                if(3 < inputid.length()){
+                    idcheck();
+                }
+                else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(sign_up.this);
+                    builder.setTitle("ERR");
+                    builder.setMessage("아이디는 4자리 이상되어야합니다.");
+                    builder.setCancelable(false);
+
+                    builder.setPositiveButton("확인",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    err = true;
+                                }
+                            });
+                    builder.show();
+                }
             }
         });
 
@@ -221,6 +237,7 @@ public class sign_up extends AppCompatActivity {
         }
     }
     public void idcheck(){
+        final EditText inputid = (EditText) findViewById(R.id.et_id); // 아이디 입력창
         String url = "http://ccit2020.cafe24.com:8082/idcheck"; // id 중복확인하는 링크
         StringRequest request = new StringRequest(
                 Request.Method.POST,
@@ -243,6 +260,8 @@ public class sign_up extends AppCompatActivity {
                                         }
                                     });
                             builder.show();
+                            inputid.setClickable(false);
+                            inputid.setFocusable(false);
                         }
                         else{
                             AlertDialog.Builder builder = new AlertDialog.Builder(sign_up.this);
@@ -272,7 +291,6 @@ public class sign_up extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                final EditText inputid = (EditText) findViewById(R.id.et_id); // 아이디 입력창
                 String id = inputid.getText().toString();
                 params.put("id", id);
                 return params;
