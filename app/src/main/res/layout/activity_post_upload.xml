@@ -53,6 +53,7 @@
 
     <Spinner
         android:id="@+id/spinner_cate"
+        android:entries="@array/my_array"
         android:layout_width="401dp"
         android:layout_height="65dp"
         android:backgroundTint="@color/colorAccent"

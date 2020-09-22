@@ -2,9 +2,8 @@
 <resources>
     <string-array name="my_array">
         <item>자유게시판</item>
-        <item>학생게시판</item>
-        <item>직장인게시판</item>
-        <item>게임게시판</item>
-        <item>야구게시판</item>
+        <item>일상게시판</item>
+        <item>비밀게시판</item>
+        <item>뻘글게시판</item>
     </string-array>
 </resources>

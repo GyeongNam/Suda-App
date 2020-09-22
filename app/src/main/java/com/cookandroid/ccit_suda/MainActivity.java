@@ -20,7 +20,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendRequest() {
-        String url = "http://10.0.2.2/login"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/login"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,

@@ -36,7 +36,7 @@
         <activity android:name=".sign_up" />
 
         <service android:name=".ForcedTerminationService" />
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/> //지울것 예시시
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
     </application>
 
 </manifest>

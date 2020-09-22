@@ -6,9 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.loader.content.CursorLoader;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.Image;
@@ -18,9 +20,11 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -37,8 +41,7 @@ public class PostUploadActivity extends AppCompatActivity {
 
     boolean err = false;
     boolean chk = true;
-//    Spinner spinner;
-//    private ArrayAdapter arrayAdapter;
+
 
     private final int GET_GALLERY_IMAGE = 200;
     private ImageView imageview;
@@ -48,11 +51,14 @@ public class PostUploadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_upload);
 
+        final EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
+        final EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);   // 글 내용 입력창
+        Spinner spinner =  findViewById(R.id.spinner_cate);
 
         imageview = (ImageView)findViewById(R.id.imgView);
+
         imageview.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent. setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                 startActivityForResult(intent, GET_GALLERY_IMAGE);
@@ -61,14 +67,6 @@ public class PostUploadActivity extends AppCompatActivity {
 
         Button back = (Button) findViewById(R.id.bt_backlist);   // 돌아가기 버튼
         Button upload = (Button) findViewById(R.id.bt_upload);    // 글 작성 버튼
-
-        final EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
-//        spinner = (Spinner) findViewById(R.id.spinner_cate);  // 글 카테고리 입력창
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-////                R.array.spinner_array, android.R.layout.simple_spinner_item);
-////        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-////        spinner.setAdapter(adapter);
-        final EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);   // 글 내용 입력창
 
         back.setOnClickListener(new View.OnClickListener() {         // 뒤로가기
             @Override
@@ -80,34 +78,13 @@ public class PostUploadActivity extends AppCompatActivity {
 
         upload.setOnClickListener(new View.OnClickListener() {         // 글 작성 버튼
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) {                // 글 작성
                 String postName = InputPostName.getText().toString();
                 String postContent = InputPostContent.getText().toString();
-//                String text = spinner.getSelectedItem().toString();
-                sendPost();
 
-//                check(postName, postContent);
-//                if(chk){
-//                    Toast.makeText(getApplicationContext(), "글 작성을 다시 해주세요", Toast.LENGTH_SHORT).show();
-//                }
-//                else {
-//                    if(!err){
-//                                  // 글 업로드 통신부분
-//                    }
-//                }
+                sendPost();
             }
         });
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == GET_GALLERY_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-
-            Uri selectedImageUri = data.getData();
-            imageview.setImageURI(selectedImageUri);
-        }
-        sendPost();
-
     }
 
     public void check(String postName, String postContent) {
@@ -130,7 +107,7 @@ public class PostUploadActivity extends AppCompatActivity {
         }
     }
     public void sendPost() {
-        String url = "http://10.0.2.2/add_post";
+        String url = "http://ccit2020.cafe24.com:8082/add_post"; //"http://10.0.2.2/add_post"; //http://ccit2020.cafe24.com:8082/login
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
@@ -138,10 +115,9 @@ public class PostUploadActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
-//                        Log.v("TAG",response.equals("1"));
                         if(response.equals("1")){
                             Toast.makeText(getApplicationContext(), "글쓰기 성공", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                             startActivity(intent);
                         }
                         else{
@@ -161,32 +137,27 @@ public class PostUploadActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                final EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
-                final EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);  // 글 내용 입력창
-//                final Spinner SelectCate = (Spinner) findViewById(R.id.spinner_cate);   // 카테고리 선택
-                final ImageView InputImageView = (ImageView) findViewById(R.id.imgView);  //이미지 등록
+                EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
+                EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);  // 글 내용 입력창
+                ImageView InputImageView = (ImageView) findViewById(R.id.imgView);  //이미지 등록
+                Spinner spinner =  findViewById(R.id.spinner_cate); // 스피너
 
+                SharedPreferences sharedPreferences = getSharedPreferences("File",0);
+                String userinfo = sharedPreferences.getString("userinfo","");
 
                 String name = InputPostName.getText().toString();
                 String content = InputPostContent.getText().toString();
-//              String select = SelectCate.getSelectedItem().toString();
+                String kategorie = spinner.getSelectedItem().toString();
 
-
-//                params.put("Kategorie", select);
+                params.put("kategorie", kategorie);
                 params.put("Text", content);
                 params.put("Title", name);
+                params.put("image", "1234");
+                params.put("writer", userinfo);
                 return params;
             }
-
-//            public Map<String, String> getHeader() throws AuthFailureError{
-//                Map<String, String> params = new HashMap<String, String >();
-//                params.put("Content-Type", "application/x-www-form-urlencoded");
-//                return params;
-//            }
         };
         request.setShouldCache(false);
-
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
         Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
