@@ -6,14 +6,20 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,18 +42,21 @@ import java.util.Map;
 
 public class boardActivity extends AppCompatActivity {
     private long backBtnTime = 0;
-    private ListView listView1,listView2,listView3;
     private DrawerLayout drawerLayout;
     private View drawerView;
-    //    String postlist[];?? check
-    ArrayAdapter<String> freepost;
-    ArrayAdapter<String> secretpost;
-    ArrayAdapter<String> dailypost;
-    ArrayAdapter<String> mypost;
+    private LinearLayout container1,container2,container3,container4,container5;
 
-    List<String> data1 = new ArrayList<>(3);
-    List<String> data2 = new ArrayList<>(3);
-    List<String> data3 = new ArrayList<>(3);
+
+    ArrayList<String> data1 = new ArrayList<>(3);
+    ArrayList<String> data2 = new ArrayList<>(3);
+    ArrayList<String> data3 = new ArrayList<>(3);
+    ArrayList<String> data4 = new ArrayList<>(3);
+    ArrayList<String> data5 = new ArrayList<>(3);
+    ArrayList<String> key1 = new ArrayList<>(3);
+    ArrayList<String> key2 = new ArrayList<>(3);
+    ArrayList<String> key3 = new ArrayList<>(3);
+    ArrayList<String> key4 = new ArrayList<>(3);
+    ArrayList<String> key5 = new ArrayList<>(3);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +64,8 @@ public class boardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_board);
         drawerLayout = (DrawerLayout) findViewById(R.id.activity_board);
         drawerView = (View) findViewById(R.id.drawer);
-        listView1 = (ListView) findViewById(R.id.freeboard);
-        listView2 = (ListView) findViewById(R.id.dailypost);
-        listView3 = (ListView) findViewById(R.id.mypost);
+
+
 
 
 
@@ -100,14 +108,27 @@ public class boardActivity extends AppCompatActivity {
             }
         }));
         sendRequest();
-        freepost = new ArrayAdapter(this, android.R.layout.simple_list_item_1, data1);
-//        secretpost = new ArrayAdapter(this,android.R.layout.simple_list_item_1,);
-        dailypost = new ArrayAdapter(this,android.R.layout.simple_list_item_1,data2);
-        mypost = new ArrayAdapter(this,android.R.layout.simple_list_item_1,data3);
 
-        listView3.setAdapter(mypost);
-        listView2.setAdapter(dailypost);
-        listView1.setAdapter(freepost);
+//텍스트뷰 부모 리니어레이아웃
+        container1 = (LinearLayout) findViewById(R.id.freeparent);
+        container2 = (LinearLayout) findViewById(R.id.dailyparent);
+        container3 = (LinearLayout) findViewById(R.id.secretparent);
+        container4 = (LinearLayout) findViewById(R.id.nomeanparent);
+        container5 = (LinearLayout) findViewById(R.id.mypostparent);
+        Log.v("TAG", container1.getClass().getName());
+
+
+//        /* 아이템 클릭시 작동 */
+//        listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView parent, View v, int position, long id) {
+//                Toast.makeText(boardActivity.this, data1.get(position), Toast.LENGTH_SHORT).show();
+//
+////                Intent intent = new Intent(getApplicationContext(), PostdetailActivity.class);
+////                /* putExtra의 첫 값은 식별 태그, 뒤에는 다음 화면에 넘길 값 */
+////                startActivity(intent);
+//            }
+//        });
     }
 
     DrawerLayout.DrawerListener listener = new DrawerLayout.DrawerListener() {
@@ -147,7 +168,7 @@ public class boardActivity extends AppCompatActivity {
 //                        processResponse(response);
 
 
-                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
                         Log.v("TAG", response);
                         try {
                             JSONArray jsonArray = new JSONArray(response);
@@ -156,21 +177,44 @@ public class boardActivity extends AppCompatActivity {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 Log.v("TAG","원하는 json 배열 얻기" + jsonObject.getString("Kategorie").indexOf("비밀게시판"));
                                 if(jsonObject.getString("Kategorie").indexOf("자유게시판")==0){
-                                    data1.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                                    data1.add((jsonArray.getJSONObject(i).getString("Title")));
+                                    key1.add((jsonArray.getJSONObject(i).getString("post_num")));
                                 }
                                 if(jsonObject.getString("Kategorie").indexOf("일상게시판")==0){
                                     data2.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                                    key2.add((jsonArray.getJSONObject(i).getString("post_num")));
+                                }
+                                if(jsonObject.getString("Kategorie").indexOf("비밀게시판")==0){
+                                    data3.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                                    key3.add((jsonArray.getJSONObject(i).getString("post_num")));
+                                }
+                                if(jsonObject.getString("Kategorie").indexOf("뻘글게시판")==0){
+                                    data4.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                                    key4.add((jsonArray.getJSONObject(i).getString("post_num")));
                                 }
                                 if(jsonObject.getString("writer").indexOf(userinfo)==0){
-                                    data3.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                                    data5.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                                    key5.add((jsonArray.getJSONObject(i).getString("post_num")));
                                 }
-//                                data1.add(jsonObject.getString("Title"));
-//                                Log.v("TAG", jsonObject.getString("Title"));
-//                                Log.v("TAG", jsonObject.getString("Kategorie"));
-                                freepost.notifyDataSetChanged();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
+                        }
+                        for(int i=0; i<data1.size(); i++){
+                            textview(data1.get(i),container1,key1.get(i));
+
+                        }
+                        for(int i=0; i<data2.size(); i++){
+                            textview(data2.get(i),container2,key2.get(i));
+                        }
+                        for(int i=0; i<data3.size(); i++){
+                            textview(data3.get(i),container3,key3.get(i));
+                        }
+                        for(int i=0; i<data4.size(); i++){
+                            textview(data4.get(i),container4,key4.get(i));
+                        }
+                        for(int i=0; i<data5.size(); i++){
+                            textview(data5.get(i),container5,key5.get(i));
                         }
 
 
@@ -219,6 +263,35 @@ public class boardActivity extends AppCompatActivity {
         }
 
     }
+    //텍스트뷰 동적생성하기
+    public void textview(final String a, android.widget.LinearLayout container, final String key){
+        //TextView 생성
+        final TextView view1 = new TextView(this);
+        view1.setText(a);
+        view1.setTextSize(20);
+        view1.setTextColor(Color.BLACK);
+
+        //layout_width, layout_height, gravity 설정
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(30,30,10,30);
+
+
+        view1.setLayoutParams(lp);
+
+        view1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("TAG",key);
+                Intent intent = new Intent(getApplicationContext(), PostdetailActivity.class);
+                intent.putExtra("primarykey",key);
+                startActivity(intent);
+            }
+        });
+
+        //부모 뷰에 추가
+        container.addView(view1);
+    }
+
 
 //    @Override
 //    public void onBackPressed () {
