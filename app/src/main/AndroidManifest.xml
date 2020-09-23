@@ -4,9 +4,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- camera, gallery -->
-    <uses-permission android:name="android.permission.CAMERA" />     <!-- 카메라 퍼미션 -->
-    <uses-feature android:name="android.hardware.camera" />    <!-- 카메라 퍼미션 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"  android:maxSdkVersion="18"/><!-- 5.0 버전 파일업로드 퍼미션 -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- 카메라 퍼미션 -->
+    <uses-feature android:name="android.hardware.camera" /> <!-- 카메라 퍼미션 -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" /> <!-- 5.0 버전 파일업로드 퍼미션 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEUVE_SMS" />
 
@@ -22,7 +24,6 @@
         <activity android:name=".postmodified" />
         <activity
             android:name=".PostUploadActivity"
-
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".PostListActivity" />
         <activity android:name=".boardActivity" />
@@ -36,7 +37,10 @@
         <activity android:name=".sign_up" />
 
         <service android:name=".ForcedTerminationService" />
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
     </application>
 
 </manifest>
