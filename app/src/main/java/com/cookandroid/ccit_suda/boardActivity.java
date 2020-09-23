@@ -118,17 +118,6 @@ public class boardActivity extends AppCompatActivity {
         Log.v("TAG", container1.getClass().getName());
 
 
-//        /* 아이템 클릭시 작동 */
-//        listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView parent, View v, int position, long id) {
-//                Toast.makeText(boardActivity.this, data1.get(position), Toast.LENGTH_SHORT).show();
-//
-////                Intent intent = new Intent(getApplicationContext(), PostdetailActivity.class);
-////                /* putExtra의 첫 값은 식별 태그, 뒤에는 다음 화면에 넘길 값 */
-////                startActivity(intent);
-//            }
-//        });
     }
 
     DrawerLayout.DrawerListener listener = new DrawerLayout.DrawerListener() {
