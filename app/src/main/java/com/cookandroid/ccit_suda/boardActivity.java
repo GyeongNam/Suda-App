@@ -36,7 +36,7 @@ import java.util.Map;
 
 public class boardActivity extends AppCompatActivity {
     private long backBtnTime = 0;
-    private ListView listView1,listView2,listView3;
+    private ListView listView1,listView2,listView3,listView4,listView5;
     private DrawerLayout drawerLayout;
     private View drawerView;
     //    String postlist[];?? check
@@ -44,10 +44,13 @@ public class boardActivity extends AppCompatActivity {
     ArrayAdapter<String> secretpost;
     ArrayAdapter<String> dailypost;
     ArrayAdapter<String> mypost;
+    ArrayAdapter<String> nomeanpost;
 
     List<String> data1 = new ArrayList<>(3);
     List<String> data2 = new ArrayList<>(3);
     List<String> data3 = new ArrayList<>(3);
+    List<String> data4 = new ArrayList<>(3);
+    List<String> data5 = new ArrayList<>(3);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,9 @@ public class boardActivity extends AppCompatActivity {
         listView1 = (ListView) findViewById(R.id.freeboard);
         listView2 = (ListView) findViewById(R.id.dailypost);
         listView3 = (ListView) findViewById(R.id.mypost);
+        listView4 = (ListView) findViewById(R.id.secretpost);
+        listView5 = (ListView) findViewById(R.id.nomeanpost);
+
 
 
 
@@ -101,10 +107,12 @@ public class boardActivity extends AppCompatActivity {
         }));
         sendRequest();
         freepost = new ArrayAdapter(this, android.R.layout.simple_list_item_1, data1);
-//        secretpost = new ArrayAdapter(this,android.R.layout.simple_list_item_1,);
+        secretpost = new ArrayAdapter(this,android.R.layout.simple_list_item_1,data4);
         dailypost = new ArrayAdapter(this,android.R.layout.simple_list_item_1,data2);
         mypost = new ArrayAdapter(this,android.R.layout.simple_list_item_1,data3);
-
+        nomeanpost = new ArrayAdapter(this,android.R.layout.simple_list_item_1,data5);
+        listView5.setAdapter(nomeanpost);
+        listView4.setAdapter(secretpost);
         listView3.setAdapter(mypost);
         listView2.setAdapter(dailypost);
         listView1.setAdapter(freepost);
@@ -147,7 +155,7 @@ public class boardActivity extends AppCompatActivity {
 //                        processResponse(response);
 
 
-                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
                         Log.v("TAG", response);
                         try {
                             JSONArray jsonArray = new JSONArray(response);
@@ -163,6 +171,12 @@ public class boardActivity extends AppCompatActivity {
                                 }
                                 if(jsonObject.getString("writer").indexOf(userinfo)==0){
                                     data3.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                                }
+                                if(jsonObject.getString("Kategorie").indexOf("비밀게시판")==0){
+                                    data4.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                                }
+                                if(jsonObject.getString("Kategorie").indexOf("뻘글게시판")==0){
+                                    data5.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
                                 }
 //                                data1.add(jsonObject.getString("Title"));
 //                                Log.v("TAG", jsonObject.getString("Title"));
