@@ -7,11 +7,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,27 +18,18 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import androidx.loader.content.CursorLoader;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.error.VolleyError;
+import com.android.volley.request.SimpleMultiPartRequest;
+
 //import com.android.volley.VolleyError;
 //import com.android.volley.toolbox.StringRequest;
-import com.android.volley.error.VolleyError;
-import com.android.volley.request.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.cookandroid.ccit_suda.VolleyMultipartRequest.DataPart;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PostUploadActivity extends AppCompatActivity {
 
@@ -48,14 +38,8 @@ public class PostUploadActivity extends AppCompatActivity {
 
 
     private final int GET_GALLERY_IMAGE = 200;
-    private ImageView imageview;
-
-    //실험실
-    private static final String ROOT_URL = "http://seoforworld.com/api/v1/file-upload.php";
-    private static final int REQUEST_PERMISSIONS = 100;
-    private static final int PICK_IMAGE_REQUEST =1 ;
-    private Bitmap bitmap;
-    private String filePath;
+    private ImageView imageView;
+    String imgPath;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,41 +50,17 @@ public class PostUploadActivity extends AppCompatActivity {
         final EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);   // 글 내용 입력창
         Spinner spinner =  findViewById(R.id.spinner_cate);
 
-        imageview = (ImageView)findViewById(R.id.imgView);  //이미지 등록 버튼
+        imageView = (ImageView)findViewById(R.id.imgView);  //이미지 등록 버튼
 
-//        imageview.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View view) {
-//                Intent intent = new Intent(Intent.ACTION_PICK);
-//                intent. setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-//                startActivityForResult(intent, GET_GALLERY_IMAGE);
-//            }
-//        });
-        //adding click listener to button
-        // 이미지 실험
-        findViewById(R.id.imgView).setOnClickListener(new View.OnClickListener() {
-            @Override
+
+
+        imageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if ((ContextCompat.checkSelfPermission(getApplicationContext(),
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(),
-                        Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-                    if ((ActivityCompat.shouldShowRequestPermissionRationale(PostUploadActivity.this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) && (ActivityCompat.shouldShowRequestPermissionRationale(PostUploadActivity.this,
-                            Manifest.permission.READ_EXTERNAL_STORAGE))) {
-
-                    } else {
-                        ActivityCompat.requestPermissions(PostUploadActivity.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
-                                REQUEST_PERMISSIONS);
-                    }
-                } else {
-                    Log.e("Else", "Else");
-                    showFileChooser();
-                }
-
-
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent. setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                startActivityForResult(intent, GET_GALLERY_IMAGE);
             }
         });
-        // 이미지 실험
 
         Button back = (Button) findViewById(R.id.bt_backlist);   // 돌아가기 버튼
         Button upload = (Button) findViewById(R.id.bt_upload);    // 글 작성 버튼
@@ -122,17 +82,29 @@ public class PostUploadActivity extends AppCompatActivity {
                 sendPost();
             }
         });
+        //외부 저장소에 권한 필요, 동적 퍼미션
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
+            int permissionResult= checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if(permissionResult== PackageManager.PERMISSION_DENIED){
+                String[] permissions= new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                requestPermissions(permissions,10);
+            }
+        }
     }
 
-    // 이미지 실험
-    private void showFileChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode){
+            case 10:
+                if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(this, "외부 메모리 읽기/쓰기 사용 가능", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(this, "외부 메모리 읽기/쓰기 제한", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
     }
-    // 이미지 실험
-
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        super.onActivityResult(requestCode, resultCode, data);
@@ -150,75 +122,40 @@ public class PostUploadActivity extends AppCompatActivity {
 //
 //    }
     // 이미지 실험
-protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+@Override
+protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
+    switch (requestCode){
+        case 10:
+            if(resultCode==RESULT_OK){
+                Toast.makeText(this, "RESULT_OK", Toast.LENGTH_SHORT).show();
+                Uri uri= data.getData();
+                if(uri!=null){
+                    imageView.setImageURI(uri);
+                    //갤러리앱에서 관리하는 DB정보가 있는데, 그것이 나온다 [실제 파일 경로가 아님!!]
+                    //얻어온 Uri는 Gallery앱의 DB번호임. (content://-----/2854)
+                    //업로드를 하려면 이미지의 절대경로(실제 경로: file:// -------/aaa.png 이런식)가 필요함
+                    //Uri -->절대경로(String)로 변환
+                    imgPath= getRealPathFromUri(uri);   //임의로 만든 메소드 (절대경로를 가져오는 메소드)
 
-    if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-        Uri picUri = data.getData();
-        filePath = getPath(picUri);
-        if (filePath != null) {
-            try {
-
-                Log.d("filePath", String.valueOf(filePath));
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), picUri);
-                uploadBitmap(bitmap);
-                imageview.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
+                    //이미지 경로 uri 확인해보기
+                    new AlertDialog.Builder(this).setMessage(uri.toString()+"\n"+imgPath).create().show();
+                }
+            }else{
+                Toast.makeText(this, "이미지 선택을 하지 않았습니다.", Toast.LENGTH_SHORT).show();
             }
-        }
-        else
-        {
-            Toast.makeText(
-                    PostUploadActivity.this,"no image selected",
-                    Toast.LENGTH_LONG).show();
-        }
+            break;
     }
-
 }
-    public String getPath(Uri uri) {
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+    String getRealPathFromUri(Uri uri){
+        String[] proj= {MediaStore.Images.Media.DATA};
+        CursorLoader loader= new CursorLoader(this, uri, proj, null, null, null);
+        Cursor cursor= loader.loadInBackground();
+        int column_index= cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
-        String document_id = cursor.getString(0);
-        document_id = document_id.substring(document_id.lastIndexOf(":") + 1);
+        String result= cursor.getString(column_index);
         cursor.close();
-
-        cursor = getContentResolver().query(
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
-        cursor.moveToFirst();
-        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-        cursor.close();
-
-        return path;
-    }
-    public byte[] getFileDataFromDrawable(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 80, byteArrayOutputStream);
-        return byteArrayOutputStream.toByteArray();
-    }
-
-    private void uploadBitmap(final Bitmap bitmap) {
-
-        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, ROOT_URL,
-                new Response.Listener<NetworkResponse>() {
-                    @Override
-                    public void onResponse(NetworkResponse response) {
-                        try {
-                            JSONObject obj = new JSONObject(new String(response.data));
-                            Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e("GotError", "" + error.getMessage());
-                    }
-                });
+        return  result;
     }
 
 //이미지 실험
@@ -244,87 +181,64 @@ public void check(String postName, String postContent) {
 
 
     public void sendPost() {
-        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, ROOT_URL,
-                new Response.Listener<NetworkResponse>() {
-                    @Override
-                    public void onResponse(NetworkResponse response) {
-                        try {
-                            JSONObject obj = new JSONObject(new String(response.data));
-                            Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e("GotError",""+error.getMessage());
-                    }
-                });
-
-        String url = "http://ccit2020.cafe24.com:8082/add_post"; //"http://10.0.2.2/add_post"; //http://ccit2020.cafe24.com:8082/login
-        StringRequest request = new StringRequest(
-                Request.Method.POST,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
-                        if(response.equals("1")){
-                            Toast.makeText(getApplicationContext(), "글쓰기 성공", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplicationContext(), boardActivity.class);
-                            startActivity(intent);
-                        }
-                        else{
-                            Toast.makeText(getApplicationContext(), "글쓰기 실패", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), "에러 ->" + error.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", error.toString());
-                    }
-                }
-
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
+                        EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
                 EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);  // 글 내용 입력창
                 ImageView InputImageView = (ImageView) findViewById(R.id.imgView);  //이미지 등록
                 Spinner spinner =  findViewById(R.id.spinner_cate); // 스피너
-
-                SharedPreferences sharedPreferences = getSharedPreferences("File",0);
+        SharedPreferences sharedPreferences = getSharedPreferences("File",0);
                 String userinfo = sharedPreferences.getString("userinfo","");
-
                 String name = InputPostName.getText().toString();
                 String content = InputPostContent.getText().toString();
                 String kategorie = spinner.getSelectedItem().toString();
 
-                params.put("kategorie", kategorie);
-                params.put("Text", content);
-                params.put("Title", name);
-                params.put("image", "1234");
-                params.put("writer", userinfo);
-                return params;
+        String url = "http://10.0.2.2/add_post"; //"http://10.0.2.2/add_post"; //http://ccit2020.cafe24.com:8082/login
+        SimpleMultiPartRequest smpr= new SimpleMultiPartRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                new AlertDialog.Builder(PostUploadActivity.this).setMessage("응답:"+response).create().show();
             }
-            protected Map<String, DataPart> getByteData() {
-                Map<String, DataPart> params = new HashMap<>();
-                long imagename = System.currentTimeMillis();
-                params.put("image", new DataPart(imagename + ".png", getFileDataFromDrawable(bitmap)));
-                return params;
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(PostUploadActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
             }
-        };
-        request.setShouldCache(false);
-        AppHelper.requestQueue.add(request);
-        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+        });
+        //요청 객체에 보낼 데이터를 추가
+        smpr.addStringParam("Text", content);
+        smpr.addStringParam("Title", name);
+        smpr.addStringParam("kategorie", kategorie);
+        smpr.addStringParam("writer", userinfo);
+        //이미지 파일 추가
+        smpr.addFile("image", imgPath);
 
-        //adding the request to volley
-        Volley.newRequestQueue(this).add(volleyMultipartRequest);
+
+        smpr.setShouldCache(false);
+        AppHelper.requestQueue.add(smpr);
+        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
+        
 }
+//        ) {
+//            @Override
+//            protected Map<String, String> getByteData() {
+//                Map<String, String> params = new HashMap<>();
+//                EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
+//                EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);  // 글 내용 입력창
+//                ImageView InputImageView = (ImageView) findViewById(R.id.imgView);  //이미지 등록
+//                Spinner spinner =  findViewById(R.id.spinner_cate); // 스피너
+//
+//                SharedPreferences sharedPreferences = getSharedPreferences("File",0);
+//                String userinfo = sharedPreferences.getString("userinfo","");
+//
+//                String name = InputPostName.getText().toString();
+//                String content = InputPostContent.getText().toString();
+//                String kategorie = spinner.getSelectedItem().toString();
+//                String img = InputImageView.;
+//
+//                params.put("kategorie", kategorie);
+//                params.put("Text", content);
+//                params.put("Title", name);
+//                params.put("image", "img");
+//                params.put("writer", userinfo);
+//                return params;
+//            }
