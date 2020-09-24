@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -125,8 +126,7 @@ public class PostUploadActivity extends AppCompatActivity {
 @Override
 protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    switch (requestCode){
-        case 10:
+
             if(resultCode==RESULT_OK){
                 Toast.makeText(this, "RESULT_OK", Toast.LENGTH_SHORT).show();
                 Uri uri= data.getData();
@@ -144,8 +144,8 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
             }else{
                 Toast.makeText(this, "이미지 선택을 하지 않았습니다.", Toast.LENGTH_SHORT).show();
             }
-            break;
-    }
+
+
 }
     String getRealPathFromUri(Uri uri){
         String[] proj= {MediaStore.Images.Media.DATA};
@@ -195,7 +195,8 @@ public void check(String postName, String postContent) {
         SimpleMultiPartRequest smpr= new SimpleMultiPartRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                new AlertDialog.Builder(PostUploadActivity.this).setMessage("응답:"+response).create().show();
+                Log.v("TAG",response);
+                new AlertDialog.Builder(PostUploadActivity.this).setMessage("응답:"+imgPath).create().show();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -209,6 +210,7 @@ public void check(String postName, String postContent) {
         smpr.addStringParam("kategorie", kategorie);
         smpr.addStringParam("writer", userinfo);
         //이미지 파일 추가
+//
         smpr.addFile("image", imgPath);
 
 
