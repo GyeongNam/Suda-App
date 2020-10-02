@@ -2,65 +2,43 @@
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_postdetail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/activity_postdetail"
     tools:context=".PostdetailActivity">
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    <include layout="@layout/toolbar_layout" />
-        <LinearLayout
+        <include layout="@layout/toolbar_layout" />
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight ="1"
-            android:orientation="vertical">
-            <TextView
-                android:layout_margin="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="30dp"
-                android:id="@+id/Title"
-                />
-            <TextView
-                android:padding="10dp"
-                android:layout_margin="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:text=""
-                android:id="@+id/Text"
-                android:background="@drawable/round_border"
-                />
-            <TextView
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:text="댓글 달기"
-                android:gravity="center"
-                android:id="@+id/replybtn"
-                android:background="@drawable/edge"
-                />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/parentlayout"
-                android:orientation="vertical">
-                <ListView
-                    android:scrollbars="none"
-                    android:id="@+id/postlist"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-        </LinearLayout>
+            android:fillViewport="true"
+            android:layout_weight="1"
+            >
+                <LinearLayout
+                    android:id="@+id/parentlayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <ListView
+                        android:id="@+id/postlist"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        />
+                </LinearLayout>
+        </ScrollView>
+
         <LinearLayout
-            android:layout_weight ="5"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,20 +46,21 @@
 
                 <EditText
                     android:id="@+id/replytext"
-                    android:layout_weight ="5"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="bottom" />
+                    android:layout_gravity="bottom"
+                    android:layout_weight="5" />
 
                 <Button
-                    android:onClick="sendreply"
-                    android:layout_weight ="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="sendreply"
                     android:text="등록" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
     <include layout="@layout/activity_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -1,17 +1,12 @@
 package com.cookandroid.ccit_suda;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,20 +16,23 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.NetworkResponse;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.error.VolleyError;
-import com.android.volley.request.MultiPartRequest;
-import com.android.volley.request.SimpleMultiPartRequest;
 import com.android.volley.request.StringRequest;
-import com.google.gson.JsonArray;
-
+import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,27 +43,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+
 public class PostdetailActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private View drawerView;
     private LinearLayout container;
     private ListView postlist;
-     List<String> replylist = new ArrayList<>() ;
-     private ArrayAdapter<String> adapter;
+    private String imgurl;
+//    ImageView imageView;
+
+    EditText replytext;
+    List<String> replylist = new ArrayList<>();
+    //두줄만든거임
+    ArrayList<Commentlist> commentlist = new ArrayList<>();
+    CommentAdapter commentAdapter;
+    private ArrayAdapter<String> adapter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_postdetail);
-
+        replytext = (EditText) findViewById(R.id.replytext);
         drawerLayout = (DrawerLayout) findViewById(R.id.activity_postdetail);
         drawerView = (View) findViewById(R.id.drawer);
         container = (LinearLayout) findViewById(R.id.parentlayout);
         postlist = (ListView) findViewById(R.id.postlist);
-//        ArrayList replylist = new ArrayList<String>();
-        postlist.setVerticalScrollBarEnabled(false);
-//        adapter.notifyDataSetChanged();
+
+        View header = getLayoutInflater().inflate(R.layout.listview_header, null, false);
+
+
+        postlist.addHeaderView(header);
+
+
         ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
         btn_open.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,8 +84,10 @@ public class PostdetailActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(drawerView);
             }
         });
+        //
 
-        Button post =  (Button) findViewById(R.id.bt_postupload);
+
+        Button post = (Button) findViewById(R.id.bt_postupload);
 
         post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,13 +121,13 @@ public class PostdetailActivity extends AppCompatActivity {
         InputMethodManager controlManager = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
 
 
-
-
         sendRequest();
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, replylist);
-        postlist.setAdapter(adapter);
+        commentAdapter = new CommentAdapter(this, commentlist);
+        postlist.setAdapter(commentAdapter);
+
 
     }
+
     DrawerLayout.DrawerListener listener = new DrawerLayout.DrawerListener() {
         @Override
         public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
@@ -136,53 +149,66 @@ public class PostdetailActivity extends AppCompatActivity {
 
         }
     };
+
     public void sendRequest() {
         String url = "http://10.0.2.2/post_detail"; //"http://ccit2020.cafe24.com:8082/login";
-        StringRequest request = new StringRequest (
+
+
+        StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
 
+
                         SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
                         String userinfo = sharedPreferences.getString("userinfo", "");
                         TextView username = (TextView) findViewById(R.id.username);
                         TextView title = (TextView) findViewById(R.id.Title);
                         TextView text = (TextView) findViewById(R.id.Text);
-                        HashMap<Integer,String> map = new HashMap<>();
+                        HashMap<Integer, String> map = new HashMap<>();
                         username.setText("환영합니다 " + userinfo + " 님");
-                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
                         Log.v("TAG", response);
-
+                        commentlist.clear();
+//                        postlist.invalidateViews();
                         try {
                             JSONArray jsonArray = new JSONArray(response);
-                            for(int i=0; i<jsonArray.length();i++){
+//                            JSONObject jsonObject = new JSONObject(response);
+//                            Log.v("TAG",jsonArray.getString(""));
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                Commentlist commentlist1 = new Commentlist();
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Log.v("TAG","게시글 디테일"+jsonObject.getString("Title"));
-//                                reply.setText(jsonObject.getString("c_writer")+":"+jsonObject.getString("comment"));
-                                if(!replylist.contains(jsonObject.getString("c_writer")+":"+jsonObject.getString("comment"))) {
+                                Log.v("TAG", "게시글 디테일" + jsonObject.getString("Title"));
+                                //가져온 댓글 정보 넣기
+                                commentlist1.setWriter(jsonObject.getString("c_writer"));
+                                commentlist1.setComment(jsonObject.getString("comment"));
+//                                commentlist1.setDate(jsonObject.getString("created_at"));
+                                commentlist1.setNum(jsonObject.getString("c_num"));
+                                //대댓글 담기영역
+                                commentlist1.setParent(jsonObject.getString("parent"));
+//                                commentlist1.setRecomment(jsonObject.getString("recomment"));
 
-                                    replylist.add(jsonObject.getString("c_writer")+":"+jsonObject.getString("comment"));
 
-                                }
-//                                replylist.add(jsonObject.getString("c_writer")+":"+jsonObject.getString("comment"));
+                                commentlist.add(commentlist1);
+                                //중복검사
+
+
                                 title.setText(jsonObject.getString("Title"));
                                 text.setText(jsonObject.getString("Text"));
+                                imgurl = "http://10.0.2.2/img/"+jsonObject.getString("image");
                             }
-                            Log.v("TAG", String.valueOf(replylist));
-//                            runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    // 갱신된 데이터 내역을 어댑터에 알려줌
-//                                    adapter.notifyDataSetChanged();
-//                                }
-//                            });
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        adapter.notifyDataSetChanged();
+                        commentAdapter.setItem(commentlist);
+                        commentAdapter.notifyDataSetChanged();
+                        Log.v("TAG",imgurl);
+
+                        ImageView imageView = (ImageView) findViewById(R.id.imageview);
+                        Picasso.get().load(imgurl).into(imageView);
                     }
                 },
                 new Response.ErrorListener() {
@@ -194,7 +220,6 @@ public class PostdetailActivity extends AppCompatActivity {
                 }
 
         ) {
-
 
 
             @Override
@@ -218,30 +243,8 @@ public class PostdetailActivity extends AppCompatActivity {
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
-        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -257,8 +260,10 @@ public class PostdetailActivity extends AppCompatActivity {
                         SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
                         String userinfo = sharedPreferences.getString("userinfo", "");
                         TextView username = (TextView) findViewById(R.id.username);
-                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
                         Log.v("TAG", response);
+                        replytext.getText().clear();
+                        commentAdapter.Number = null;
                         sendRequest();
                     }
                 },
@@ -277,12 +282,15 @@ public class PostdetailActivity extends AppCompatActivity {
                 SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
                 String userinfo = sharedPreferences.getString("userinfo", "");
                 Intent intent = getIntent();
-                EditText replytext = (EditText)findViewById(R.id.replytext);
+
+                Log.v("TAG", "리플쓸때 number존재유무" + commentAdapter.Number);
+
                 String reply = replytext.getText().toString();
                 String KEY = intent.getExtras().getString("primarykey");
                 params.put("post_num", KEY);
-                params.put("reply",reply);
-                params.put("writer",userinfo);
+                params.put("reply", reply);
+                params.put("writer", userinfo);
+                params.put("comment_num", commentAdapter.Number);
                 return params;
             }
 
@@ -296,13 +304,15 @@ public class PostdetailActivity extends AppCompatActivity {
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
-        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
-    public void sendreply(View view){
+
+    public void sendreply(View view) {
         sendreply();
     }
+
     //텍스트뷰 동적생성하기
-    public void textview(final String a, android.widget.LinearLayout container){
+    public void textview(final String a, android.widget.LinearLayout container) {
         //TextView 생성
         final TextView view1 = new TextView(this);
         view1.setText(a);
@@ -312,14 +322,14 @@ public class PostdetailActivity extends AppCompatActivity {
         view1.setBackground(drawable);
         //layout_width, layout_height, gravity 설정
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(30,30,10,30);
+        lp.setMargins(30, 30, 10, 30);
 
 
         view1.setLayoutParams(lp);
 
 
-
         //부모 뷰에 추가
         container.addView(view1);
     }
+
 }

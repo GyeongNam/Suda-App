@@ -26,8 +26,7 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
-//import com.android.volley.VolleyError;
-//import com.android.volley.toolbox.StringRequest;
+
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.StringRequest;
 import com.google.gson.Gson;
@@ -47,6 +46,7 @@ public class boardActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private View drawerView;
     private LinearLayout container1,container2,container3,container4,container5;
+    private TextView free_board,daily_board,nomean_board,secret_board,mypost_board;
 
 
     ArrayList<String> data1 = new ArrayList<>(3);
@@ -66,6 +66,61 @@ public class boardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_board);
         drawerLayout = (DrawerLayout) findViewById(R.id.activity_board);
         drawerView = (View) findViewById(R.id.drawer);
+
+        free_board = (TextView) findViewById(R.id.free_board);
+        daily_board = (TextView) findViewById(R.id.daily_board);
+        nomean_board = (TextView) findViewById(R.id.nomean_board);
+        secret_board = (TextView) findViewById(R.id.secret_board);
+        mypost_board = (TextView) findViewById(R.id.mypost_board);
+
+        free_board.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
+                intent.putExtra("board_name",free_board.getText());
+                startActivity(intent);
+            }
+        });
+        daily_board.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
+                intent.putExtra("board_name",daily_board.getText());
+                startActivity(intent);
+            }
+        });
+
+        nomean_board.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
+                intent.putExtra("board_name",nomean_board.getText());
+                startActivity(intent);
+            }
+        });
+
+        secret_board.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
+                intent.putExtra("board_name",secret_board.getText());
+                startActivity(intent);
+            }
+        });
+
+        mypost_board.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
+                intent.putExtra("board_name",mypost_board.getText());
+                startActivity(intent);
+            }
+        });
+
+
+
+
+
 
 
 
@@ -193,7 +248,6 @@ public class boardActivity extends AppCompatActivity {
                         }
                         for(int i=0; i<data1.size(); i++){
                             textview(data1.get(i),container1,key1.get(i));
-
                         }
                         for(int i=0; i<data2.size(); i++){
                             textview(data2.get(i),container2,key2.get(i));

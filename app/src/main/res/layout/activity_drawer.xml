@@ -9,6 +9,7 @@
     >
 
     <TextView
+        android:id="@+id/free_board"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="자유 게시판"
@@ -17,6 +18,7 @@
         android:gravity="center_horizontal"/>
 
     <TextView
+        android:id="@+id/daily_board"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="일상 게시판"
@@ -25,6 +27,7 @@
         android:gravity="center_horizontal"/>
 
     <TextView
+        android:id="@+id/secret_board"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="비밀 게시판"
@@ -33,9 +36,18 @@
         android:gravity="center_horizontal"/>
 
     <TextView
+        android:id="@+id/nomean_board"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="뻘글 게시판"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:gravity="center_horizontal"/>
+    <TextView
+        android:id="@+id/mypost_board"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="내가 쓴글"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:gravity="center_horizontal"/>
