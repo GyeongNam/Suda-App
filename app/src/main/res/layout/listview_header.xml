@@ -32,9 +32,39 @@
             android:layout_marginBottom="20dp"
             android:id="@+id/imageview"/>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/post_like_button"
+            android:text="게시글 좋아요 : "/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/post_like"
+            android:text="게시글 좋아요"/>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="작성자 : "/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/post_writer"
+            android:text="작성자"/>
+    </LinearLayout>
 
 
     <TextView
+        android:layout_marginTop="20dp"
         android:id="@+id/replybtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

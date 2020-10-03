@@ -41,12 +41,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class boardActivity extends AppCompatActivity {
+public class boardActivity extends DrawerActivity {
     private long backBtnTime = 0;
-    private DrawerLayout drawerLayout;
-    private View drawerView;
+
     private LinearLayout container1,container2,container3,container4,container5;
-    private TextView free_board,daily_board,nomean_board,secret_board,mypost_board;
+
 
 
     ArrayList<String> data1 = new ArrayList<>(3);
@@ -64,106 +63,7 @@ public class boardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
-        drawerLayout = (DrawerLayout) findViewById(R.id.activity_board);
-        drawerView = (View) findViewById(R.id.drawer);
 
-        free_board = (TextView) findViewById(R.id.free_board);
-        daily_board = (TextView) findViewById(R.id.daily_board);
-        nomean_board = (TextView) findViewById(R.id.nomean_board);
-        secret_board = (TextView) findViewById(R.id.secret_board);
-        mypost_board = (TextView) findViewById(R.id.mypost_board);
-
-        free_board.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
-                intent.putExtra("board_name",free_board.getText());
-                startActivity(intent);
-            }
-        });
-        daily_board.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
-                intent.putExtra("board_name",daily_board.getText());
-                startActivity(intent);
-            }
-        });
-
-        nomean_board.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
-                intent.putExtra("board_name",nomean_board.getText());
-                startActivity(intent);
-            }
-        });
-
-        secret_board.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
-                intent.putExtra("board_name",secret_board.getText());
-                startActivity(intent);
-            }
-        });
-
-        mypost_board.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
-                intent.putExtra("board_name",mypost_board.getText());
-                startActivity(intent);
-            }
-        });
-
-
-
-
-
-
-
-
-
-
-        ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
-        btn_open.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.openDrawer(drawerView);
-            }
-        });
-
-        Button post =  (Button) findViewById(R.id.bt_postupload);
-
-        post.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), PostUploadActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        drawerLayout.setDrawerListener(listener);
-        drawerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return true;
-            }
-        });
-        Button btn_close = (Button) findViewById(R.id.btn_close);
-        btn_close.setOnClickListener((new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                drawerLayout.closeDrawers();
-                editor.remove("userinfo");
-                editor.commit();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-            }
-        }));
         sendRequest();
 
 //텍스트뷰 부모 리니어레이아웃
@@ -177,27 +77,7 @@ public class boardActivity extends AppCompatActivity {
 
     }
 
-    DrawerLayout.DrawerListener listener = new DrawerLayout.DrawerListener() {
-        @Override
-        public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
 
-        }
-
-        @Override
-        public void onDrawerOpened(@NonNull View drawerView) {
-
-        }
-
-        @Override
-        public void onDrawerClosed(@NonNull View drawerView) {
-
-        }
-
-        @Override
-        public void onDrawerStateChanged(int newState) {
-
-        }
-    };
 
     public void sendRequest() {
         String url = "http://10.0.2.2/main"; //"http://ccit2020.cafe24.com:8082/login";

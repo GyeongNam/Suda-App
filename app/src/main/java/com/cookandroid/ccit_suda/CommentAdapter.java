@@ -35,7 +35,7 @@ import java.util.Map;
 public class CommentAdapter extends BaseAdapter {
     int position;
     String array;
-    TextView rereply, del_reply, up;
+    TextView rereply, del_reply;
     EditText editText;
     ArrayList<Commentlist> commentlist;
     String Number;
@@ -155,6 +155,7 @@ public class CommentAdapter extends BaseAdapter {
         }
         rereply = (TextView) convertView.findViewById(R.id.rereply);
         del_reply = (TextView) convertView.findViewById(R.id.del_reply);
+
         editText = ((PostdetailActivity) mContext).replytext;
         //사용자 여부에따라 삭제 기능 활성/비활성
             if(!(userinfo.equals(item.getWriter()))){
@@ -162,6 +163,7 @@ public class CommentAdapter extends BaseAdapter {
                 Log.v("TAG","뭐지??"+item.getWriter());
                 del_reply.setVisibility(View.GONE);
             }
+
 
 
         rereply.setOnClickListener(new View.OnClickListener() {

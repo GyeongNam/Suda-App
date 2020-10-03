@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PostListActivity extends AppCompatActivity {
+public class PostListActivity extends DrawerActivity {
     TextView maintitle;
     Intent intent;
     String boardname;
