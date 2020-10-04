@@ -12,6 +12,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/del_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="글 삭제" />
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -27,8 +33,9 @@
                     <ListView
                         android:id="@+id/postlist"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        />
+                        android:layout_height="match_parent" >
+
+                    </ListView>
                 </LinearLayout>
         </ScrollView>
 

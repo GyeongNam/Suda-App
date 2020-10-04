@@ -70,7 +70,7 @@ public class PostUploadActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {         // 뒤로가기
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
+                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                 startActivity(intent);
             }
         });
@@ -80,6 +80,8 @@ public class PostUploadActivity extends AppCompatActivity {
             public void onClick(View view) {                // 글 작성
                 String postName = InputPostName.getText().toString();
                 String postContent = InputPostContent.getText().toString();
+                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+                startActivity(intent);
 
                 sendPost();
             }
@@ -107,22 +109,6 @@ public class PostUploadActivity extends AppCompatActivity {
                 break;
         }
     }
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == GET_GALLERY_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-//
-//            Uri selectedImageUri = data.getData();
-//            imageview.setImageURI(selectedImageUri);
-//
-//        }
-//        else{
-//            Toast.makeText(this, "이미지 선택을 하지 않았습니다.", Toast.LENGTH_SHORT).show();
-//        }
-//
-//
-//    }
     // 이미지 실험
 @Override
 protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -221,27 +207,3 @@ public void check(String postName, String postContent) {
     }
         
 }
-//        ) {
-//            @Override
-//            protected Map<String, String> getByteData() {
-//                Map<String, String> params = new HashMap<>();
-//                EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
-//                EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);  // 글 내용 입력창
-//                ImageView InputImageView = (ImageView) findViewById(R.id.imgView);  //이미지 등록
-//                Spinner spinner =  findViewById(R.id.spinner_cate); // 스피너
-//
-//                SharedPreferences sharedPreferences = getSharedPreferences("File",0);
-//                String userinfo = sharedPreferences.getString("userinfo","");
-//
-//                String name = InputPostName.getText().toString();
-//                String content = InputPostContent.getText().toString();
-//                String kategorie = spinner.getSelectedItem().toString();
-//                String img = InputImageView.;
-//
-//                params.put("kategorie", kategorie);
-//                params.put("Text", content);
-//                params.put("Title", name);
-//                params.put("image", "img");
-//                params.put("writer", userinfo);
-//                return params;
-//            }
