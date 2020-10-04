@@ -98,7 +98,7 @@ public class CommentAdapter extends BaseAdapter {
         holder = new Holder();
         holder.writer = convertView.findViewById(R.id.id);
         holder.comment = convertView.findViewById(R.id.comment);
-//            holder.date = convertView.findViewById(R.id.date);
+            holder.date = convertView.findViewById(R.id.date);
         convertView.setTag(holder);
         if (convertView == null) {
 
@@ -134,6 +134,7 @@ public class CommentAdapter extends BaseAdapter {
                 LinearLayout replylayout = convertView.findViewById(R.id.replylayout);
                 holder.writer.setText(item.getWriter());
                 holder.comment.setText(item.getComment());
+                holder.date.setText(item.getDate());
                 LinearLayout.LayoutParams layparam = (LinearLayout.LayoutParams) replylayout.getLayoutParams();
                 layparam.leftMargin = 80;
                 indicate.setVisibility(View.VISIBLE);
@@ -147,6 +148,7 @@ public class CommentAdapter extends BaseAdapter {
                 indicate.setVisibility(View.INVISIBLE);
                 holder.writer.setText(item.getWriter());
                 holder.comment.setText(item.getComment());
+                holder.date.setText(item.getDate());
             }
 
 
@@ -159,8 +161,6 @@ public class CommentAdapter extends BaseAdapter {
         editText = ((PostdetailActivity) mContext).replytext;
         //사용자 여부에따라 삭제 기능 활성/비활성
             if(!(userinfo.equals(item.getWriter()))){
-                Log.v("TAG","뭐지??"+userinfo);
-                Log.v("TAG","뭐지??"+item.getWriter());
                 del_reply.setVisibility(View.GONE);
             }
 
