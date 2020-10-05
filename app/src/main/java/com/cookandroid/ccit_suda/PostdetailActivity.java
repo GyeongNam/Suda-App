@@ -162,7 +162,7 @@ public class PostdetailActivity extends DrawerActivity {
                                 //가져온 댓글 정보 넣기
                                 commentlist1.setWriter(jsonObject.getString("c_writer"));
                                 commentlist1.setComment(jsonObject.getString("comment"));
-//                                commentlist1.setDate(jsonObject.getString("created_at"));
+                                commentlist1.setDate(jsonObject.getString("created_at").substring(0,16));
                                 commentlist1.setNum(jsonObject.getString("c_num"));
                                 //대댓글 담기영역
                                 commentlist1.setParent(jsonObject.getString("parent"));
@@ -320,13 +320,14 @@ public class PostdetailActivity extends DrawerActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.v("TAG", response);
-//                        sendRequest();
+                        sendRequest();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getApplicationContext(), "에러 ->" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        sendRequest();
                         Log.v("TAG", error.toString());
                     }
                 }
