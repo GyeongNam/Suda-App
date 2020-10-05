@@ -1,14 +1,20 @@
 package com.cookandroid.ccit_suda;
 
 public class Commentlist {
-    String Comment,Writer,Date,Num,Parent,Recomment;
+    String Comment,Writer,Date,Num,Parent,Recomment,Activation;
     private int type ;
     public void setType(int type) {
         this.type = type ;
     }
 
 
+    public String getActivation() {
+        return Activation;
+    }
 
+    public void setActivation(String activation) {
+        Activation = activation;
+    }
 
     public void setParent(String parent) {
         Parent = parent;

@@ -143,12 +143,20 @@ public class PostdetailActivity extends DrawerActivity {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 Log.v("TAG", "게시글 디테일" + jsonObject.getString("Title"));
                                 //가져온 댓글 정보 넣기
-                                commentlist1.setWriter(jsonObject.getString("c_writer"));
-                                commentlist1.setComment(jsonObject.getString("comment"));
-                                commentlist1.setDate(jsonObject.getString("created_at").substring(0,16));
-                                commentlist1.setNum(jsonObject.getString("c_num"));
-                                //대댓글 담기영역
-                                commentlist1.setParent(jsonObject.getString("parent"));
+//                                Log.v("TAG",jsonObject.getString("c_activation"));
+                                commentlist1.setActivation(jsonObject.getString("c_activation"));
+//                                Log.v("TAG",String.valueOf(jsonObject.getString("c_activation").equals("null")));
+                                if (!jsonObject.getString("c_activation").equals("0") && !jsonObject.getString("c_activation").equals("null")) {
+                                    commentlist1.setWriter(jsonObject.getString("c_writer"));
+                                    commentlist1.setComment(jsonObject.getString("comment"));
+                                    commentlist1.setDate(jsonObject.getString("created_at").substring(0,16));
+                                    commentlist1.setNum(jsonObject.getString("c_num"));
+                                    //대댓글 담기영역
+                                    commentlist1.setParent(jsonObject.getString("parent"));
+                                    Log.v("TAG","뭐냐고 참이 아닌데 왜들어가냐");
+
+                                }
+
 //                                commentlist1.setRecomment(jsonObject.getString("recomment"));
 
 

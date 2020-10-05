@@ -118,6 +118,12 @@ public class CommentAdapter extends BaseAdapter {
                 replylayout.setVisibility(View.GONE);
                 return convertView;
             }
+            if (item.getActivation().equals("0") || item.getActivation().equals("null")) {
+                LinearLayout replylayout = convertView.findViewById(R.id.replylayout);
+                replylayout.setVisibility(View.GONE);
+                return convertView;
+            }
+
 
 
 
