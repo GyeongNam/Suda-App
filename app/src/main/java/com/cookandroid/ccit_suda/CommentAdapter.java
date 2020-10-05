@@ -167,8 +167,8 @@ public class CommentAdapter extends BaseAdapter {
         editText = ((PostdetailActivity) mContext).replytext;
         //사용자 여부에따라 삭제 기능 활성/비활성
             if(!(userinfo.equals(item.getWriter()))){
-                del_reply.setVisibility(View.GONE);
-            }
+            del_reply.setVisibility(View.GONE);
+        }
 
 
 

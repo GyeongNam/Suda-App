@@ -1,6 +1,8 @@
 package com.cookandroid.ccit_suda;
 
+import android.app.AlertDialog;
 import android.app.Service;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -51,6 +53,7 @@ public class PostdetailActivity extends DrawerActivity {
     private ListView postlist;
     private String imgurl;
 //    ImageView imageView;
+    Button del_post;
 
     EditText replytext;
     List<String> replylist = new ArrayList<>();
@@ -74,9 +77,11 @@ public class PostdetailActivity extends DrawerActivity {
         post_like_button = (TextView)findViewById(R.id.post_like_button);
         post_like = (TextView)findViewById(R.id.post_like);
         post_writer = (TextView)findViewById(R.id.post_writer);
-
+        del_post = (Button)findViewById(R.id.del_post);
         ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+        String userinfo = sharedPreferences.getString("userinfo", "");
 
 
         Button post = (Button) findViewById(R.id.bt_postupload);
@@ -97,6 +102,28 @@ public class PostdetailActivity extends DrawerActivity {
         });
 
 
+        del_post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(PostdetailActivity.this);
+                builder.setTitle("게시글 삭제");
+                builder.setMessage("게시글을 정말 삭제하시겠습니까?")     // 제목 부분 (직접 작성)
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {      // 버튼1 (직접 작성)
+                            public void onClick(DialogInterface dialog, int which){
+                                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+                                startActivity(intent);
+                                Toast.makeText(getApplicationContext(), "삭제되었습니다!", Toast.LENGTH_SHORT).show(); // 실행할 코드
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {     // 버튼2 (직접 작성)
+                            public void onClick(DialogInterface dialog, int which){
+                                Toast.makeText(getApplicationContext(), "취소 누름", Toast.LENGTH_SHORT).show(); // 실행할 코드
+                            }
+                        })
+                        .show();
+
+            }
+        });
 
 
         InputMethodManager controlManager = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
@@ -141,6 +168,9 @@ public class PostdetailActivity extends DrawerActivity {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 Commentlist commentlist1 = new Commentlist();
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                if(!(userinfo).equals(jsonObject.getString("writer"))) {
+                                    del_post.setVisibility(View.GONE);
+                                }
                                 Log.v("TAG", "게시글 디테일" + jsonObject.getString("Title"));
                                 //가져온 댓글 정보 넣기
 //                                Log.v("TAG",jsonObject.getString("c_activation"));
