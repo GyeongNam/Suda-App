@@ -1,14 +1,14 @@
 package com.cookandroid.ccit_suda;
 
+import android.app.AlertDialog;
 import android.app.Service;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -22,16 +22,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -50,8 +44,8 @@ public class PostdetailActivity extends DrawerActivity {
     private LinearLayout container;
     private ListView postlist;
     private String imgurl;
-//    ImageView imageView;
 
+    Button del_post;
     EditText replytext;
     List<String> replylist = new ArrayList<>();
     //두줄만든거임
@@ -62,6 +56,9 @@ public class PostdetailActivity extends DrawerActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+        String userinfo = sharedPreferences.getString("userinfo", "");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_postdetail);
         replytext = (EditText) findViewById(R.id.replytext);
@@ -74,12 +71,10 @@ public class PostdetailActivity extends DrawerActivity {
         post_like_button = (TextView)findViewById(R.id.post_like_button);
         post_like = (TextView)findViewById(R.id.post_like);
         post_writer = (TextView)findViewById(R.id.post_writer);
-
         ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
 
-
-
         Button post = (Button) findViewById(R.id.bt_postupload);
+        del_post = findViewById(R.id.del_post);
 
         post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,7 +91,27 @@ public class PostdetailActivity extends DrawerActivity {
             }
         });
 
-
+        del_post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(PostdetailActivity.this);
+                builder.setTitle("게시글 삭제");
+                builder.setMessage("게시글을 정말 삭제하시겠습니까?")     // 제목 부분 (직접 작성)
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {      // 버튼1 (직접 작성)
+                            public void onClick(DialogInterface dialog, int which){
+                                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+                                startActivity(intent);
+                                Toast.makeText(getApplicationContext(), "삭제되었습니다!", Toast.LENGTH_SHORT).show(); // 실행할 코드
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {     // 버튼2 (직접 작성)
+                            public void onClick(DialogInterface dialog, int which){
+                                Toast.makeText(getApplicationContext(), "취소 누름", Toast.LENGTH_SHORT).show(); // 실행할 코드
+                            }
+                        })
+                        .show();
+            }
+        });
 
 
         InputMethodManager controlManager = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
@@ -108,6 +123,8 @@ public class PostdetailActivity extends DrawerActivity {
 
 
     }
+
+
 
 
 
