@@ -225,7 +225,6 @@ public class PostdetailActivity extends DrawerActivity {
                         TextView username = (TextView) findViewById(R.id.username);
 //                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
                         Log.v("TAG", response);
-                        Log.v("TAG","외 않되");
                         replytext.getText().clear();
                         commentAdapter.Number = null;
                         sendRequest();
