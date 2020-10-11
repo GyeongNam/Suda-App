@@ -44,8 +44,7 @@ import java.util.Map;
 public class boardActivity extends DrawerActivity {
     private long backBtnTime = 0;
 
-    private LinearLayout container1,container2,container3,container4,container5;
-
+    private LinearLayout container1, container2, container3, container4, container5;
 
 
     ArrayList<String> data1 = new ArrayList<>(3);
@@ -78,7 +77,6 @@ public class boardActivity extends DrawerActivity {
     }
 
 
-
     public void sendRequest() {
         String url = "http://10.0.2.2/main"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
@@ -98,27 +96,27 @@ public class boardActivity extends DrawerActivity {
                         Log.v("TAG", response);
                         try {
                             JSONArray jsonArray = new JSONArray(response);
-                            Log.v("TAG", "zz"+jsonArray);
+                            Log.v("TAG", "zz" + jsonArray);
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Log.v("TAG","원하는 json 배열 얻기" + jsonObject.getString("Kategorie").indexOf("비밀게시판"));
-                                if(jsonObject.getString("Kategorie").indexOf("자유게시판")==0){
+                                Log.v("TAG", "원하는 json 배열 얻기" + jsonObject.getString("Kategorie").indexOf("비밀게시판"));
+                                if (jsonObject.getString("Kategorie").indexOf("자유게시판") == 0) {
                                     data1.add((jsonArray.getJSONObject(i).getString("Title")));
                                     key1.add((jsonArray.getJSONObject(i).getString("post_num")));
                                 }
-                                if(jsonObject.getString("Kategorie").indexOf("일상게시판")==0){
+                                if (jsonObject.getString("Kategorie").indexOf("일상게시판") == 0) {
                                     data2.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
                                     key2.add((jsonArray.getJSONObject(i).getString("post_num")));
                                 }
-                                if(jsonObject.getString("Kategorie").indexOf("비밀게시판")==0){
+                                if (jsonObject.getString("Kategorie").indexOf("비밀게시판") == 0) {
                                     data3.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
                                     key3.add((jsonArray.getJSONObject(i).getString("post_num")));
                                 }
-                                if(jsonObject.getString("Kategorie").indexOf("뻘글게시판")==0){
+                                if (jsonObject.getString("Kategorie").indexOf("뻘글게시판") == 0) {
                                     data4.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
                                     key4.add((jsonArray.getJSONObject(i).getString("post_num")));
                                 }
-                                if(jsonObject.getString("writer").indexOf(userinfo)==0){
+                                if (jsonObject.getString("writer").indexOf(userinfo) == 0) {
                                     data5.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
                                     key5.add((jsonArray.getJSONObject(i).getString("post_num")));
                                 }
@@ -126,20 +124,50 @@ public class boardActivity extends DrawerActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        for(int i=0; i<data1.size(); i++){
-                            textview(data1.get(i),container1,key1.get(i));
+                        if (data1.size() > 3) {
+                            for (int i = 0; i < 3; i++) {
+                                textview(data1.get(i), container1, key1.get(i));
+                            }
+                        } else {
+                            for (int i = 0; i < data1.size(); i++) {
+                                textview(data1.get(i), container1, key1.get(i));
+                            }
                         }
-                        for(int i=0; i<data2.size(); i++){
-                            textview(data2.get(i),container2,key2.get(i));
+                        if (data2.size() > 3) {
+                            for (int i = 0; i < 3; i++) {
+                                textview(data2.get(i), container2, key2.get(i));
+                            }
+                        } else {
+                            for (int i = 0; i < data2.size(); i++) {
+                                textview(data2.get(i), container2, key2.get(i));
+                            }
                         }
-                        for(int i=0; i<data3.size(); i++){
-                            textview(data3.get(i),container3,key3.get(i));
+                        if (data3.size() > 3) {
+                            for (int i = 0; i < 3; i++) {
+                                textview(data3.get(i), container3, key3.get(i));
+                            }
+                        } else {
+                            for (int i = 0; i < data3.size(); i++) {
+                                textview(data3.get(i), container1, key3.get(i));
+                            }
                         }
-                        for(int i=0; i<data4.size(); i++){
-                            textview(data4.get(i),container4,key4.get(i));
+                        if (data4.size() > 3) {
+                            for (int i = 0; i < 3; i++) {
+                                textview(data4.get(i), container4, key4.get(i));
+                            }
+                        } else {
+                            for (int i = 0; i < data4.size(); i++) {
+                                textview(data4.get(i), container4, key4.get(i));
+                            }
                         }
-                        for(int i=0; i<data5.size(); i++){
-                            textview(data5.get(i),container5,key5.get(i));
+                        if (data5.size() > 3) {
+                            for (int i = 0; i < 3; i++) {
+                                textview(data5.get(i), container5, key5.get(i));
+                            }
+                        } else {
+                            for (int i = 0; i < data5.size(); i++) {
+                                textview(data5.get(i), container5, key5.get(i));
+                            }
                         }
 
 
@@ -188,8 +216,9 @@ public class boardActivity extends DrawerActivity {
         }
 
     }
+
     //텍스트뷰 동적생성하기
-    public void textview(final String a, android.widget.LinearLayout container, final String key){
+    public void textview(final String a, android.widget.LinearLayout container, final String key) {
         //TextView 생성
         final TextView view1 = new TextView(this);
         view1.setText(a);
@@ -198,7 +227,7 @@ public class boardActivity extends DrawerActivity {
 
         //layout_width, layout_height, gravity 설정
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(30,30,10,30);
+        lp.setMargins(30, 30, 10, 30);
 
 
         view1.setLayoutParams(lp);
@@ -206,9 +235,9 @@ public class boardActivity extends DrawerActivity {
         view1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.v("TAG",key);
+                Log.v("TAG", key);
                 Intent intent = new Intent(getApplicationContext(), PostdetailActivity.class);
-                intent.putExtra("primarykey",key);
+                intent.putExtra("primarykey", key);
                 startActivity(intent);
             }
         });

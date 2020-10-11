@@ -2,6 +2,7 @@ package com.cookandroid.ccit_suda;
 
 import android.app.AlertDialog;
 import android.app.Service;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,6 +29,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.android.volley.Request;
@@ -48,10 +52,14 @@ import java.util.Map;
 
 
 public class PostdetailActivity extends DrawerActivity {
-    private TextView post_like,post_like_button,post_writer;
+    static String input;
+    private TextView post_like,post_like_button,post_writer,reply_close;
+    TextView reply_tag,text_limit_indicate;
     private LinearLayout container;
+    LinearLayout reply_top_layout,reply_border_layout;
     private ListView postlist;
     private String imgurl;
+    InputMethodManager imm;
 //    ImageView imageView;
     Button del_post;
 
@@ -65,11 +73,19 @@ public class PostdetailActivity extends DrawerActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_postdetail);
         replytext = (EditText) findViewById(R.id.replytext);
         container = (LinearLayout) findViewById(R.id.parentlayout);
         postlist = (ListView) findViewById(R.id.postlist);
+        reply_top_layout = (LinearLayout) findViewById(R.id.reply_top_layout);
+        reply_close = findViewById(R.id.reply_close);
+        reply_tag = findViewById(R.id.reply_tag);
+        reply_border_layout = findViewById(R.id.reply_border_layout);
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        text_limit_indicate = findViewById(R.id.text_limit_indicate);
+        input = "";
 
         View header = getLayoutInflater().inflate(R.layout.listview_header, null, false);
         postlist.addHeaderView(header);
@@ -82,6 +98,61 @@ public class PostdetailActivity extends DrawerActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
         String userinfo = sharedPreferences.getString("userinfo", "");
+        reply_top_layout.setVisibility(View.GONE);
+        replytext.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        if(commentAdapter.Number != null){
+                            Log.v("TAG",commentAdapter.Number);
+                        }
+                        else{
+                            reply_top_layout.setVisibility(View.VISIBLE);
+                            reply_border_layout.setBackgroundResource(0);
+                            reply_tag.setText("댓글 입력");
+                            replytext.setCursorVisible(true);
+                            text_limit_indicate.setText(input.length()+" / 200 글자 수");
+                        }
+
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
+        replytext.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                input = replytext.getText().toString();
+                text_limit_indicate.setText(input.length()+" / 200 글자 수");
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        reply_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                reply_top_layout.setVisibility(View.GONE);
+                replytext.getText().clear();
+                imm.hideSoftInputFromWindow(replytext.getWindowToken(), 0);
+                reply_border_layout.setBackgroundResource(R.drawable.topborder);
+                 replytext.setCursorVisible(false);
+                commentAdapter.Number = null;
+
+
+
+            }
+        });
+
+
 
 
         Button post = (Button) findViewById(R.id.bt_postupload);
@@ -264,6 +335,10 @@ public class PostdetailActivity extends DrawerActivity {
 //                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
                         Log.v("TAG", response);
                         replytext.getText().clear();
+                        reply_top_layout.setVisibility(View.GONE);
+                        imm.hideSoftInputFromWindow(replytext.getWindowToken(), 0);
+                        reply_border_layout.setBackgroundResource(R.drawable.topborder);
+                        replytext.setCursorVisible(false);
                         commentAdapter.Number = null;
                         sendRequest();
                     }
