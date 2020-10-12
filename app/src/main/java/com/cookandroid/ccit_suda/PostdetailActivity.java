@@ -180,6 +180,31 @@ public class PostdetailActivity extends DrawerActivity {
             }
         });
 
+        del_post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(PostdetailActivity.this);
+                builder.setTitle("게시글 삭제");
+                builder.setMessage("게시글을 정말 삭제하시겠습니까?")     // 제목 부분 (직접 작성)
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {      // 버튼1 (직접 작성)
+                            public void onClick(DialogInterface dialog, int which){
+                                delpost();
+                                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+                                startActivity(intent);
+                                Toast.makeText(getApplicationContext(), "삭제되었습니다!", Toast.LENGTH_SHORT).show(); // 실행할 코드
+
+
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {     // 버튼2 (직접 작성)
+                            public void onClick(DialogInterface dialog, int which){
+                                Toast.makeText(getApplicationContext(), "취소 누름", Toast.LENGTH_SHORT).show(); // 실행할 코드
+                            }
+                        })
+                        .show();
+            }
+        });
+
         Button post = (Button) findViewById(R.id.bt_postupload);
 
         post.setOnClickListener(new View.OnClickListener() {
@@ -194,30 +219,6 @@ public class PostdetailActivity extends DrawerActivity {
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "좋아요 버튼눌렀습니다.", Toast.LENGTH_SHORT).show();
                 like_button();
-            }
-        });
-
-
-        del_post.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(PostdetailActivity.this);
-                builder.setTitle("게시글 삭제");
-                builder.setMessage("게시글을 정말 삭제하시겠습니까?")     // 제목 부분 (직접 작성)
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {      // 버튼1 (직접 작성)
-                            public void onClick(DialogInterface dialog, int which){
-                                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
-                                startActivity(intent);
-                                Toast.makeText(getApplicationContext(), "삭제되었습니다!", Toast.LENGTH_SHORT).show(); // 실행할 코드
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {     // 버튼2 (직접 작성)
-                            public void onClick(DialogInterface dialog, int which){
-                                Toast.makeText(getApplicationContext(), "취소 누름", Toast.LENGTH_SHORT).show(); // 실행할 코드
-                            }
-                        })
-                        .show();
-
             }
         });
 
@@ -411,6 +412,58 @@ public class PostdetailActivity extends DrawerActivity {
 //        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
 
+    public void delpost() {
+        String url = "http://10.0.2.2/delete_post";
+        StringRequest request = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+                        String userinfo = sharedPreferences.getString("userinfo", "");
+//                        TextView username = (TextView) ((Activity)mContext).findViewById(R.id.username);
+//                        username.setText("환영합니다 " + userinfo + " 님");
+
+
+//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+                        Log.v("TAG", response);
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "에러 ->" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.v("TAG", error.toString());
+                    }
+                }
+
+
+
+        )
+        {
+            @Override
+            protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+            String userinfo = sharedPreferences.getString("userinfo", "");
+            Intent intent = getIntent();
+            KEY = intent.getExtras().getString("primarykey");
+            params.put("post_num", KEY);
+            params.put("writer", userinfo);
+            return params;
+        }
+
+//            public Map<String, String> getHeader() throws AuthFailureError{
+//                Map<String, String> params = new HashMap<String, String >();
+//                params.put("Content-Type", "application/x-www-form-urlencoded");
+//                return params;
+//            }
+        };
+        request.setShouldCache(false);
+        AppHelper.requestQueue.add(request);
+    }
     public void sendreply(View view) {
         sendreply();
     }
@@ -463,7 +516,7 @@ public class PostdetailActivity extends DrawerActivity {
                 SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
                 String userinfo = sharedPreferences.getString("userinfo", "");
                 Intent intent = getIntent();
-                String KEY = intent.getExtras().getString("primarykey");
+                KEY = intent.getExtras().getString("primarykey");
                 params.put("post_num", KEY);
                 params.put("writer", userinfo);
                 return params;

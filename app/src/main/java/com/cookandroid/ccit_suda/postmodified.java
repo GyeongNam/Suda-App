@@ -97,10 +97,9 @@ public class postmodified extends AppCompatActivity {
             public void onClick(View view) {                // 글 작성
                 String postName = InputPostName.getText().toString();
                 String postContent = InputPostContent.getText().toString();
+                sendPost();
                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                 startActivity(intent);
-
-                sendPost();
             }
         });
         //외부 저장소에 권한 필요, 동적 퍼미션
@@ -306,7 +305,7 @@ public class postmodified extends AppCompatActivity {
         smpr.addStringParam("kategorie", kategorie);
         smpr.addStringParam("writer", userinfo);
         //이미지 파일 추가
-//
+
         smpr.addFile("image", imgPath);
 
 
