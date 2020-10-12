@@ -2,6 +2,7 @@ package com.cookandroid.ccit_suda;
 
 import android.app.AlertDialog;
 import android.app.Service;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -240,7 +243,7 @@ public class PostdetailActivity extends DrawerActivity {
                                     del_post.setVisibility(View.GONE);
                                 }
                                 if(!(userinfo).equals(jsonObject.getString("writer"))) {
-                                    md_post.setVisibility(View.GONE);
+//                                    md_post.setVisibility(View.GONE);
                                 }
                                 Log.v("TAG", "게시글 디테일" + jsonObject.getString("Title"));
                                 //가져온 댓글 정보 넣기
