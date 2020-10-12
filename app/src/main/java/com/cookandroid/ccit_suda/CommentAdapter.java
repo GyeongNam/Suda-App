@@ -37,11 +37,13 @@ public class CommentAdapter extends BaseAdapter {
     String array;
     TextView rereply, del_reply;
     EditText editText;
+    TextView reply_tag,textview_limit;
     ArrayList<Commentlist> commentlist;
     String Number;
     Context mContext;
     LayoutInflater inflater;
-    LinearLayout replylayout;
+
+    LinearLayout replylayout,reply_layout1,reply_layout2;
     private static final int ITEM_VIEW_TYPE_reply = 0;
     private static final int ITEM_VIEW_TYPE_rereply = 1;
     private static final int ITEM_VIEW_TYPE_MAX = 2;
@@ -91,6 +93,7 @@ public class CommentAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         Holder holder;
+
         SharedPreferences sharedPreferences = mContext.getSharedPreferences("File", 0);
         String userinfo = sharedPreferences.getString("userinfo", "");
         int viewType = this.getItemViewType(position);
@@ -165,6 +168,12 @@ public class CommentAdapter extends BaseAdapter {
         del_reply = (TextView) convertView.findViewById(R.id.del_reply);
 
         editText = ((PostdetailActivity) mContext).replytext;
+        reply_tag = ((PostdetailActivity) mContext).reply_tag;
+        reply_layout1 = ((PostdetailActivity) mContext).reply_top_layout;
+        reply_layout2 = ((PostdetailActivity) mContext).reply_border_layout;
+        textview_limit = ((PostdetailActivity) mContext).text_limit_indicate;
+
+
         //사용자 여부에따라 삭제 기능 활성/비활성
             if(!(userinfo.equals(item.getWriter()))){
             del_reply.setVisibility(View.GONE);
@@ -185,6 +194,11 @@ public class CommentAdapter extends BaseAdapter {
                     public void run() {
                         editText.setFocusableInTouchMode(true);
                         editText.requestFocus();
+                        reply_tag.setText("@"+item.getWriter());
+                        reply_layout1.setVisibility(View.VISIBLE);
+                        reply_layout2.setBackgroundResource(0);
+                        editText.setCursorVisible(true);
+                        textview_limit.setText(PostdetailActivity.input.length()+" / 200 글자 수");
 
                         InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
 
