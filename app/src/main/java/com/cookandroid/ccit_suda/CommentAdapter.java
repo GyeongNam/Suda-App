@@ -212,8 +212,8 @@ public class CommentAdapter extends BaseAdapter {
             }
         });
         del_reply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+                        @Override
+                        public void onClick(View view) {
                 // 다이얼로그 바디
                 AlertDialog.Builder alertdialog = new AlertDialog.Builder(mContext);
                 // 다이얼로그 메세지

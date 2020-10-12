@@ -61,7 +61,8 @@ public class PostdetailActivity extends DrawerActivity {
     private String imgurl;
     InputMethodManager imm;
 //    ImageView imageView;
-    Button del_post;
+    Button del_post, md_post;
+    String KEY;
 
     EditText replytext;
     List<String> replylist = new ArrayList<>();
@@ -86,6 +87,8 @@ public class PostdetailActivity extends DrawerActivity {
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         text_limit_indicate = findViewById(R.id.text_limit_indicate);
         input = "";
+        Intent intent = getIntent();
+        KEY = intent.getExtras().getString("primarykey");
 
         View header = getLayoutInflater().inflate(R.layout.listview_header, null, false);
         postlist.addHeaderView(header);
@@ -94,6 +97,7 @@ public class PostdetailActivity extends DrawerActivity {
         post_like = (TextView)findViewById(R.id.post_like);
         post_writer = (TextView)findViewById(R.id.post_writer);
         del_post = (Button)findViewById(R.id.del_post);
+        md_post = (Button)findViewById(R.id.md_post);
         ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
 
         SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
@@ -153,7 +157,28 @@ public class PostdetailActivity extends DrawerActivity {
         });
 
 
-
+        md_post.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(PostdetailActivity.this);
+                builder.setTitle("게시글 수정");
+                builder.setMessage("게시글 수정페이지로 이동합니다")     // 제목 부분 (직접 작성)
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {      // 버튼1 (직접 작성)
+                            public void onClick(DialogInterface dialog, int which){
+                                Intent intent = new Intent(getApplicationContext(), postmodified.class);
+                                intent.putExtra("primarykey",KEY);
+                                startActivity(intent);
+                                Toast.makeText(getApplicationContext(), "수정페이지 이동!", Toast.LENGTH_SHORT).show(); // 실행할 코드
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {     // 버튼2 (직접 작성)
+                            public void onClick(DialogInterface dialog, int which){
+                                Toast.makeText(getApplicationContext(), "취소 누름", Toast.LENGTH_SHORT).show(); // 실행할 코드
+                            }
+                        })
+                        .show();
+            }
+        });
 
         Button post = (Button) findViewById(R.id.bt_postupload);
 
@@ -243,7 +268,7 @@ public class PostdetailActivity extends DrawerActivity {
                                     del_post.setVisibility(View.GONE);
                                 }
                                 if(!(userinfo).equals(jsonObject.getString("writer"))) {
-//                                    md_post.setVisibility(View.GONE);
+                                    md_post.setVisibility(View.GONE);
                                 }
                                 Log.v("TAG", "게시글 디테일" + jsonObject.getString("Title"));
                                 //가져온 댓글 정보 넣기
