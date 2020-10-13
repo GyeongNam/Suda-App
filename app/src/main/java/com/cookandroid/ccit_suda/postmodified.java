@@ -47,7 +47,7 @@ import static android.provider.Contacts.SettingsColumns.KEY;
 //import com.android.volley.toolbox.StringRequest;
 
 public class postmodified extends AppCompatActivity {
-
+    String KEY;
     boolean err = false;
     boolean chk = true;
 
@@ -187,7 +187,7 @@ public class postmodified extends AppCompatActivity {
                 SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
                 String userinfo = sharedPreferences.getString("userinfo", "");
                 Intent intent = getIntent();
-                String KEY = intent.getExtras().getString("primarykey");
+                KEY = intent.getExtras().getString("primarykey");
                 Log.v("확인k",KEY);
                 params.put("post_num", KEY);
                 params.put("writer", userinfo);
@@ -290,7 +290,7 @@ public class postmodified extends AppCompatActivity {
         SimpleMultiPartRequest smpr= new SimpleMultiPartRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.v("TAG",response);
+                Log.v("TAG111",response);
                 new AlertDialog.Builder(postmodified.this).setMessage("응답:"+imgPath).create().show();
             }
         }, new Response.ErrorListener() {
@@ -300,6 +300,7 @@ public class postmodified extends AppCompatActivity {
             }
         });
         //요청 객체에 보낼 데이터를 추가
+        smpr.addStringParam("post_num", KEY);
         smpr.addStringParam("Text", content);
         smpr.addStringParam("Title", name);
         smpr.addStringParam("kategorie", kategorie);
