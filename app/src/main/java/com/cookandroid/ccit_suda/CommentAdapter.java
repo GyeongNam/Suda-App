@@ -103,6 +103,8 @@ public class CommentAdapter extends BaseAdapter {
         holder.comment = convertView.findViewById(R.id.comment);
             holder.date = convertView.findViewById(R.id.date);
         convertView.setTag(holder);
+        rereply = (TextView) convertView.findViewById(R.id.rereply);
+        del_reply = (TextView) convertView.findViewById(R.id.del_reply);
         if (convertView == null) {
 
 
@@ -116,16 +118,39 @@ public class CommentAdapter extends BaseAdapter {
         final Commentlist item = commentlist.get(position);
 
         if (item != null) {
+
+
+            LinearLayout replylayout = convertView.findViewById(R.id.replylayout);
+            LinearLayout deletelayout = convertView.findViewById(R.id.deletelayout);
+            LinearLayout.LayoutParams layparam = (LinearLayout.LayoutParams) replylayout.getLayoutParams();
             if (item.getWriter() == "null") {
-                LinearLayout replylayout = convertView.findViewById(R.id.replylayout);
+
                 replylayout.setVisibility(View.GONE);
                 return convertView;
             }
-            if (item.getActivation().equals("0") || item.getActivation().equals("null")) {
-                LinearLayout replylayout = convertView.findViewById(R.id.replylayout);
+            if (item.getActivation().equals("null")) {
+
                 replylayout.setVisibility(View.GONE);
                 return convertView;
             }
+            if (item.getActivation().equals("0")) {
+                holder.date.setVisibility(View.INVISIBLE);
+                del_reply.setVisibility(View.GONE);
+                rereply.setVisibility(View.GONE);
+                holder.comment.setText("삭제된 댓글입니다.");
+                //대댓글일경우
+                if(item.getParent() != "null"){
+                    holder.writer.setVisibility(View.GONE);
+                    layparam.leftMargin = 80;
+                    return convertView;
+                }
+                deletelayout.setVisibility(View.INVISIBLE);
+
+
+                return convertView;
+            }
+
+
 
 
 
@@ -140,11 +165,10 @@ public class CommentAdapter extends BaseAdapter {
 //
             if (item.getParent() != "null") {
                 //대댓글
-                LinearLayout replylayout = convertView.findViewById(R.id.replylayout);
+
                 holder.writer.setText(item.getWriter());
                 holder.comment.setText(item.getComment());
                 holder.date.setText(item.getDate());
-                LinearLayout.LayoutParams layparam = (LinearLayout.LayoutParams) replylayout.getLayoutParams();
                 layparam.leftMargin = 80;
                 indicate.setVisibility(View.VISIBLE);
                 ifrereply.setVisibility(View.GONE);
@@ -164,8 +188,7 @@ public class CommentAdapter extends BaseAdapter {
         } else {
 
         }
-        rereply = (TextView) convertView.findViewById(R.id.rereply);
-        del_reply = (TextView) convertView.findViewById(R.id.del_reply);
+
 
         editText = ((PostdetailActivity) mContext).replytext;
         reply_tag = ((PostdetailActivity) mContext).reply_tag;

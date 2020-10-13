@@ -276,7 +276,7 @@ public class PostdetailActivity extends DrawerActivity {
 //                                Log.v("TAG",jsonObject.getString("c_activation"));
                                 commentlist1.setActivation(jsonObject.getString("c_activation"));
 //                                Log.v("TAG",String.valueOf(jsonObject.getString("c_activation").equals("null")));
-                                if (!jsonObject.getString("c_activation").equals("0") && !jsonObject.getString("c_activation").equals("null")) {
+                                if (!jsonObject.getString("c_activation").equals("null")) {
                                     commentlist1.setWriter(jsonObject.getString("c_writer"));
                                     commentlist1.setComment(jsonObject.getString("comment"));
                                     commentlist1.setDate(jsonObject.getString("created_at").substring(0,16));
