@@ -42,6 +42,8 @@ public class CommentAdapter extends BaseAdapter {
     String Number;
     Context mContext;
     LayoutInflater inflater;
+    LinearLayout deletelayout;
+    LinearLayout.LayoutParams layparam;
 
     LinearLayout replylayout,reply_layout1,reply_layout2;
     private static final int ITEM_VIEW_TYPE_reply = 0;
@@ -121,8 +123,8 @@ public class CommentAdapter extends BaseAdapter {
 
 
             LinearLayout replylayout = convertView.findViewById(R.id.replylayout);
-            LinearLayout deletelayout = convertView.findViewById(R.id.deletelayout);
-            LinearLayout.LayoutParams layparam = (LinearLayout.LayoutParams) replylayout.getLayoutParams();
+            deletelayout = convertView.findViewById(R.id.deletelayout);
+            layparam = (LinearLayout.LayoutParams) replylayout.getLayoutParams();
             if (item.getWriter() == "null") {
 
                 replylayout.setVisibility(View.GONE);
@@ -234,6 +236,7 @@ public class CommentAdapter extends BaseAdapter {
 
             }
         });
+        final Holder finalHolder = holder;
         del_reply.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -247,7 +250,7 @@ public class CommentAdapter extends BaseAdapter {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         delreply(item.getNum());
-                        commentlist.remove(position);
+                        item.setActivation("0");
                         notifyDataSetChanged();
 //                        Toast.makeText(mContext, "'확인'버튼을 눌렀습니다.", Toast.LENGTH_SHORT).show();
                     }
