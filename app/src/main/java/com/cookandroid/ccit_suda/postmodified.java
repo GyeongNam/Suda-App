@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -56,6 +57,7 @@ public class postmodified extends AppCompatActivity {
     private ImageView imageView;
     private TextView post_writer;
     private String imgurl;
+    private ImageButton imgDel;
     int selection;
     String imgPath;
 
@@ -71,6 +73,7 @@ public class postmodified extends AppCompatActivity {
 
         imageView = (ImageView)findViewById(R.id.imgView);  //이미지 등록 버튼
         Picasso.get().load(imgurl).fit().into(imageView);
+        imgDel = (ImageButton)findViewById(R.id.imgbtn2);
 
 
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -102,6 +105,17 @@ public class postmodified extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        ImageButton imgdel = (ImageButton) findViewById(R.id.imgbtn2); //이미지 삭제 버튼
+
+        imgdel.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                imageView.setImageBitmap(null);
+                imgPath = (null);
+            }
+        });
+
         //외부 저장소에 권한 필요, 동적 퍼미션
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
             int permissionResult= checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);

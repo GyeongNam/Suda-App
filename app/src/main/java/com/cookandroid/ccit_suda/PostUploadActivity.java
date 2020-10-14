@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -41,6 +42,7 @@ public class PostUploadActivity extends AppCompatActivity {
 
     private final int GET_GALLERY_IMAGE = 200;
     private ImageView imageView;
+    private ImageButton imgDel;
     String imgPath;
 
     @Override
@@ -53,8 +55,7 @@ public class PostUploadActivity extends AppCompatActivity {
         Spinner spinner =  findViewById(R.id.spinner_cate);
 
         imageView = (ImageView)findViewById(R.id.imgView);  //이미지 등록 버튼
-
-
+        imgDel = (ImageButton)findViewById(R.id.imgbtn2);
 
         imageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -63,7 +64,15 @@ public class PostUploadActivity extends AppCompatActivity {
                 startActivityForResult(intent, GET_GALLERY_IMAGE);
             }
         });
+        ImageButton imgdel = (ImageButton) findViewById(R.id.imgbtn2); //이미지 삭제 버튼
 
+        imgdel.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                imageView.setImageBitmap(null);
+                imgPath = (null);
+            }
+        });
         Button back = (Button) findViewById(R.id.bt_backlist);   // 돌아가기 버튼
         Button upload = (Button) findViewById(R.id.bt_upload);    // 글 작성 버튼
 
@@ -86,6 +95,8 @@ public class PostUploadActivity extends AppCompatActivity {
                 sendPost();
             }
         });
+
+
         //외부 저장소에 권한 필요, 동적 퍼미션
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
             int permissionResult= checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);

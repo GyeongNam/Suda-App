@@ -124,18 +124,30 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.046" />
 
-    <ImageView
-        android:id="@+id/imgView"
-        android:layout_width="161dp"
-        android:layout_height="158dp"
-        android:background="#8C8C8C"
+    <FrameLayout
+        android:layout_width="160dp"
+        android:layout_height="157dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.036"
+        app:layout_constraintHorizontal_bias="0.039"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.802"
-        android:onClick="imgView"
-        app:srcCompat="@android:drawable/ic_menu_gallery" />
+        app:layout_constraintVertical_bias="0.792">
+
+        <ImageView
+            android:id="@+id/imgView"
+            android:layout_width="161dp"
+            android:layout_height="158dp"
+            android:background="#8C8C8C"
+            android:onClick="imgView"
+            app:srcCompat="@android:drawable/ic_menu_gallery" />
+
+        <ImageButton
+            android:id="@+id/imgbtn2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:backgroundTint="@color/cardview_shadow_end_color"
+            app:srcCompat="@android:drawable/ic_notification_clear_all" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
