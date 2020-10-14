@@ -333,7 +333,7 @@ public class postmodified extends AppCompatActivity {
         smpr.addStringParam("post_num", KEY);
         smpr.addStringParam("Text", content);
         smpr.addStringParam("Title", name);
-        smpr.addStringParam("categorie", String.valueOf(categorie));
+        smpr.addStringParam("categorie", String.valueOf(categorie+1));
         smpr.addStringParam("writer", userinfo);
         //이미지 파일 추가
 
