@@ -30,7 +30,8 @@ import java.util.Map;
 public class PostListActivity extends DrawerActivity {
     TextView maintitle;
     Intent intent;
-    String boardname;
+    String primarykey;
+    String mypost;
     LinearLayout freeparent;
     ArrayList<String> List = new ArrayList<>(3);
     ArrayList<String> ListKey = new ArrayList<>(3);
@@ -43,8 +44,10 @@ public class PostListActivity extends DrawerActivity {
         freeparent = findViewById(R.id.freeparent);
         maintitle = (TextView)findViewById(R.id.maintitle);
         Intent intent = getIntent();
-        boardname = intent.getExtras().getString("board_name");
-        maintitle.setText(intent.getExtras().getString("board_name"));
+        mypost = intent.getExtras().getString("mypost");
+        primarykey = intent.getExtras().getString("primarykey");
+        categorie = intent.getExtras().getString("categorie");
+        maintitle.setText(categorie);
         sendRequest();
 
     }
@@ -95,7 +98,8 @@ public class PostListActivity extends DrawerActivity {
                 SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
                 String userinfo = sharedPreferences.getString("userinfo", "");
                 params.put("userid", userinfo);
-                params.put("kategorie",boardname);
+                params.put("categorie",primarykey);
+                params.put("mypost",mypost);
 
 
                 return params;

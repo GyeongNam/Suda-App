@@ -7,42 +7,13 @@
     android:background="#009688"
     android:orientation="vertical">
     >
-
-    <TextView
-        android:id="@+id/free_board"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="자유 게시판"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:gravity="center_horizontal"/>
+        android:id="@+id/list_parent"
+        android:orientation="vertical"></LinearLayout>
 
-    <TextView
-        android:id="@+id/daily_board"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="일상 게시판"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:gravity="center_horizontal"/>
 
-    <TextView
-        android:id="@+id/secret_board"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="비밀 게시판"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:gravity="center_horizontal"/>
-
-    <TextView
-        android:id="@+id/nomean_board"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="뻘글 게시판"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:gravity="center_horizontal"/>
     <TextView
         android:id="@+id/mypost_board"
         android:layout_width="match_parent"

@@ -73,7 +73,6 @@ public class boardActivity extends DrawerActivity {
         container5 = (LinearLayout) findViewById(R.id.mypostparent);
         Log.v("TAG", container1.getClass().getName());
 
-
     }
 
 
@@ -99,20 +98,20 @@ public class boardActivity extends DrawerActivity {
                             Log.v("TAG", "zz" + jsonArray);
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Log.v("TAG", "원하는 json 배열 얻기" + jsonObject.getString("Kategorie").indexOf("비밀게시판"));
-                                if (jsonObject.getString("Kategorie").indexOf("자유게시판") == 0) {
+                                Log.v("TAG", "원하는 json 배열 얻기" + jsonObject.getString("categorie").indexOf("비밀게시판"));
+                                if (jsonObject.getString("categorie_num").equals("1")) {
                                     data1.add((jsonArray.getJSONObject(i).getString("Title")));
                                     key1.add((jsonArray.getJSONObject(i).getString("post_num")));
                                 }
-                                if (jsonObject.getString("Kategorie").indexOf("일상게시판") == 0) {
+                                if (jsonObject.getString("categorie_num").equals("2")) {
                                     data2.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
                                     key2.add((jsonArray.getJSONObject(i).getString("post_num")));
                                 }
-                                if (jsonObject.getString("Kategorie").indexOf("비밀게시판") == 0) {
+                                if (jsonObject.getString("categorie_num").equals("3")) {
                                     data3.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
                                     key3.add((jsonArray.getJSONObject(i).getString("post_num")));
                                 }
-                                if (jsonObject.getString("Kategorie").indexOf("뻘글게시판") == 0) {
+                                if (jsonObject.getString("categorie_num").equals("4")) {
                                     data4.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
                                     key4.add((jsonArray.getJSONObject(i).getString("post_num")));
                                 }
@@ -206,16 +205,7 @@ public class boardActivity extends DrawerActivity {
         Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
 
-    public void processResponse(String response) {
-        Gson gson = new Gson();
-        boardlist list = gson.fromJson(response, boardlist.class);
-        if (list != null) {
 
-            Toast.makeText(getApplicationContext(), list.id, Toast.LENGTH_SHORT).show();
-            Toast.makeText(getApplicationContext(), list.password, Toast.LENGTH_SHORT).show();
-        }
-
-    }
 
     //텍스트뷰 동적생성하기
     public void textview(final String a, android.widget.LinearLayout container, final String key) {

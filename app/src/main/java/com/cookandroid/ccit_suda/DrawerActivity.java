@@ -6,9 +6,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -16,15 +19,27 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.error.VolleyError;
+import com.android.volley.request.StringRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class DrawerActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private View drawerView;
     private TextView free_board,daily_board,nomean_board,secret_board,mypost_board;
+    private LinearLayout list_parent;
+    String categorie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.toolbar_layout);
+        get_categorie_list();
 
     }
     @Override
@@ -33,56 +48,18 @@ public class DrawerActivity extends AppCompatActivity {
         FrameLayout activityContainer = (FrameLayout) fullView.findViewById(R.id.activity_content);
         getLayoutInflater().inflate(layoutResID, activityContainer, true);
         super.setContentView(fullView);
-
+        list_parent = findViewById(R.id.list_parent);
         drawerLayout = (DrawerLayout) findViewById(R.id.toolbar_lay);
         drawerView = (View) findViewById(R.id.drawer);
-
-        free_board = (TextView) findViewById(R.id.free_board);
-        daily_board = (TextView) findViewById(R.id.daily_board);
-        nomean_board = (TextView) findViewById(R.id.nomean_board);
-        secret_board = (TextView) findViewById(R.id.secret_board);
         mypost_board = (TextView) findViewById(R.id.mypost_board);
 
-        free_board.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
-                intent.putExtra("board_name",free_board.getText());
-                startActivity(intent);
-            }
-        });
-        daily_board.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
-                intent.putExtra("board_name",daily_board.getText());
-                startActivity(intent);
-            }
-        });
-
-        nomean_board.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
-                intent.putExtra("board_name",nomean_board.getText());
-                startActivity(intent);
-            }
-        });
-
-        secret_board.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
-                intent.putExtra("board_name",secret_board.getText());
-                startActivity(intent);
-            }
-        });
 
         mypost_board.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
-                intent.putExtra("board_name",mypost_board.getText());
+                intent.putExtra("mypost",mypost_board.getText());
+                intent.putExtra("categorie",mypost_board.getText());
                 startActivity(intent);
             }
         });
@@ -158,5 +135,71 @@ public class DrawerActivity extends AppCompatActivity {
 
         }
     };
+    public void textview1(String a, android.widget.LinearLayout container,final String key) {
+        //TextView 생성
+        final TextView view1 = new TextView(this);
+        view1.setText(a);
+        view1.setTextSize(20);
+        view1.setTextColor(Color.BLACK);
 
+        //layout_width, layout_height, gravity 설정
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(30, 30, 10, 30);
+
+
+        view1.setLayoutParams(lp);
+
+        view1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("TAG", key);
+                Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
+                intent.putExtra("primarykey", key);
+                intent.putExtra("categorie", view1.getText());
+                startActivity(intent);
+            }
+        });
+
+        //부모 뷰에 추가
+        container.addView(view1);
+    }
+    public void get_categorie_list() {
+        String url = "http://10.0.2.2/get_categorie_list"; //"http://ccit2020.cafe24.com:8082/login";
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.v("카테고리",response);
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            for(int i = 0; i<jsonArray.length(); i++){
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                textview1(jsonObject.getString("categorie"),list_parent,jsonObject.getString("categorie_num"));
+                                Log.v("드로어액티비티",response);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "에러 ->" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.v("TAG", error.toString());
+                    }
+                }
+
+        );
+        request.setShouldCache(false);
+
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        AppHelper.requestQueue.add(request);
+        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+    }
 }
