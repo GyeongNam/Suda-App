@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -38,7 +40,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static android.provider.Contacts.SettingsColumns.KEY;
@@ -60,7 +64,9 @@ public class postmodified extends AppCompatActivity {
     private ImageButton imgDel;
     int selection;
     String imgPath;
-
+    Spinner spinner;
+    List<String> spinnerArray;
+    ArrayAdapter<String> adapter;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +74,33 @@ public class postmodified extends AppCompatActivity {
 
         final EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
         final EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);   // 글 내용 입력창
-        Spinner spinner =  findViewById(R.id.spinner_cate);
+        spinner =  findViewById(R.id.spinner_cate);
+        spinnerArray =  new ArrayList<>();
+
+
+
+        //갖고올 카테고리 함수구현
+        get_categorie();
+//        spinnerArray.add("itme1");
+        adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, spinnerArray);
+
+
+
+
+
+//        spinner.setSelection(0);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.v("TAG",String.valueOf(spinner.getSelectedItemPosition()));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
 
         imageView = (ImageView)findViewById(R.id.imgView);  //이미지 등록 버튼
@@ -141,7 +173,6 @@ public class postmodified extends AppCompatActivity {
 
 
                         TextView title = (TextView) findViewById(R.id.et_postname);
-                        Spinner spinner =  findViewById(R.id.spinner_cate); // 스피너
                         TextView text = (TextView) findViewById(R.id.et_postcontent);
                         HashMap<Integer, String> map = new HashMap<>();
                         try {
@@ -150,22 +181,7 @@ public class postmodified extends AppCompatActivity {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 Commentlist commentlist1 = new Commentlist();
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                if(jsonObject.getString("Kategorie").equals("자유게시판")){
-                                    Log.v("1234","만족0");
-                                    selection = 0;
-                                }
-                                else if(jsonObject.getString("Kategorie").equals("일상게시판")){
-                                    selection = 1;
-                                    Log.v("1234","만족1");
-                                }
-                                else if(jsonObject.getString("Kategorie").equals("비밀게시판")){
-                                    selection = 2;
-                                    Log.v("1234","만족2");
-                                }
-                                else if(jsonObject.getString("Kategorie").equals("뻘글게시판")){
-                                    selection = 3;
-                                    Log.v("1234","만족3");
-                                }
+                                selection = jsonObject.getInt("categorie_num")-1;
                                 Log.v("TAG", "게시글 디테일" + jsonObject.getString("Title"));
                                 title.setText(jsonObject.getString("Title"));
                                 text.setText(jsonObject.getString("Text"));
@@ -293,12 +309,12 @@ public class postmodified extends AppCompatActivity {
         EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
         EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);  // 글 내용 입력창
         ImageView InputImageView = (ImageView) findViewById(R.id.imgView);  //이미지 등록
-        Spinner spinner =  findViewById(R.id.spinner_cate); // 스피너
+
         SharedPreferences sharedPreferences = getSharedPreferences("File",0);
         String userinfo = sharedPreferences.getString("userinfo","");
         String name = InputPostName.getText().toString();
         String content = InputPostContent.getText().toString();
-        String kategorie = spinner.getSelectedItem().toString();
+        int categorie = spinner.getSelectedItemPosition();
 
         String url = "http://10.0.2.2/update_post"; //"http://10.0.2.2/add_post"; //http://ccit2020.cafe24.com:8082/login
         SimpleMultiPartRequest smpr= new SimpleMultiPartRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -317,7 +333,7 @@ public class postmodified extends AppCompatActivity {
         smpr.addStringParam("post_num", KEY);
         smpr.addStringParam("Text", content);
         smpr.addStringParam("Title", name);
-        smpr.addStringParam("kategorie", kategorie);
+        smpr.addStringParam("categorie", String.valueOf(categorie));
         smpr.addStringParam("writer", userinfo);
         //이미지 파일 추가
 
@@ -326,6 +342,65 @@ public class postmodified extends AppCompatActivity {
 
         smpr.setShouldCache(false);
         AppHelper.requestQueue.add(smpr);
+        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+    }
+    public void get_categorie() {
+        String url = "http://10.0.2.2/get_categorie"; //"http://ccit2020.cafe24.com:8082/login";
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.v("카테고리",response);
+
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            for(int i =0; i<jsonArray.length(); i++){
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                spinnerArray.add(jsonObject.getString("categorie"));
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spinner.setAdapter(adapter);
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "에러 ->" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.v("TAG", error.toString());
+                    }
+                }
+
+        ) {
+//            @Override
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<String, String>();
+////                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+////                String userinfo = sharedPreferences.getString("userinfo", "");
+////                params.put("userid", userinfo);
+//
+//
+//
+//                return params;
+//            }
+
+//            public Map<String, String> getHeader() throws AuthFailureError{
+//                Map<String, String> params = new HashMap<String, String >();
+//                params.put("Content-Type", "application/x-www-form-urlencoded");
+//                return params;
+//            }
+        };
+        request.setShouldCache(false);
+
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        AppHelper.requestQueue.add(request);
         Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
 
