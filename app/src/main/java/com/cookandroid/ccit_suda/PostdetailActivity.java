@@ -236,7 +236,7 @@ public class PostdetailActivity extends DrawerActivity {
 
 
     public void sendRequest() {
-        String url = "http://10.0.2.2/post_detail"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/post_detail"; //"http://ccit2020.cafe24.com:8082/login";
 
 
         StringRequest request = new StringRequest(
@@ -298,7 +298,7 @@ public class PostdetailActivity extends DrawerActivity {
                                 text.setText(jsonObject.getString("Text"));
                                 post_writer.setText(jsonObject.getString("writer"));
                                 post_like.setText(jsonObject.getString("like"));
-                                imgurl = "http://10.0.2.2/img/"+jsonObject.getString("image");
+                                imgurl = "http://ccit2020.cafe24.com:8082/img/"+jsonObject.getString("image");
                             }
 
                         } catch (JSONException e) {
@@ -351,7 +351,7 @@ public class PostdetailActivity extends DrawerActivity {
 
 
     public void sendreply() {
-        String url = "http://10.0.2.2/post_reply"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/post_reply"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
@@ -413,7 +413,7 @@ public class PostdetailActivity extends DrawerActivity {
     }
 
     public void delpost() {
-        String url = "http://10.0.2.2/delete_post";
+        String url = "http://ccit2020.cafe24.com:8082/delete_post";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
@@ -489,7 +489,7 @@ public class PostdetailActivity extends DrawerActivity {
         container.addView(view1);
     }
     public void like_button(){
-        String url = "http://10.0.2.2/post_like"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/post_like"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,

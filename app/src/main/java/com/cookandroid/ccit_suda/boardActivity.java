@@ -77,7 +77,7 @@ public class boardActivity extends DrawerActivity {
 
 
     public void sendRequest() {
-        String url = "http://10.0.2.2/main"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/main"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,

@@ -289,7 +289,7 @@ public class CommentAdapter extends BaseAdapter {
     }
 
     public void delreply(final String num) {
-        String url = "http://10.0.2.2/del_reply"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/del_reply"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,

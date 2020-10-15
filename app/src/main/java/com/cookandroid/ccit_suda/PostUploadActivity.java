@@ -230,7 +230,7 @@ public void check(String postName, String postContent) {
                 String content = InputPostContent.getText().toString();
                 int categorie = spinner.getSelectedItemPosition();
 
-        String url = "http://10.0.2.2/add_post"; //"http://10.0.2.2/add_post"; //http://ccit2020.cafe24.com:8082/login
+        String url = "http://ccit2020.cafe24.com:8082/add_post"; //"http://ccit2020.cafe24.com:8082/add_post"; //http://ccit2020.cafe24.com:8082/login
         SimpleMultiPartRequest smpr= new SimpleMultiPartRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -259,7 +259,7 @@ public void check(String postName, String postContent) {
     }
 
     public void get_categorie() {
-        String url = "http://10.0.2.2/get_categorie"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/get_categorie"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.GET,
                 url,

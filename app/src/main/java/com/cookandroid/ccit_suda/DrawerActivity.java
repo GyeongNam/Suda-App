@@ -166,7 +166,7 @@ public class DrawerActivity extends AppCompatActivity {
         container.addView(view1);
     }
     public void get_categorie_list() {
-        String url = "http://10.0.2.2/get_categorie_list"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/get_categorie_list"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.GET,
                 url,

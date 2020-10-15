@@ -159,7 +159,7 @@ public class postmodified extends AppCompatActivity {
         sendRequest();
     }
     public void sendRequest() {
-        String url = "http://10.0.2.2/up_post";
+        String url = "http://ccit2020.cafe24.com:8082/up_post";
 
         StringRequest request = new StringRequest(
                 Request.Method.POST,
@@ -187,7 +187,7 @@ public class postmodified extends AppCompatActivity {
                                 text.setText(jsonObject.getString("Text"));
                                 spinner.setSelection(selection);
 //                                post_writer.setText(jsonObject.getString("writer"));
-                                imgurl = "http://10.0.2.2/img/"+jsonObject.getString("image");
+                                imgurl = "http://ccit2020.cafe24.com:8082/img/"+jsonObject.getString("image");
 
                             }
 
@@ -316,7 +316,7 @@ public class postmodified extends AppCompatActivity {
         String content = InputPostContent.getText().toString();
         int categorie = spinner.getSelectedItemPosition();
 
-        String url = "http://10.0.2.2/update_post"; //"http://10.0.2.2/add_post"; //http://ccit2020.cafe24.com:8082/login
+        String url = "http://ccit2020.cafe24.com:8082/update_post"; //"http://ccit2020.cafe24.com:8082/add_post"; //http://ccit2020.cafe24.com:8082/login
         SimpleMultiPartRequest smpr= new SimpleMultiPartRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -345,7 +345,7 @@ public class postmodified extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
     public void get_categorie() {
-        String url = "http://10.0.2.2/get_categorie"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/get_categorie"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.GET,
                 url,
