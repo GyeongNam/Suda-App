@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void pushlog() {                                         // 로그파일 전송
         String android = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        String url = "http://10.0.2.2/get_logfile"; //10.0.2.2 ccit2020.cafe24.com:8082
+        String url = "http://ccit2020.cafe24.com:8082/get_logfile"; //10.0.2.2 ccit2020.cafe24.com:8082
         SimpleMultiPartRequest smpr= new SimpleMultiPartRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
