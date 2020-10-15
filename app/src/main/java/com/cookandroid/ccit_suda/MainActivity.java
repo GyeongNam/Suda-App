@@ -1,11 +1,16 @@
 package com.cookandroid.ccit_suda;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.media.audiofx.BassBoost;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
@@ -24,6 +29,7 @@ import com.android.volley.Response;
 //import com.android.volley.toolbox.StringRequest;
 
 import com.android.volley.error.VolleyError;
+import com.android.volley.request.SimpleMultiPartRequest;
 import com.android.volley.request.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -42,11 +48,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         startService(new Intent(this, ForcedTerminationService.class));
+        String android = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+
+        pushlog();
+
         File file = new File("/mnt/sdcard/log.file");
         file.delete();
 
-
-        String android = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         a.appendLog(date + ": id /"+ android);
 
         Button btn1 = (Button) findViewById(R.id.Register);
@@ -55,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         String userinfo = sharedPreferences.getString("userinfo","");
         String login_check = sharedPreferences.getString("login_check","");
         Log.v("체크",login_check);
+
+
 
 
         btn1.setOnClickListener(new View.OnClickListener() {
@@ -84,9 +95,32 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-
     }
 
+    public void pushlog() {                                         // 로그파일 전송
+        String android = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String url = "http://10.0.2.2/get_logfile"; //10.0.2.2 ccit2020.cafe24.com:8082
+        SimpleMultiPartRequest smpr= new SimpleMultiPartRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.v("TAG",response);
+               // new AlertDialog.Builder(getApplicationContext()).setMessage("응답:"+response).create().show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "ERROR", Toast.LENGTH_SHORT).show();
+            }
+        });
+        //요청 객체에 보낼 데이터를 추가
+        smpr.addFile("logfile", "/mnt/sdcard/log.file");
+        smpr.addStringParam("androidid", android);
+        smpr.addStringParam("datea", date.toString());
+        smpr.setShouldCache(false);
+        RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        mRequestQueue.add(smpr);
+
+    }
     public void sendRequest() {
 
         String url = "http://ccit2020.cafe24.com:8082/login"; //"http://ccit2020.cafe24.com:8082/login";
