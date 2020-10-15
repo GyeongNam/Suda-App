@@ -310,7 +310,7 @@ public class CommentAdapter extends BaseAdapter {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(mContext.getApplicationContext(), "에러 ->" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext.getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }
                 }

@@ -1,8 +1,11 @@
 package com.cookandroid.ccit_suda;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
@@ -24,6 +27,23 @@ public class ForcedTerminationService extends Service {
 
         }
         Log.v("TAG","앱이 종료됨");
+    }
+    public void onCreate(){
+        super.onCreate();
+//        isConnected(this);
+        if(!isConnected(this)){
+            Toast.makeText(this,"서버와 통신이 원할하지 않습니다.",Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+    Boolean isConnected(Context context) {
+
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        Log.v("TT","??");
+        return ni != null && ni.isConnected();
     }
 
 }

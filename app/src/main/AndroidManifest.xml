@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEUVE_SMS" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
@@ -21,7 +22,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize">
-        <activity android:name=".DrawerActivity"></activity>
+
+        <activity android:name=".DrawerActivity" />
         <activity android:name=".PostdetailActivity" />
         <activity android:name=".materialdesign" />
         <activity android:name=".postmodified" />
@@ -40,7 +42,6 @@
         <activity android:name=".sign_up" />
 
         <service android:name=".ForcedTerminationService" />
-
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
