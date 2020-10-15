@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         Button btn2 = (Button) findViewById(R.id.Login);
         SharedPreferences sharedPreferences = getSharedPreferences("File",0);
         String userinfo = sharedPreferences.getString("userinfo","");
+        String login_check = sharedPreferences.getString("login_check","");
+        Log.v("체크",login_check);
 
 
         btn1.setOnClickListener(new View.OnClickListener() {
@@ -61,9 +63,10 @@ public class MainActivity extends AppCompatActivity {
         if (AppHelper.requestQueue == null) {
             AppHelper.requestQueue = Volley.newRequestQueue(getApplicationContext());
         }
-        if(!(userinfo.equals(""))){
+        if(!(userinfo.equals(""))&&(login_check.equals("true"))){
             Intent intent = new Intent(getApplicationContext(), boardActivity.class);
-
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
 

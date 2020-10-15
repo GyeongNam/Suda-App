@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -139,12 +140,13 @@ public class DrawerActivity extends AppCompatActivity {
         //TextView 생성
         final TextView view1 = new TextView(this);
         view1.setText(a);
-        view1.setTextSize(20);
-        view1.setTextColor(Color.BLACK);
+//        view1.setTextSize(20);
+//        view1.setTextColor(Color.BLACK);
+        view1.setGravity(Gravity.CENTER_HORIZONTAL);
 
         //layout_width, layout_height, gravity 설정
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(30, 30, 10, 30);
+        lp.setMargins(0, 30, 0, 30);
 
 
         view1.setLayoutParams(lp);
