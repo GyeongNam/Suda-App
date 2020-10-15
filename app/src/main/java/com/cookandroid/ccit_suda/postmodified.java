@@ -116,6 +116,16 @@ public class postmodified extends AppCompatActivity {
             }
         });
 
+        ImageButton imgdel = (ImageButton) findViewById(R.id.imgbtn2); //이미지 삭제 버튼
+
+        imgdel.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                imageView.setImageBitmap(null);
+                imgPath = (null);
+            }
+        });
+
         Button back = (Button) findViewById(R.id.bt_backlist);   // 돌아가기 버튼
         Button upload = (Button) findViewById(R.id.bt_upload);    // 글 작성 버튼
 
@@ -138,15 +148,7 @@ public class postmodified extends AppCompatActivity {
             }
         });
 
-        ImageButton imgdel = (ImageButton) findViewById(R.id.imgbtn2); //이미지 삭제 버튼
 
-        imgdel.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                imageView.setImageBitmap(null);
-                imgPath = (null);
-            }
-        });
 
         //외부 저장소에 권한 필요, 동적 퍼미션
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
