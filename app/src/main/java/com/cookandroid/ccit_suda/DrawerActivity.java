@@ -29,12 +29,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 public class DrawerActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private View drawerView;
     private TextView free_board,daily_board,nomean_board,secret_board,mypost_board;
     private LinearLayout list_parent;
     String categorie;
+    log a = new log();
+    Date date = new Date();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,7 @@ public class DrawerActivity extends AppCompatActivity {
         mypost_board.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                a.appendLog(date+": mypost");
                 Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
                 intent.putExtra("mypost",mypost_board.getText());
                 intent.putExtra("categorie",mypost_board.getText());
@@ -78,6 +83,7 @@ public class DrawerActivity extends AppCompatActivity {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                a.appendLog(date+": PostUpload");
                 Intent intent = new Intent(getApplicationContext(), PostUploadActivity.class);
                 startActivity(intent);
             }
@@ -139,6 +145,8 @@ public class DrawerActivity extends AppCompatActivity {
         }
     };
     public void textview1(String a, android.widget.LinearLayout container,final String key) {
+        log b = new log();
+        Date dateb = new Date();
         //TextView 생성
         final TextView view1 = new TextView(this);
         view1.setText(a);
@@ -154,8 +162,11 @@ public class DrawerActivity extends AppCompatActivity {
         view1.setLayoutParams(lp);
 
         view1.setOnClickListener(new View.OnClickListener() {
+            log a = new log();
+            Date date = new Date();
             @Override
             public void onClick(View v) {
+                a.appendLog(date+": postlist /"+ key);
                 Log.v("TAG", key);
                 Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
                 intent.putExtra("primarykey", key);
@@ -194,6 +205,7 @@ public class DrawerActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        a.appendLog(date+":" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }

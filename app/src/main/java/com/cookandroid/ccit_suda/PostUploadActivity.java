@@ -39,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,8 @@ import java.util.Map;
 //import com.android.volley.toolbox.StringRequest;
 
 public class PostUploadActivity extends AppCompatActivity {
-
+    log a = new log();
+    Date date = new Date();
     boolean err = false;
     boolean chk = true;
     Spinner spinner;
@@ -121,6 +123,7 @@ public class PostUploadActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {         // 뒤로가기
             @Override
             public void onClick(View view) {
+                a.appendLog((date+ ": "));
                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                 startActivity(intent);
             }
@@ -287,6 +290,7 @@ public void check(String postName, String postContent) {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        a.appendLog(date+":" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }

@@ -32,6 +32,7 @@ public class ForcedTerminationService extends Service {
         super.onCreate();
 //        isConnected(this);
         if(!isConnected(this)){
+
             Toast.makeText(this,"서버와 통신이 원할하지 않습니다.",Toast.LENGTH_SHORT).show();
         }
 

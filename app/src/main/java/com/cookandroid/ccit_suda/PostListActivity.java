@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +36,8 @@ public class PostListActivity extends DrawerActivity {
     LinearLayout freeparent;
     ArrayList<String> List = new ArrayList<>(3);
     ArrayList<String> ListKey = new ArrayList<>(3);
-
+    log a = new log();
+    Date date = new Date();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +88,7 @@ public class PostListActivity extends DrawerActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        a.appendLog(date+":" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }
@@ -132,9 +135,12 @@ public class PostListActivity extends DrawerActivity {
         view1.setLayoutParams(lp);
 
         view1.setOnClickListener(new View.OnClickListener() {
+            log a = new log();
+            Date date = new Date();
             @Override
             public void onClick(View v) {
                 Log.v("TAG",key);
+                a.appendLog(date+": post detil/"+ key);
                 Intent intent = new Intent(getApplicationContext(), PostdetailActivity.class);
                 intent.putExtra("primarykey",key);
                 startActivity(intent);

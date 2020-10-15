@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.audiofx.BassBoost;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,19 +27,28 @@ import com.android.volley.error.VolleyError;
 import com.android.volley.request.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-
+    log a = new log();
+    Date date = new Date();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         startService(new Intent(this, ForcedTerminationService.class));
+        File file = new File("/mnt/sdcard/log.file");
+        file.delete();
+
+
+        String android = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        a.appendLog(date + ": id /"+ android);
+
         Button btn1 = (Button) findViewById(R.id.Register);
         Button btn2 = (Button) findViewById(R.id.Login);
         SharedPreferences sharedPreferences = getSharedPreferences("File",0);
@@ -48,8 +60,10 @@ public class MainActivity extends AppCompatActivity {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                a.appendLog(date + ": sign_up");
                 Intent intent = new Intent(getApplicationContext(), sign_up.class);
                 startActivity(intent);
+
             }
         });
         btn2.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendRequest() {
+
         String url = "http://ccit2020.cafe24.com:8082/login"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
@@ -81,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+
                         CheckBox checkBox = (CheckBox) findViewById(R.id.cb_save) ;
                         Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
                         Log.v("TAG", response);
@@ -96,11 +112,15 @@ public class MainActivity extends AppCompatActivity {
                                 editor.putString("login_check",String.valueOf(checkBox.isChecked()));
                                 editor.commit();
                                 Log.v("TAG", String.valueOf(checkBox.isChecked()));
+
+                                a.appendLog(date + ": login:"+ userinfo);
                             }
                             else{
                                 editor.putString("userinfo",userinfo);
                                 editor.putString("login_check",String.valueOf(checkBox.isChecked()));
                                 editor.commit();
+
+                                a.appendLog(date + ": login:"+ userinfo);
                             }
                             Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -117,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        a.appendLog(date+":" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }

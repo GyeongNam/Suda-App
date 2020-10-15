@@ -41,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,8 @@ public class postmodified extends AppCompatActivity {
     String KEY;
     boolean err = false;
     boolean chk = true;
-
+    log a = new log();
+    Date date = new Date();
 
     private final int GET_GALLERY_IMAGE = 200;
     private ImageView imageView;
@@ -132,6 +134,7 @@ public class postmodified extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {         // 뒤로가기
             @Override
             public void onClick(View view) {
+                a.appendLog(date +": back");
                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                 startActivity(intent);
             }
@@ -143,6 +146,7 @@ public class postmodified extends AppCompatActivity {
                 String postName = InputPostName.getText().toString();
                 String postContent = InputPostContent.getText().toString();
                 sendPost();
+                a.appendLog(date +": post up");
                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                 startActivity(intent);
             }
@@ -206,6 +210,7 @@ public class postmodified extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        a.appendLog(date+":" +error.toString());
                         Log.v("TAG", error.toString());
                     }
                 }
@@ -328,6 +333,7 @@ public class postmodified extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                a.appendLog(date+":" +error.toString());
                 Toast.makeText(postmodified.this, "ERROR", Toast.LENGTH_SHORT).show();
             }
         });
@@ -375,6 +381,7 @@ public class postmodified extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        a.appendLog(date+":" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }
