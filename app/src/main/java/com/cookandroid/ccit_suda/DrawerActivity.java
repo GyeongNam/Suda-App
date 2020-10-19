@@ -4,9 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -30,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.List;
 
 public class DrawerActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
@@ -57,6 +62,28 @@ public class DrawerActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.toolbar_lay);
         drawerView = (View) findViewById(R.id.drawer);
         mypost_board = (TextView) findViewById(R.id.mypost_board);
+        ImageButton home_button = findViewById(R.id.home_button);
+
+        home_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+                List<ActivityManager.RunningTaskInfo> info = manager.getRunningTasks(1);
+                ComponentName componentName= info.get(0).topActivity;
+                String ActivityName = componentName.getShortClassName().substring(1);
+                Log.v("현재",ActivityName);
+                if(ActivityName.equals("boardActivity")){
+                    Toast.makeText(getApplicationContext(),"이미 홈 화면 입니다.",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+
+            }
+        });
 
 
         mypost_board.setOnClickListener(new View.OnClickListener() {
