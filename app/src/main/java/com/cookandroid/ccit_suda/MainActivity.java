@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -47,53 +48,73 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startService(new Intent(this, ForcedTerminationService.class));
-        String android = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        int status = InternetCheck.getConnectivityStatus(getApplicationContext());
+        if(status == InternetCheck.TYPE_NOT_CONNECTED){
+            AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity.this);
+            dlg.setTitle("오류"); //제목
+            dlg.setMessage("네트워크 연결상태를 확인해 주세요."); // 메시지
+
+//                버튼 클릭시 동작
+            dlg.setPositiveButton("확인",new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which) {
+                    moveTaskToBack(true);
+                    finish();
+                    android.os.Process.killProcess(android.os.Process.myPid());
+                }
+            });
+            dlg.show();
+            Log.v("Internet","연결안됨");
+        }else {
+            //인터넷 연결상태일시에 아래코드들 실행
+            startService(new Intent(this, ForcedTerminationService.class));
+            String android = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
 
-        pushlog();
+            pushlog();
 
-        File file = new File("/mnt/sdcard/log.file");
-        file.delete();
+            File file = new File("/mnt/sdcard/log.file");
+            file.delete();
 
-        a.appendLog(date + ": id /"+ android);
-
-        Button btn1 = (Button) findViewById(R.id.Register);
-        Button btn2 = (Button) findViewById(R.id.Login);
-        SharedPreferences sharedPreferences = getSharedPreferences("File",0);
-        String userinfo = sharedPreferences.getString("userinfo","");
-        String login_check = sharedPreferences.getString("login_check","");
-        Log.v("체크",login_check);
-
+            a.appendLog(date + ": id /"+ android);
+            Button btn1 = (Button) findViewById(R.id.Register);
+            Button btn2 = (Button) findViewById(R.id.Login);
+            SharedPreferences sharedPreferences = getSharedPreferences("File",0);
+            String userinfo = sharedPreferences.getString("userinfo","");
+            String login_check = sharedPreferences.getString("login_check","");
+            Log.v("체크",login_check);
 
 
 
-        btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                a.appendLog(date + ": sign_up");
-                Intent intent = new Intent(getApplicationContext(), sign_up.class);
-                startActivity(intent);
 
-            }
-        });
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            btn1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    a.appendLog(date + ": sign_up");
+                    Intent intent = new Intent(getApplicationContext(), sign_up.class);
+                    startActivity(intent);
+
+                }
+            });
+            btn2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
 //                Toast.makeText(getApplicationContext(),value+'\n'+value1,Toast.LENGTH_SHORT).show();
-                sendRequest();
+                    sendRequest();
+                }
+            });
+            if (AppHelper.requestQueue == null) {
+                AppHelper.requestQueue = Volley.newRequestQueue(getApplicationContext());
             }
-        });
-        if (AppHelper.requestQueue == null) {
-            AppHelper.requestQueue = Volley.newRequestQueue(getApplicationContext());
+            if(!(userinfo.equals(""))&&(login_check.equals("true"))){
+                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+
         }
-        if(!(userinfo.equals(""))&&(login_check.equals("true"))){
-            Intent intent = new Intent(getApplicationContext(), boardActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
+
 
     }
 

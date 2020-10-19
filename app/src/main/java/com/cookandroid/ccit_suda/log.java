@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class log {
+    int a = 0;
     public void appendLog(String text)
     {
         File logFile = new File("sdcard/log.file");
