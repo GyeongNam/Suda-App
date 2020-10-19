@@ -145,10 +145,17 @@ public class postmodified extends AppCompatActivity {
             public void onClick(View view) {                // 글 작성
                 String postName = InputPostName.getText().toString();
                 String postContent = InputPostContent.getText().toString();
-                sendPost();
+
+                check(postName, postContent);
+                if (!(postName.isEmpty() || postContent.isEmpty())){
+                    Toast.makeText(getApplicationContext(), "성공", Toast.LENGTH_SHORT).show();
+                    sendPost();
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "공백이 있는지 확인해주세요", Toast.LENGTH_SHORT).show();
+                }
                 a.appendLog(date +": post up");
-                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
-                startActivity(intent);
             }
         });
 
@@ -329,6 +336,9 @@ public class postmodified extends AppCompatActivity {
             public void onResponse(String response) {
                 Log.v("TAG111",response);
                 new AlertDialog.Builder(postmodified.this).setMessage("응답:"+imgPath).create().show();
+
+                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+                startActivity(intent);
             }
         }, new Response.ErrorListener() {
             @Override

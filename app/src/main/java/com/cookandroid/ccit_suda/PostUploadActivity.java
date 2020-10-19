@@ -43,6 +43,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 //import com.android.volley.toolbox.StringRequest;
 
 //import com.android.volley.VolleyError;
@@ -134,12 +135,19 @@ public class PostUploadActivity extends AppCompatActivity {
             public void onClick(View view) {                // 글 작성
                 String postName = InputPostName.getText().toString();
                 String postContent = InputPostContent.getText().toString();
-                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
-                startActivity(intent);
 
-                sendPost();
+                check(postName, postContent);
+                if (!(postName.isEmpty() || postContent.isEmpty())){
+                    Toast.makeText(getApplicationContext(), "성공", Toast.LENGTH_SHORT).show();
+                    sendPost();
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "공백이 있는지 확인해주세요", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
 
 
         //외부 저장소에 권한 필요, 동적 퍼미션
@@ -200,29 +208,26 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
         cursor.close();
         return  result;
     }
+    public void check(String postName, String postContent) {
+        if(postName.equals("") || postContent.equals("")){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("ERR");
+            builder.setMessage("공백인 항목이 있습니다. 공백은 입력할 수 없습니다.");
+            builder.setCancelable(false);
 
+            builder.setPositiveButton("확인",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            err = true;
+                        }
+                    });
+            builder.show();
+        }
+        else {
+            err = false;
+        }
+    }
 //이미지 실험
-public void check(String postName, String postContent) {
-    if(postName.equals("") || postContent.equals("")){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("ERR");
-        builder.setMessage("공백인 항목이 있습니다. 공백은 입력할 수 없습니다.");
-        builder.setCancelable(false);
-
-        builder.setPositiveButton("확인",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        err = true;
-                    }
-                });
-        builder.show();
-    }
-    else {
-        err = false;
-    }
-}
-
-
     public void sendPost() {
                         EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
                 EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);  // 글 내용 입력창
@@ -239,6 +244,8 @@ public void check(String postName, String postContent) {
             public void onResponse(String response) {
                 Log.v("TAG",response);
                 new AlertDialog.Builder(PostUploadActivity.this).setMessage("응답:"+imgPath).create().show();
+                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+                startActivity(intent);
             }
         }, new Response.ErrorListener() {
             @Override
