@@ -67,7 +67,7 @@ public class sign_up extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener(){         // 뒤로가기
             @Override
             public void onClick(View view) {
-                a.appendLog(date+": back");
+                a.appendLog(date + "/M/login/0");
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
@@ -287,7 +287,7 @@ public class sign_up extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+":" +error.toString());
+                        a.appendLog(date+"/"+"E"+"/sign_up/" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }
@@ -325,7 +325,7 @@ public class sign_up extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
 //                        Log.v("TAG",response.equals("1"));
                         if(response.equals("1")){
-                            a.appendLog(date + ": 회원가입 성공");
+                            a.appendLog(date + "/M/login/0");
                             Toast.makeText(getApplicationContext(), "회원가입 성공", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
@@ -338,7 +338,7 @@ public class sign_up extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+":" +error.toString());
+                        a.appendLog(date+"/"+"E"+"/sign_up/" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }
@@ -395,7 +395,7 @@ public class sign_up extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+":" +error.toString());
+                        a.appendLog(date+"/"+"E"+"/sign_up/" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }

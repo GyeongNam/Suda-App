@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             File file = new File("/mnt/sdcard/log.file");
             file.delete();
 
-            a.appendLog(date + ": id /"+ android);
+            a.appendLog(date + "/R/android/"+ android);
             Button btn1 = (Button) findViewById(R.id.Register);
             Button btn2 = (Button) findViewById(R.id.Login);
             SharedPreferences sharedPreferences = getSharedPreferences("File",0);
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             btn1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    a.appendLog(date + ": sign_up");
+                    a.appendLog(date + "/M/sign_up/0");
                     Intent intent = new Intent(getApplicationContext(), sign_up.class);
                     startActivity(intent);
 
@@ -168,15 +168,16 @@ public class MainActivity extends AppCompatActivity {
                                 editor.commit();
                                 Log.v("TAG", String.valueOf(checkBox.isChecked()));
 
-                                a.appendLog(date + ": login:"+ userinfo);
+                                a.appendLog(date + "/R/login/"+ userinfo);
                             }
                             else{
                                 editor.putString("userinfo",userinfo);
                                 editor.putString("login_check",String.valueOf(checkBox.isChecked()));
                                 editor.commit();
 
-                                a.appendLog(date + ": login:"+ userinfo);
+                                a.appendLog(date + "/R/login/"+ userinfo);
                             }
+                            a.appendLog(date + "/M/boardActivity/0");
                             Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -192,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+":" +error.toString());
+                        a.appendLog(date+"/"+"E"+"/login/" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }

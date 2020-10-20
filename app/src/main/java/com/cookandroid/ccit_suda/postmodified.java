@@ -134,7 +134,7 @@ public class postmodified extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {         // 뒤로가기
             @Override
             public void onClick(View view) {
-                a.appendLog(date +": back");
+                a.appendLog(date +"/M/boardActivity/0");
                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                 startActivity(intent);
             }
@@ -155,7 +155,6 @@ public class postmodified extends AppCompatActivity {
                 {
                     Toast.makeText(getApplicationContext(), "공백이 있는지 확인해주세요", Toast.LENGTH_SHORT).show();
                 }
-                a.appendLog(date +": post up");
             }
         });
 
@@ -336,14 +335,14 @@ public class postmodified extends AppCompatActivity {
             public void onResponse(String response) {
                 Log.v("TAG111",response);
                 new AlertDialog.Builder(postmodified.this).setMessage("응답:"+imgPath).create().show();
-
+                a.appendLog(date + "/U/postmodified/"+KEY);
                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                 startActivity(intent);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                a.appendLog(date+":" +error.toString());
+                a.appendLog(date + "/E/postmodified/"+error.toString());
                 Toast.makeText(postmodified.this, "ERROR", Toast.LENGTH_SHORT).show();
             }
         });
@@ -391,7 +390,7 @@ public class postmodified extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+":" +error.toString());
+                        a.appendLog(date + "/E/postmodified/"+error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }

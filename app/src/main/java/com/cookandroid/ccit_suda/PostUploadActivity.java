@@ -243,7 +243,9 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
             @Override
             public void onResponse(String response) {
                 Log.v("TAG",response);
+                a.appendLog(date+"/"+"U"+"/PostUploadActivity/post_add");
                 new AlertDialog.Builder(PostUploadActivity.this).setMessage("응답:"+imgPath).create().show();
+                a.appendLog(date+"/"+"M"+"/boardActivity/0");
                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                 startActivity(intent);
             }
@@ -297,7 +299,7 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+":" +error.toString());
+                        a.appendLog(date+"/"+"E"+"/PostUploadActivity/" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }

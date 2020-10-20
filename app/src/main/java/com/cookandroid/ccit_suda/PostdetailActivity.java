@@ -170,7 +170,7 @@ public class PostdetailActivity extends DrawerActivity {
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {      // 버튼1 (직접 작성)
                             public void onClick(DialogInterface dialog, int which){
                                 Intent intent = new Intent(getApplicationContext(), postmodified.class);
-                                a.appendLog(date + ": post modified/"+ KEY );
+                                a.appendLog(date+"/"+"M"+"/postmodified/0");
                                 intent.putExtra("primarykey",KEY);
                                 startActivity(intent);
                                 Toast.makeText(getApplicationContext(), "수정페이지 이동!", Toast.LENGTH_SHORT).show(); // 실행할 코드
@@ -194,8 +194,9 @@ public class PostdetailActivity extends DrawerActivity {
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {      // 버튼1 (직접 작성)
                             public void onClick(DialogInterface dialog, int which){
                                 delpost();
-                                a.appendLog(date + ": post del/" + KEY );
+                                a.appendLog(date+"/"+"D"+"/PostdetailActivity/"+KEY);
                                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+                                a.appendLog(date+"/"+"M"+"/boardActivity/0");
                                 startActivity(intent);
                                 Toast.makeText(getApplicationContext(), "삭제되었습니다!", Toast.LENGTH_SHORT).show(); // 실행할 코드
 
@@ -223,7 +224,7 @@ public class PostdetailActivity extends DrawerActivity {
         post_like_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                a.appendLog(date + ": like/" + KEY);
+                a.appendLog(date + "/U/PostdetailActivity/like");
                 Toast.makeText(getApplicationContext(), "좋아요 버튼눌렀습니다.", Toast.LENGTH_SHORT).show();
                 like_button();
             }
@@ -322,7 +323,7 @@ public class PostdetailActivity extends DrawerActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+":" +error.toString());
+                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }
@@ -377,13 +378,14 @@ public class PostdetailActivity extends DrawerActivity {
                         reply_border_layout.setBackgroundResource(R.drawable.topborder);
                         replytext.setCursorVisible(false);
                         commentAdapter.Number = null;
+                        a.appendLog(date+"/"+"U"+"/PostdetailActivity/reply");
                         sendRequest();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+":" +error.toString());
+                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }
@@ -443,7 +445,7 @@ public class PostdetailActivity extends DrawerActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+":" +error.toString());
+                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }
@@ -513,7 +515,7 @@ public class PostdetailActivity extends DrawerActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+":" +error.toString());
+                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         sendRequest();
                         Log.v("TAG", error.toString());

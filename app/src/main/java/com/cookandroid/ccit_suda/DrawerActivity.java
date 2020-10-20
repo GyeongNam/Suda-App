@@ -76,6 +76,7 @@ public class DrawerActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"이미 홈 화면 입니다.",Toast.LENGTH_SHORT).show();
                 }
                 else{
+                    a.appendLog(date+"/M/boardActivity/0");
                     Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -89,7 +90,7 @@ public class DrawerActivity extends AppCompatActivity {
         mypost_board.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                a.appendLog(date+": mypost");
+                a.appendLog(date+"/M/PostListActivity/0");
                 Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
                 intent.putExtra("mypost",mypost_board.getText());
                 intent.putExtra("categorie",mypost_board.getText());
@@ -110,7 +111,7 @@ public class DrawerActivity extends AppCompatActivity {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                a.appendLog(date+": PostUpload");
+                a.appendLog(date+"/M/PostUploadActivity/0");
                 Intent intent = new Intent(getApplicationContext(), PostUploadActivity.class);
                 startActivity(intent);
             }
@@ -132,6 +133,7 @@ public class DrawerActivity extends AppCompatActivity {
                 drawerLayout.closeDrawers();
                 editor.remove("userinfo");
                 editor.commit();
+                a.appendLog(date+"/M/MainActivity/logout");
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -193,7 +195,7 @@ public class DrawerActivity extends AppCompatActivity {
             Date date = new Date();
             @Override
             public void onClick(View v) {
-                a.appendLog(date+": postlist /"+ key);
+                a.appendLog(date+"/M/PostListActivity /"+ key);
                 Log.v("TAG", key);
                 Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
                 intent.putExtra("primarykey", key);
@@ -232,7 +234,7 @@ public class DrawerActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+":" +error.toString());
+                        a.appendLog(date+"/"+"E"+"/DrawerActivity/" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }

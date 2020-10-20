@@ -176,7 +176,7 @@ public class boardActivity extends DrawerActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+":" +error.toString());
+                        a.appendLog(date+"/"+"E"+"/boardActivity/" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }
@@ -224,9 +224,11 @@ public class boardActivity extends DrawerActivity {
         view1.setLayoutParams(lp);
 
         view1.setOnClickListener(new View.OnClickListener() {
+            log a = new log();
             @Override
             public void onClick(View v) {
                 Log.v("TAG", key);
+                a.appendLog(date + "/M/PostdetailActivity/"+key);
                 Intent intent = new Intent(getApplicationContext(), PostdetailActivity.class);
                 intent.putExtra("primarykey", key);
                 startActivity(intent);

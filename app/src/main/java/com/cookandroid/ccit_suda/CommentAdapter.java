@@ -29,10 +29,13 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class CommentAdapter extends BaseAdapter {
+    log a =new log();
+    Date date = new Date();
     int position;
     String array;
     TextView rereply, del_reply;
@@ -252,6 +255,7 @@ public class CommentAdapter extends BaseAdapter {
                         delreply(item.getNum());
                         item.setActivation("0");
                         notifyDataSetChanged();
+                        a.appendLog(date+"/D/removeComment/"+item.getNum());
 //                        Toast.makeText(mContext, "'확인'버튼을 눌렀습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -310,6 +314,7 @@ public class CommentAdapter extends BaseAdapter {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        a.appendLog(date+"/"+"E"+"/CommentAdapter/" +error.toString());
                         Toast.makeText(mContext.getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }
