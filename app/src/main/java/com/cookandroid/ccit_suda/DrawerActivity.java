@@ -245,6 +245,6 @@ public class DrawerActivity extends AppCompatActivity {
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
-        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
 }

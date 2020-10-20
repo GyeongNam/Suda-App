@@ -343,7 +343,7 @@ public class CommentAdapter extends BaseAdapter {
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
-        Toast.makeText(mContext.getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(mContext.getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
 
 }

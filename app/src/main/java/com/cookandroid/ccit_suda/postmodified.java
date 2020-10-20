@@ -216,7 +216,7 @@ public class postmodified extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+":" +error.toString());
+                        a.appendLog(date+"/E/postmodified/" +error.toString());
                         Log.v("TAG", error.toString());
                     }
                 }
@@ -247,7 +247,7 @@ public class postmodified extends AppCompatActivity {
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
-//        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+//        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -359,7 +359,7 @@ public class postmodified extends AppCompatActivity {
 
         smpr.setShouldCache(false);
         AppHelper.requestQueue.add(smpr);
-        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
     public void get_categorie() {
         String url = "http://ccit2020.cafe24.com:8082/get_categorie"; //"http://ccit2020.cafe24.com:8082/login";
@@ -419,7 +419,7 @@ public class postmodified extends AppCompatActivity {
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
-        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
 
 }

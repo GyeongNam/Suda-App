@@ -121,7 +121,7 @@ public class PostListActivity extends DrawerActivity {
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
-        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
     public void textview(final String a, android.widget.LinearLayout container, final String key){
         //TextView 생성

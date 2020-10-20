@@ -124,7 +124,7 @@ public class PostUploadActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {         // 뒤로가기
             @Override
             public void onClick(View view) {
-                a.appendLog((date+ ": "));
+                a.appendLog((date+ "/M/boardActivity/0"));
                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                 startActivity(intent);
             }
@@ -267,7 +267,7 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
 
         smpr.setShouldCache(false);
         AppHelper.requestQueue.add(smpr);
-        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
 
     public void get_categorie() {
@@ -328,7 +328,7 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
-        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
         
 }

@@ -92,7 +92,7 @@ public class PostdetailActivity extends DrawerActivity {
         input = "";
         Intent intent = getIntent();
         KEY = intent.getExtras().getString("primarykey");
-        a.appendLog(date+": postdetail/ "+ KEY);
+
 
         View header = getLayoutInflater().inflate(R.layout.listview_header, null, false);
         postlist.addHeaderView(header);
@@ -154,7 +154,7 @@ public class PostdetailActivity extends DrawerActivity {
                 reply_border_layout.setBackgroundResource(R.drawable.topborder);
                  replytext.setCursorVisible(false);
                 commentAdapter.Number = null;
-                a.appendLog(date+": comment add");
+                a.appendLog(date+"/U/commentadd/0");
 
 
             }
@@ -353,7 +353,7 @@ public class PostdetailActivity extends DrawerActivity {
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
-//        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+//        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -420,7 +420,7 @@ public class PostdetailActivity extends DrawerActivity {
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
-//        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+//        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
 
     public void delpost() {

@@ -35,6 +35,7 @@ import com.android.volley.request.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +43,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     log a = new log();
     Date date = new Date();
-
+    String androids;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,23 +68,31 @@ public class MainActivity extends AppCompatActivity {
         }else {
             //인터넷 연결상태일시에 아래코드들 실행
             startService(new Intent(this, ForcedTerminationService.class));
-            String android = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+            androids = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-            if(a.a == 0){
-                pushlog();
-                a.a=1;
+            if (AppHelper.requestQueue == null) {
+                AppHelper.requestQueue = Volley.newRequestQueue(getApplicationContext());
             }
+//            SharedPreferences sharedPreferences = getSharedPreferences("File",0);
+//            String userinfo = sharedPreferences.getString("userinfo","");
+//            String login_check = sharedPreferences.getString("login_check","");
+//            Log.v("체크",login_check);
+            pushlog();
+//            if(!(userinfo.equals(""))&&(login_check.equals("true"))){
+//                a.appendLog(date + "/R/login/"+ userinfo);
+//                a.appendLog(date + "/M/boardActivity/0");
+//                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(intent);
+//            }
 
-            File file = new File("/mnt/sdcard/log.file");
-            file.delete();
 
-            a.appendLog(date + "/R/android/"+ android);
+
+
             Button btn1 = (Button) findViewById(R.id.Register);
             Button btn2 = (Button) findViewById(R.id.Login);
-            SharedPreferences sharedPreferences = getSharedPreferences("File",0);
-            String userinfo = sharedPreferences.getString("userinfo","");
-            String login_check = sharedPreferences.getString("login_check","");
-            Log.v("체크",login_check);
+
 
 
 
@@ -105,15 +114,8 @@ public class MainActivity extends AppCompatActivity {
                     sendRequest();
                 }
             });
-            if (AppHelper.requestQueue == null) {
-                AppHelper.requestQueue = Volley.newRequestQueue(getApplicationContext());
-            }
-            if(!(userinfo.equals(""))&&(login_check.equals("true"))){
-                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
+
+
 
         }
 
@@ -128,6 +130,28 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 Log.v("TAG",response);
                // new AlertDialog.Builder(getApplicationContext()).setMessage("응답:"+response).create().show();
+
+                File file = new File("/mnt/sdcard/log.file");
+                file.delete();
+
+
+                a.appendLog(date + "/R/android/"+ androids);
+
+                SharedPreferences sharedPreferences = getSharedPreferences("File",0);
+                String userinfo = sharedPreferences.getString("userinfo","");
+                String login_check = sharedPreferences.getString("login_check","");
+                Log.v("체크",login_check);
+
+                if(!(userinfo.equals(""))&&(login_check.equals("true"))){
+                    a.appendLog(date + "/R/login/"+ userinfo);
+                    a.appendLog(date + "/M/boardActivity/0");
+                    Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -184,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
-                            Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
+
                         } else {
                             Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
                         }
@@ -224,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
-        Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+
     }
 
 
