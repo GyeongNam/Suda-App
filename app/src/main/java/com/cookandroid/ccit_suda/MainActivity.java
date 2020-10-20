@@ -36,13 +36,16 @@ import com.android.volley.toolbox.Volley;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     log a = new log();
-    Date date = new Date();
+    SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+    Date date1 = new Date();
+    String date = format1.format(date1);
     String androids;
 
     @Override

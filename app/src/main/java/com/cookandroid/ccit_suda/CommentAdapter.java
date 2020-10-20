@@ -28,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,7 +36,9 @@ import java.util.Map;
 
 public class CommentAdapter extends BaseAdapter {
     log a =new log();
-    Date date = new Date();
+    SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+    Date date1 = new Date();
+    String date = format1.format(date1);
     int position;
     String array;
     TextView rereply, del_reply;

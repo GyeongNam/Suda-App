@@ -23,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,7 +38,9 @@ public class PostListActivity extends DrawerActivity {
     ArrayList<String> List = new ArrayList<>(3);
     ArrayList<String> ListKey = new ArrayList<>(3);
     log a = new log();
-    Date date = new Date();
+    SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+    Date date1 = new Date();
+    String date = format1.format(date1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +142,9 @@ public class PostListActivity extends DrawerActivity {
         if (!key.equals("0")) {
             view1.setOnClickListener(new View.OnClickListener() {
                 log a = new log();
-                Date date = new Date();
+                SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+                Date date1 = new Date();
+                String date = format1.format(date1);
                 @Override
                 public void onClick(View v) {
                     Log.v("TAG",key);

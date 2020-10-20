@@ -44,6 +44,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,7 +55,9 @@ import java.util.Map;
 
 public class PostdetailActivity extends DrawerActivity {
     log a = new log();
-    Date date = new Date();
+    SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+    Date date1 = new Date();
+    String date = format1.format(date1);
     static String input;
     private TextView post_like,post_like_button,post_writer,reply_close;
     TextView reply_tag,text_limit_indicate;

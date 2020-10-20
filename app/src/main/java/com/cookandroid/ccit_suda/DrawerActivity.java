@@ -33,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -43,7 +44,9 @@ public class DrawerActivity extends AppCompatActivity {
     private LinearLayout list_parent;
     String categorie;
     log a = new log();
-    Date date = new Date();
+    SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+    Date date1 = new Date();
+    String date = format1.format(date1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,7 +195,9 @@ public class DrawerActivity extends AppCompatActivity {
 
         view1.setOnClickListener(new View.OnClickListener() {
             log a = new log();
-            Date date = new Date();
+            SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+            Date date1 = new Date();
+            String date = format1.format(date1);
             @Override
             public void onClick(View v) {
                 a.appendLog(date+"/M/PostListActivity /"+ key);
