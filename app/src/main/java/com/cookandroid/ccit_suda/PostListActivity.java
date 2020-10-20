@@ -79,6 +79,9 @@ public class PostListActivity extends DrawerActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        if(List.size()==0){
+                            textview("생성된 글이 없습니다.",freeparent,"0");
+                        }
                         for(int i=0; i<List.size(); i++){
                             textview(List.get(i),freeparent,ListKey.get(i));
                         }
@@ -133,19 +136,23 @@ public class PostListActivity extends DrawerActivity {
 
 
         view1.setLayoutParams(lp);
+        if (!key.equals("0")) {
+            view1.setOnClickListener(new View.OnClickListener() {
+                log a = new log();
+                Date date = new Date();
+                @Override
+                public void onClick(View v) {
+                    Log.v("TAG",key);
+                    a.appendLog(date+": post detil/"+ key);
+                    Intent intent = new Intent(getApplicationContext(), PostdetailActivity.class);
+                    intent.putExtra("primarykey",key);
+                    startActivity(intent);
+                }
+            });
 
-        view1.setOnClickListener(new View.OnClickListener() {
-            log a = new log();
-            Date date = new Date();
-            @Override
-            public void onClick(View v) {
-                Log.v("TAG",key);
-                a.appendLog(date+": post detil/"+ key);
-                Intent intent = new Intent(getApplicationContext(), PostdetailActivity.class);
-                intent.putExtra("primarykey",key);
-                startActivity(intent);
-            }
-        });
+
+        }
+
 
         //부모 뷰에 추가
         container.addView(view1);
