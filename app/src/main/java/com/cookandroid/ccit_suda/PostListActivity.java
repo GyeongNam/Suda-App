@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +33,7 @@ import java.util.Map;
 
 public class PostListActivity extends DrawerActivity {
     TextView maintitle;
+    private ImageView alarm;
     Intent intent;
     String primarykey;
     String mypost;
@@ -48,15 +51,32 @@ public class PostListActivity extends DrawerActivity {
         setContentView(R.layout.activity_post_list);
         freeparent = findViewById(R.id.freeparent);
         maintitle = (TextView)findViewById(R.id.maintitle);
+        alarm = (ImageView)findViewById(R.id.alarm);
         Intent intent = getIntent();
         mypost = intent.getExtras().getString("mypost");
         primarykey = intent.getExtras().getString("primarykey");
         categorie = intent.getExtras().getString("categorie");
         maintitle.setText(categorie);
+
+        alarm = (ImageView)findViewById(R.id.alarm);
+        alarm.setOnClickListener(new View.OnClickListener() {
+            int ck =0;
+            public void onClick(View view) {
+                if (ck == 0) {
+                    alarm.setImageResource(R.drawable.cbell);
+                    Toast.makeText(getApplicationContext(), categorie + "  알림을 켰습니다!", Toast.LENGTH_SHORT).show();
+                    ck =1;
+                }
+                else if (ck ==1) {
+                    alarm.setImageResource(R.drawable.nbell);
+                    Toast.makeText(getApplicationContext(), categorie + "  알림을 껐습니다!", Toast.LENGTH_SHORT).show();
+                    ck =0;
+                }
+            }
+        });
         sendRequest();
 
     }
-
 
     public void sendRequest() {
         String url = "http://ccit2020.cafe24.com:8082/board_list"; //"http://ccit2020.cafe24.com:8082/login";
@@ -109,7 +129,6 @@ public class PostListActivity extends DrawerActivity {
                 params.put("userid", userinfo);
                 params.put("categorie",primarykey);
                 params.put("mypost",mypost);
-
 
                 return params;
             }
