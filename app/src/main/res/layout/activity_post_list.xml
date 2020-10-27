@@ -24,15 +24,29 @@
                 android:orientation="vertical">
 
 
-                <TextView
-                    android:id="@+id/maintitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="20dp"
-                    android:padding="5dp"
-                    android:text="자유 게시판"
-                    android:textSize="20dp" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/alarm"
+                        android:layout_gravity="right"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginRight="105dp"
+                        android:layout_width="43dp"
+                        android:layout_height="43dp"
+                        app:srcCompat="@drawable/nbell" />
+
+                    <TextView
+                        android:id="@+id/maintitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="20dp"
+                        android:padding="5dp"
+                        android:text="자유 게시판"
+                        android:textSize="20dp" />
+                </FrameLayout>
 
                 <LinearLayout
                     android:id="@+id/freeparent"
