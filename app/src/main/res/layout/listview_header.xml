@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
     <TextView
         android:id="@+id/Title"
@@ -62,16 +62,30 @@
             android:text="작성자"/>
     </LinearLayout>
 
-
-    <TextView
-        android:layout_marginTop="20dp"
-        android:id="@+id/replybtn"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/edge"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="댓글 달기"
-        android:textSize="20dp" />
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:layout_marginTop="20dp"
+            android:id="@+id/replybtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edge"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="댓글 달기"
+            android:textSize="20dp" />
+        <ImageView
+            android:id="@+id/alert"
+            android:layout_marginTop="20dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp"
+            app:srcCompat="@drawable/nbell"/>
+
+    </FrameLayout>
+
 
 </LinearLayout>

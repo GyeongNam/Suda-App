@@ -36,7 +36,9 @@ import com.android.volley.toolbox.Volley;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 Log.v("TAG",response);
-               // new AlertDialog.Builder(getApplicationContext()).setMessage("응답:"+response).create().show();
+                // new AlertDialog.Builder(getApplicationContext()).setMessage("응답:"+response).create().show();
 
                 File file = new File("/mnt/sdcard/log.file");
                 file.delete();

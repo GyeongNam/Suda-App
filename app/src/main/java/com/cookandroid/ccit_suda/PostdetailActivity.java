@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -27,13 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.StringRequest;
@@ -66,10 +61,11 @@ public class PostdetailActivity extends DrawerActivity {
     private ListView postlist;
     private String imgurl;
     InputMethodManager imm;
-//    ImageView imageView;
+    ImageView Notification;
     Button del_post, md_post;
     String KEY;
-
+    SharedPreferences sharedPreferences;
+    String userinfo;
     EditText replytext;
     List<String> replylist = new ArrayList<>();
     //두줄만든거임
@@ -83,22 +79,25 @@ public class PostdetailActivity extends DrawerActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_postdetail);
+        postlist = (ListView) findViewById(R.id.postlist);
+        View header = getLayoutInflater().inflate(R.layout.listview_header, null, false);
+        postlist.addHeaderView(header);
+
         replytext = (EditText) findViewById(R.id.replytext);
         container = (LinearLayout) findViewById(R.id.parentlayout);
-        postlist = (ListView) findViewById(R.id.postlist);
         reply_top_layout = (LinearLayout) findViewById(R.id.reply_top_layout);
         reply_close = findViewById(R.id.reply_close);
         reply_tag = findViewById(R.id.reply_tag);
         reply_border_layout = findViewById(R.id.reply_border_layout);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         text_limit_indicate = findViewById(R.id.text_limit_indicate);
+        Notification = findViewById(R.id.alert);
         input = "";
         Intent intent = getIntent();
         KEY = intent.getExtras().getString("primarykey");
 
 
-        View header = getLayoutInflater().inflate(R.layout.listview_header, null, false);
-        postlist.addHeaderView(header);
+
 
         post_like_button = (TextView)findViewById(R.id.post_like_button);
         post_like = (TextView)findViewById(R.id.post_like);
@@ -107,8 +106,8 @@ public class PostdetailActivity extends DrawerActivity {
         md_post = (Button)findViewById(R.id.md_post);
         ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-        String userinfo = sharedPreferences.getString("userinfo", "");
+        sharedPreferences = getSharedPreferences("File", 0);
+        userinfo = sharedPreferences.getString("userinfo", "");
         reply_top_layout.setVisibility(View.GONE);
         replytext.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
@@ -129,6 +128,16 @@ public class PostdetailActivity extends DrawerActivity {
                     }
                 }
                 return false;
+            }
+        });
+        Notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Toast.makeText(getApplicationContext(),"눌렀음",Toast.LENGTH_SHORT).show();
+
+                comment_push();
+
+
             }
         });
         replytext.addTextChangedListener(new TextWatcher() {
@@ -247,7 +256,7 @@ public class PostdetailActivity extends DrawerActivity {
 
 
     public void sendRequest() {
-        String url = "http://ccit2020.cafe24.com:8082/post_detail"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://10.0.2.2/post_detail"; //"http://ccit2020.cafe24.com:8082/login";
 
 
         StringRequest request = new StringRequest(
@@ -258,21 +267,26 @@ public class PostdetailActivity extends DrawerActivity {
                     public void onResponse(String response) {
 
 
-                        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                        String userinfo = sharedPreferences.getString("userinfo", "");
                         TextView username = (TextView) findViewById(R.id.username);
                         TextView title = (TextView) findViewById(R.id.Title);
                         TextView text = (TextView) findViewById(R.id.Text);
                         HashMap<Integer, String> map = new HashMap<>();
                         username.setText("환영합니다 " + userinfo + " 님");
 //                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", response);
+                        Log.v("compact", response);
                         commentlist.clear();
 //                        postlist.invalidateViews();
                         try {
-                            JSONArray jsonArray = new JSONArray(response);
-//                            JSONObject jsonObject = new JSONObject(response);
-//                            Log.v("TAG",jsonArray.getString(""));
+                            JSONObject data = new JSONObject(response);
+                            JSONArray jsonArray = new JSONArray(data.getString("data"));
+                            Log.v("푸시값",data.getString("comment_push"));
+                            if(data.getString("comment_push").equals("1")){
+                                Notification.setImageResource(R.drawable.cbell);
+                            }
+                            else{
+                                Notification.setImageResource(R.drawable.nbell);
+                            }
+
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 Commentlist commentlist1 = new Commentlist();
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -338,10 +352,9 @@ public class PostdetailActivity extends DrawerActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-//                String userinfo = sharedPreferences.getString("userinfo", "");
                 Intent intent = getIntent();
                 String KEY = intent.getExtras().getString("primarykey");
+                params.put("userinfo",userinfo);
                 params.put("post_num", KEY);
                 return params;
             }
@@ -370,8 +383,6 @@ public class PostdetailActivity extends DrawerActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                        String userinfo = sharedPreferences.getString("userinfo", "");
                         TextView username = (TextView) findViewById(R.id.username);
 //                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
                         Log.v("TAG", response);
@@ -398,8 +409,6 @@ public class PostdetailActivity extends DrawerActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                String userinfo = sharedPreferences.getString("userinfo", "");
                 Intent intent = getIntent();
 
                 Log.v("TAG", "리플쓸때 number존재유무" + commentAdapter.Number);
@@ -434,8 +443,6 @@ public class PostdetailActivity extends DrawerActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                        String userinfo = sharedPreferences.getString("userinfo", "");
 //                        TextView username = (TextView) ((Activity)mContext).findViewById(R.id.username);
 //                        username.setText("환영합니다 " + userinfo + " 님");
 
@@ -461,8 +468,6 @@ public class PostdetailActivity extends DrawerActivity {
             @Override
             protected Map<String, String> getParams() {
             Map<String, String> params = new HashMap<String, String>();
-            SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-            String userinfo = sharedPreferences.getString("userinfo", "");
             Intent intent = getIntent();
             KEY = intent.getExtras().getString("primarykey");
             params.put("post_num", KEY);
@@ -520,7 +525,6 @@ public class PostdetailActivity extends DrawerActivity {
                     public void onErrorResponse(VolleyError error) {
                         a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-                        sendRequest();
                         Log.v("TAG", error.toString());
                     }
                 }
@@ -529,12 +533,65 @@ public class PostdetailActivity extends DrawerActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                String userinfo = sharedPreferences.getString("userinfo", "");
                 Intent intent = getIntent();
                 KEY = intent.getExtras().getString("primarykey");
                 params.put("post_num", KEY);
                 params.put("writer", userinfo);
+                return params;
+            }
+
+//            public Map<String, String> getHeader() throws AuthFailureError{
+//                Map<String, String> params = new HashMap<String, String >();
+//                params.put("Content-Type", "application/x-www-form-urlencoded");
+//                return params;
+//            }
+        };
+        request.setShouldCache(false);
+        AppHelper.requestQueue.add(request);
+
+
+    }
+    //댓글 알림설정
+    public void comment_push(){
+        String url = "http://10.0.2.2/comment_push"; //"http://ccit2020.cafe24.com:8082/login";
+        StringRequest request = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.v("TAG", response);
+                        Drawable temp = Notification.getDrawable();
+                        Drawable temp1 = getResources().getDrawable(R.drawable.nbell);
+                        Bitmap tmpBitmap = ((BitmapDrawable)temp).getBitmap();
+                        Bitmap tmpBitmap1 = ((BitmapDrawable)temp1).getBitmap();
+                        if(tmpBitmap.equals(tmpBitmap1)){
+                            Notification.setImageResource(R.drawable.cbell);
+                            Toast.makeText(getApplicationContext(),"댓글 푸시 알림이 설정되었습니다.",Toast.LENGTH_SHORT).show();
+
+                        }
+                        else{
+                            Notification.setImageResource(R.drawable.nbell);
+                            Toast.makeText(getApplicationContext(),"댓글 푸시 알림이 취소되었습니다.",Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
+                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+                        Log.v("TAG", error.toString());
+                    }
+                }
+
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("KEY", KEY);
+                params.put("userinfo", userinfo);
                 return params;
             }
 
