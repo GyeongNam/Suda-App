@@ -2,9 +2,13 @@ package com.cookandroid.ccit_suda;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Notification;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -60,26 +64,70 @@ public class PostListActivity extends DrawerActivity {
 
         alarm = (ImageView)findViewById(R.id.alarm);
         alarm.setOnClickListener(new View.OnClickListener() {
-            int ck =0;
             public void onClick(View view) {
-                if (ck == 0) {
-                    alarm.setImageResource(R.drawable.cbell);
-                    Toast.makeText(getApplicationContext(), categorie + "  알림을 켰습니다!", Toast.LENGTH_SHORT).show();
-                    ck =1;
-                }
-                else if (ck ==1) {
-                    alarm.setImageResource(R.drawable.nbell);
-                    Toast.makeText(getApplicationContext(), categorie + "  알림을 껐습니다!", Toast.LENGTH_SHORT).show();
-                    ck =0;
-                }
+                alarmRequest();
             }
         });
         sendRequest();
 
     }
+    public void alarmRequest() {
+        String url = "http://10.0.2.2/alarm";
+        StringRequest request = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.v("TAGal", response);
+                        Drawable temp = alarm.getDrawable();
+                        Drawable temp1 = getResources().getDrawable(R.drawable.nbell);
+                        Bitmap tmpBitmap = ((BitmapDrawable)temp).getBitmap();
+                        Bitmap tmpBitmap1 = ((BitmapDrawable)temp1).getBitmap();
+                        if(tmpBitmap.equals(tmpBitmap1)){
+                            alarm.setImageResource(R.drawable.cbell);
+                            Toast.makeText(getApplicationContext(), categorie +"  알림이 설정되었습니다.",Toast.LENGTH_SHORT).show();
+
+                        }
+                        else{
+                            alarm.setImageResource(R.drawable.nbell);
+                            Toast.makeText(getApplicationContext(),categorie +"  알림이 취소되었습니다.",Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        a.appendLog(date+"/"+"E"+"/PostListActivity/" +error.toString());
+                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+                        Log.v("TAG", error.toString());
+                    }
+                }
+
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+                String userinfo = sharedPreferences.getString("userinfo", "");
+                params.put("user_id", userinfo);
+                params.put("pkey",primarykey);
+
+                return params;
+            }
+
+
+        };
+        request.setShouldCache(false);
+
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        AppHelper.requestQueue.add(request);
+        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+    }
 
     public void sendRequest() {
-        String url = "http://ccit2020.cafe24.com:8082/board_list"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://10.0.2.2/board_list"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
@@ -92,12 +140,21 @@ public class PostListActivity extends DrawerActivity {
                         username.setText("환영합니다 " + userinfo + " 님");
                         Log.v("TAG","반환값"+response);
                         try {
-                            JSONArray jsonArray = new JSONArray(response);
+                            JSONObject pdata = new JSONObject(response);
+                            JSONArray jsonArray = new JSONArray(pdata.getString("data"));
+                            Log.v("pdata", "pdata"+ pdata.getString("pdata"));
+                            if(pdata.getString("pdata").equals("1")){
+                                alarm.setImageResource(R.drawable.cbell);
+                            }
+                            else{
+                                alarm.setImageResource(R.drawable.nbell);
+                            }
                             for(int i=0; i<jsonArray.length(); i++){
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 List.add((jsonArray.getJSONObject(i).getString("Title")));
                                 ListKey.add((jsonArray.getJSONObject(i).getString("post_num")));
                                 Log.v("TAG",jsonObject.getString("Title"));
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
