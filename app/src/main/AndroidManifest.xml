@@ -23,12 +23,13 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize">
-
+        <activity android:name=".setting"></activity>
         <activity android:name=".DrawerActivity" />
         <activity android:name=".PostdetailActivity" />
         <activity android:name=".materialdesign" />
-        <activity android:name=".postmodified"
-            android:windowSoftInputMode="adjustResize|adjustPan"/>
+        <activity
+            android:name=".postmodified"
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".PostUploadActivity"
             android:windowSoftInputMode="adjustPan" />
@@ -44,9 +45,18 @@
         <activity android:name=".sign_up" />
 
         <service android:name=".ForcedTerminationService" />
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
+
+        <service android:name=".MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

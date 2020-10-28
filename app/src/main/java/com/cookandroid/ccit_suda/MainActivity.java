@@ -1,19 +1,16 @@
 package com.cookandroid.ccit_suda;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.media.audiofx.BassBoost;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -22,26 +19,30 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-//import com.android.volley.AuthFailureError;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-//import com.android.volley.VolleyError;
-//import com.android.volley.toolbox.StringRequest;
-
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.SimpleMultiPartRequest;
 import com.android.volley.request.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+//import com.android.volley.AuthFailureError;
+//import com.android.volley.VolleyError;
+//import com.android.volley.toolbox.StringRequest;
 
 public class MainActivity extends AppCompatActivity {
     log a = new log();
@@ -71,6 +72,32 @@ public class MainActivity extends AppCompatActivity {
             dlg.show();
             Log.v("Internet","연결안됨");
         }else {
+                            //fcm
+
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//                NotificationChannel notificationChannel = new NotificationChannel("suda", "suda", NotificationManager.IMPORTANCE_DEFAULT);
+//                notificationChannel.setDescription("channel description"); notificationChannel.enableLights(true);
+//                notificationChannel.setLightColor(Color.GREEN); notificationChannel.enableVibration(true);
+//                notificationChannel.setVibrationPattern(new long[]{100, 200, 100, 200});
+//                notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+//                notificationManager.createNotificationChannel(notificationChannel);
+//            }
+
+
+            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                @Override
+                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                    if(!task.isSuccessful()){
+                        Log.w("fcm log", "get", task.getException());
+                        return;
+                    }
+                    String token = task.getResult().getToken();
+                    Log.d("fcm tocken", token);
+                }
+            });
+
+
             //인터넷 연결상태일시에 아래코드들 실행
             startService(new Intent(this, ForcedTerminationService.class));
             androids = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -95,12 +122,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
             Button btn1 = (Button) findViewById(R.id.Register);
             Button btn2 = (Button) findViewById(R.id.Login);
-
-
-
-
 
             btn1.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -134,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 Log.v("TAG",response);
-                // new AlertDialog.Builder(getApplicationContext()).setMessage("응답:"+response).create().show();
+               // new AlertDialog.Builder(getApplicationContext()).setMessage("응답:"+response).create().show();
 
                 File file = new File("/mnt/sdcard/log.file");
                 file.delete();

@@ -40,7 +40,7 @@ import java.util.List;
 public class DrawerActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private View drawerView;
-    private TextView free_board,daily_board,nomean_board,secret_board,mypost_board;
+    private TextView free_board,daily_board,nomean_board,secret_board,mypost_board, setting_view;
     private LinearLayout list_parent;
     String categorie;
     log a = new log();
@@ -65,6 +65,7 @@ public class DrawerActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.toolbar_lay);
         drawerView = (View) findViewById(R.id.drawer);
         mypost_board = (TextView) findViewById(R.id.mypost_board);
+        setting_view = (TextView) findViewById(R.id.setting_view);
         ImageButton home_button = findViewById(R.id.home_button);
 
         home_button.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +90,14 @@ public class DrawerActivity extends AppCompatActivity {
             }
         });
 
+        setting_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                a.appendLog(date+"/M/setting/0");
+                Intent intent = new Intent(getApplicationContext(), setting.class);
+                startActivity(intent);
+            }
+        });
 
         mypost_board.setOnClickListener(new View.OnClickListener() {
             @Override
