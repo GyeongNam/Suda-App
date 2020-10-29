@@ -245,7 +245,7 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
         SimpleMultiPartRequest smpr= new SimpleMultiPartRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.v("TAG",response);
+                Log.v("TAGadd_post",response);
                 a.appendLog(date+"/"+"U"+"/PostUploadActivity/post_add");
                 new AlertDialog.Builder(PostUploadActivity.this).setMessage("응답:"+imgPath).create().show();
                 a.appendLog(date+"/"+"M"+"/boardActivity/0");
