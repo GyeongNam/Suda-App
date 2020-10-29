@@ -133,7 +133,7 @@ public class setting extends AppCompatActivity {
     }
 
     public void getkeyword(){
-        String url = "http://10.0.2.2/getkeyword"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/getkeyword"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
@@ -141,6 +141,10 @@ public class setting extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("getkeyword", response);
+
+
+
+
                     }
                 },
                 new Response.ErrorListener() {
@@ -177,7 +181,7 @@ public class setting extends AppCompatActivity {
     } // 키워드 리스트 가겨오기
 
     public void alsetting(final int onoff) {
-        String url = "http://10.0.2.2/alsetting"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/alsetting"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
@@ -222,7 +226,7 @@ public class setting extends AppCompatActivity {
     } // 알림 on off
 
     public void keywordadd(final String keyword) {
-        String url = "http://10.0.2.2/keywordadd"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/keywordadd"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
