@@ -256,7 +256,7 @@ public class PostdetailActivity extends DrawerActivity {
 
 
     public void sendRequest() {
-        String url = "http://10.0.2.2/post_detail"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/post_detail"; //"http://ccit2020.cafe24.com:8082/login";
 
 
         StringRequest request = new StringRequest(

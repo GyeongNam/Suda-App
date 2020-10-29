@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
                 String value1 = userpw.getText().toString();
                 params.put("id", value);
                 params.put("pw", value1);
-                //params.put("token",token);
+                params.put("token",token);
                 return params;
             }
 
