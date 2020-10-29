@@ -19,26 +19,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ForcedTerminationService extends Service {
-    SharedPreferences sharedPreferences;
-    String userinfo;
+
     public IBinder onBind(Intent intent){
         return null;
     }
     //자동로그인 체크 안했을시 로그인 데이터 파기
     public void onDestroy(){
         super.onDestroy();
+
+        Log.v("TAG","앱이 종료됨");
+
+    }
+    @Override
+    public void onTaskRemoved(Intent rootIntent) { //핸들링 하는 부분
         SharedPreferences sharedPreferences = getSharedPreferences("File",0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String login_check = sharedPreferences.getString("login_check","");
         if((login_check.equals("false"))){
-            editor.clear();
-            logout();
-            editor.commit();
-
+            Log.v("백그라운드","돌아라");
+            logout3();
         }
-        Log.v("TAG","앱이 종료됨");
+        Log.e("Error","onTaskRemoved - 강제 종료 " + rootIntent);
+        stopSelf(); //서비스 종료
     }
-    public void logout() {
+    public void logout3() {
 
         String url = "http://10.0.2.2/logout"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
@@ -47,9 +51,10 @@ public class ForcedTerminationService extends Service {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        sharedPreferences = getSharedPreferences("File", 0);
+                        Log.v("백그라운드",response);
+                        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.remove("userinfo");
+                        editor.clear();
                         editor.commit();
                     }
                 },
@@ -64,9 +69,10 @@ public class ForcedTerminationService extends Service {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                sharedPreferences = getSharedPreferences("File", 0);
-                userinfo = sharedPreferences.getString("userinfo", "");
+                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+                String userinfo = sharedPreferences.getString("userinfo", "");
                 params.put("id", userinfo);
+//                params.put("id","test");
                 return params;
             }
         };
@@ -74,6 +80,7 @@ public class ForcedTerminationService extends Service {
         AppHelper.requestQueue.add(request);
 
     }
+
 
 
 }
