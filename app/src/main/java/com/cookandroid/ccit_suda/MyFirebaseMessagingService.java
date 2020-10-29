@@ -51,8 +51,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        String title = remoteMessage.getNotification().getTitle();
-        String message = remoteMessage.getNotification().getBody();
+        String title = remoteMessage.getData().get("title");
+        String message = remoteMessage.getData().get("body");
 
 //        Intent intent = new Intent(this, MainActivity.class);
 //        intent.putExtra("test", test);
@@ -61,18 +61,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            String channel = "suda";
+            String channel = "ccit";
             String channel_nm = "suda";
 
-            NotificationManager notichannel = (android.app.NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+            NotificationManager notichannel = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel channelMessage = new NotificationChannel(channel, channel_nm,
-                    android.app.NotificationManager.IMPORTANCE_DEFAULT);
+                    NotificationManager.IMPORTANCE_DEFAULT);
             channelMessage.setDescription("채널에 대한 설명.");
             channelMessage.enableLights(true);
             channelMessage.enableVibration(true);
             channelMessage.setShowBadge(false);
             channelMessage.setVibrationPattern(new long[]{1000, 1000});
             notichannel.createNotificationChannel(channelMessage);
+
+            Intent nointent = new Intent(this, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, nointent,
+                    PendingIntent.FLAG_ONE_SHOT);
+
 
             //푸시알림을 Builder를 이용하여 만듭니다.
             NotificationCompat.Builder notificationBuilder =
@@ -82,7 +89,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             .setContentText(message)//푸시알림의 내용
                             .setChannelId(channel)
                             .setAutoCancel(true)//선택시 자동으로 삭제되도록 설정.
-          //                  .setContentIntent(pendingIntent)//알림을 눌렀을때 실행할 인텐트 설정.
+                            .setContentIntent(pendingIntent)//알림을 눌렀을때 실행할 인텐트 설정.
                             .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
 
             NotificationManager notificationManager =
@@ -92,7 +99,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         } else {
             NotificationCompat.Builder notificationBuilder =
-                    new NotificationCompat.Builder(this, "suda")
+                    new NotificationCompat.Builder(this, "ccit")
                             .setSmallIcon(R.drawable.ic_launcher_background)
                             .setContentTitle(title)
                             .setContentText(message)

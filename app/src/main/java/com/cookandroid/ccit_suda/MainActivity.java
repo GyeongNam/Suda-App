@@ -1,15 +1,9 @@
 package com.cookandroid.ccit_suda;
 
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -31,8 +25,10 @@ import com.android.volley.request.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -94,8 +90,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                      token = task.getResult().getToken();
                     Log.d("fcm tocken", token);
+                    Log.d("fcm tocken2", token);
+                    Log.d("fcm tocken3", token);
+                    Log.d("fcm tocken4", token);
+
                 }
             });
+            FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+
 
 
             //인터넷 연결상태일시에 아래코드들 실행
@@ -199,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void sendRequest() {
 
-        String url = "http://10.0.2.2/login"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/login"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
