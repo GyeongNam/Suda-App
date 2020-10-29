@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     Date date1 = new Date();
     String date = format1.format(date1);
     String androids;
+    String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
 //                notificationManager.createNotificationChannel(notificationChannel);
 //            }
 
-
             FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                 @Override
                 public void onComplete(@NonNull Task<InstanceIdResult> task) {
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.w("fcm log", "get", task.getException());
                         return;
                     }
-                    String token = task.getResult().getToken();
+                     token = task.getResult().getToken();
                     Log.d("fcm tocken", token);
                 }
             });
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void sendRequest() {
 
-        String url = "http://ccit2020.cafe24.com:8082/login"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://10.0.2.2/login"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
@@ -264,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
                 String value1 = userpw.getText().toString();
                 params.put("id", value);
                 params.put("pw", value1);
+                params.put("token",token);
                 return params;
             }
 

@@ -18,6 +18,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -35,18 +37,22 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DrawerActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private View drawerView;
-    private TextView free_board,daily_board,nomean_board,secret_board,mypost_board, setting_view;
+    private TextView free_board, daily_board, nomean_board, secret_board, mypost_board, setting_view;
     private LinearLayout list_parent;
     String categorie;
     log a = new log();
-    SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     Date date1 = new Date();
     String date = format1.format(date1);
+    SharedPreferences sharedPreferences;
+    String userinfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +61,9 @@ public class DrawerActivity extends AppCompatActivity {
         get_categorie_list();
 
     }
+
     @Override
-    public void setContentView(int layoutResID){
+    public void setContentView(int layoutResID) {
         DrawerLayout fullView = (DrawerLayout) getLayoutInflater().inflate(R.layout.toolbar_layout, null);
         FrameLayout activityContainer = (FrameLayout) fullView.findViewById(R.id.activity_content);
         getLayoutInflater().inflate(layoutResID, activityContainer, true);
@@ -73,14 +80,13 @@ public class DrawerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
                 List<ActivityManager.RunningTaskInfo> info = manager.getRunningTasks(1);
-                ComponentName componentName= info.get(0).topActivity;
+                ComponentName componentName = info.get(0).topActivity;
                 String ActivityName = componentName.getShortClassName().substring(1);
-                Log.v("현재",ActivityName);
-                if(ActivityName.equals("boardActivity")){
-                    Toast.makeText(getApplicationContext(),"이미 홈 화면 입니다.",Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    a.appendLog(date+"/M/boardActivity/0");
+                Log.v("현재", ActivityName);
+                if (ActivityName.equals("boardActivity")) {
+                    Toast.makeText(getApplicationContext(), "이미 홈 화면 입니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    a.appendLog(date + "/M/boardActivity/0");
                     Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -93,7 +99,7 @@ public class DrawerActivity extends AppCompatActivity {
         setting_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                a.appendLog(date+"/M/setting/0");
+                a.appendLog(date + "/M/setting/0");
                 Intent intent = new Intent(getApplicationContext(), setting.class);
                 startActivity(intent);
             }
@@ -102,10 +108,10 @@ public class DrawerActivity extends AppCompatActivity {
         mypost_board.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                a.appendLog(date+"/M/PostListActivity/0");
+                a.appendLog(date + "/M/PostListActivity/0");
                 Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
-                intent.putExtra("mypost",mypost_board.getText());
-                intent.putExtra("categorie",mypost_board.getText());
+                intent.putExtra("mypost", mypost_board.getText());
+                intent.putExtra("categorie", mypost_board.getText());
                 startActivity(intent);
             }
         });
@@ -113,17 +119,18 @@ public class DrawerActivity extends AppCompatActivity {
         ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
         btn_open.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { ;
+            public void onClick(View v) {
+                ;
                 drawerLayout.openDrawer(drawerView);
             }
         });
 //
-        Button post =  (Button) findViewById(R.id.bt_postupload);
+        Button post = (Button) findViewById(R.id.bt_postupload);
 
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                a.appendLog(date+"/M/PostUploadActivity/0");
+                a.appendLog(date + "/M/PostUploadActivity/0");
                 Intent intent = new Intent(getApplicationContext(), PostUploadActivity.class);
                 startActivity(intent);
             }
@@ -140,16 +147,7 @@ public class DrawerActivity extends AppCompatActivity {
         btn_close.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                drawerLayout.closeDrawers();
-                editor.remove("userinfo");
-                editor.commit();
-                a.appendLog(date+"/M/MainActivity/logout");
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                logout();
             }
         }));
 
@@ -164,6 +162,7 @@ public class DrawerActivity extends AppCompatActivity {
 
 
     }
+
     DrawerLayout.DrawerListener listener = new DrawerLayout.DrawerListener() {
         @Override
         public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
@@ -185,7 +184,8 @@ public class DrawerActivity extends AppCompatActivity {
 
         }
     };
-    public void textview1(String a, android.widget.LinearLayout container,final String key) {
+
+    public void textview1(String a, android.widget.LinearLayout container, final String key) {
         log b = new log();
         Date dateb = new Date();
         //TextView 생성
@@ -204,12 +204,13 @@ public class DrawerActivity extends AppCompatActivity {
 
         view1.setOnClickListener(new View.OnClickListener() {
             log a = new log();
-            SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date1 = new Date();
             String date = format1.format(date1);
+
             @Override
             public void onClick(View v) {
-                a.appendLog(date+"/M/PostListActivity /"+ key);
+                a.appendLog(date + "/M/PostListActivity /" + key);
                 Log.v("TAG", key);
                 Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
                 intent.putExtra("primarykey", key);
@@ -221,6 +222,7 @@ public class DrawerActivity extends AppCompatActivity {
         //부모 뷰에 추가
         container.addView(view1);
     }
+
     public void get_categorie_list() {
         String url = "http://ccit2020.cafe24.com:8082/get_categorie_list"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
@@ -229,13 +231,13 @@ public class DrawerActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.v("카테고리",response);
+                        Log.v("카테고리", response);
                         try {
                             JSONArray jsonArray = new JSONArray(response);
-                            for(int i = 0; i<jsonArray.length(); i++){
+                            for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                textview1(jsonObject.getString("categorie"),list_parent,jsonObject.getString("categorie_num"));
-                                Log.v("드로어액티비티",response);
+                                textview1(jsonObject.getString("categorie"), list_parent, jsonObject.getString("categorie_num"));
+                                Log.v("드로어액티비티", response);
                             }
 
                         } catch (JSONException e) {
@@ -248,7 +250,7 @@ public class DrawerActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+"/"+"E"+"/DrawerActivity/" +error.toString());
+                        a.appendLog(date + "/" + "E" + "/DrawerActivity/" + error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }
@@ -260,5 +262,49 @@ public class DrawerActivity extends AppCompatActivity {
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
         //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+    }
+
+    public void logout() {
+
+        String url = "http://10.0.2.2/logout"; //"http://ccit2020.cafe24.com:8082/login";
+        StringRequest request = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        sharedPreferences = getSharedPreferences("File", 0);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                        drawerLayout.closeDrawers();
+                        editor.remove("userinfo");
+                        editor.commit();
+                        a.appendLog(date + "/M/MainActivity/logout");
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.v("TAG", error.toString());
+                    }
+                }
+
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                sharedPreferences = getSharedPreferences("File", 0);
+                userinfo = sharedPreferences.getString("userinfo", "");
+                params.put("id", userinfo);
+                return params;
+            }
+        };
+        request.setShouldCache(false);
+        AppHelper.requestQueue.add(request);
+
     }
 }
