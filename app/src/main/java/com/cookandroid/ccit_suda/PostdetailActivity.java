@@ -553,7 +553,7 @@ public class PostdetailActivity extends DrawerActivity {
     }
     //댓글 알림설정
     public void comment_push(){
-        String url = "http://10.0.2.2/comment_push"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/comment_push"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
