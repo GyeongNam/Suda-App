@@ -61,7 +61,7 @@ public class PostdetailActivity extends DrawerActivity {
     private ListView postlist;
     private String imgurl;
     InputMethodManager imm;
-    ImageView Notification;
+//    ImageView Notification;
     Button del_post, md_post;
     String KEY;
     SharedPreferences sharedPreferences;
@@ -91,7 +91,7 @@ public class PostdetailActivity extends DrawerActivity {
         reply_border_layout = findViewById(R.id.reply_border_layout);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         text_limit_indicate = findViewById(R.id.text_limit_indicate);
-        Notification = findViewById(R.id.alert);
+//        Notification = findViewById(R.id.alert);
         input = "";
         Intent intent = getIntent();
         KEY = intent.getExtras().getString("primarykey");
@@ -130,16 +130,16 @@ public class PostdetailActivity extends DrawerActivity {
                 return false;
             }
         });
-        Notification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Toast.makeText(getApplicationContext(),"눌렀음",Toast.LENGTH_SHORT).show();
-
-                comment_push();
-
-
-            }
-        });
+//        Notification.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Toast.makeText(getApplicationContext(),"눌렀음",Toast.LENGTH_SHORT).show();
+//
+//                comment_push();
+//
+//
+//            }
+//        });
         replytext.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -280,12 +280,12 @@ public class PostdetailActivity extends DrawerActivity {
                             JSONObject data = new JSONObject(response);
                             JSONArray jsonArray = new JSONArray(data.getString("data"));
                             Log.v("푸시값",data.getString("comment_push"));
-                            if(data.getString("comment_push").equals("1")){
-                                Notification.setImageResource(R.drawable.cbell);
-                            }
-                            else{
-                                Notification.setImageResource(R.drawable.nbell);
-                            }
+//                            if(data.getString("comment_push").equals("1")){
+//                                Notification.setImageResource(R.drawable.cbell);
+//                            }
+//                            else{
+//                                Notification.setImageResource(R.drawable.nbell);
+//                            }
 
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 Commentlist commentlist1 = new Commentlist();
@@ -561,20 +561,20 @@ public class PostdetailActivity extends DrawerActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.v("TAG", response);
-                        Drawable temp = Notification.getDrawable();
-                        Drawable temp1 = getResources().getDrawable(R.drawable.nbell);
-                        Bitmap tmpBitmap = ((BitmapDrawable)temp).getBitmap();
-                        Bitmap tmpBitmap1 = ((BitmapDrawable)temp1).getBitmap();
-                        if(tmpBitmap.equals(tmpBitmap1)){
-                            Notification.setImageResource(R.drawable.cbell);
-                            Toast.makeText(getApplicationContext(),"댓글 푸시 알림이 설정되었습니다.",Toast.LENGTH_SHORT).show();
-
-                        }
-                        else{
-                            Notification.setImageResource(R.drawable.nbell);
-                            Toast.makeText(getApplicationContext(),"댓글 푸시 알림이 취소되었습니다.",Toast.LENGTH_SHORT).show();
-
-                        }
+//                        Drawable temp = Notification.getDrawable();
+//                        Drawable temp1 = getResources().getDrawable(R.drawable.nbell);
+//                        Bitmap tmpBitmap = ((BitmapDrawable)temp).getBitmap();
+//                        Bitmap tmpBitmap1 = ((BitmapDrawable)temp1).getBitmap();
+//                        if(tmpBitmap.equals(tmpBitmap1)){
+//                            Notification.setImageResource(R.drawable.cbell);
+//                            Toast.makeText(getApplicationContext(),"댓글 푸시 알림이 설정되었습니다.",Toast.LENGTH_SHORT).show();
+//
+//                        }
+//                        else{
+//                            Notification.setImageResource(R.drawable.nbell);
+//                            Toast.makeText(getApplicationContext(),"댓글 푸시 알림이 취소되었습니다.",Toast.LENGTH_SHORT).show();
+//
+//                        }
                     }
                 },
                 new Response.ErrorListener() {
