@@ -22,6 +22,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.StringRequest;
+import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
+import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +36,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+
 public class CommentAdapter extends BaseAdapter {
+    ApiInterface api;
     log a =new log();
     SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
     Date date1 = new Date();
@@ -295,58 +301,85 @@ public class CommentAdapter extends BaseAdapter {
 
     }
 
-    public void delreply(final String num) {
-        String url = "http://ccit2020.cafe24.com:8082/del_reply"; //"http://ccit2020.cafe24.com:8082/login";
-        StringRequest request = new StringRequest(
-                Request.Method.POST,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        SharedPreferences sharedPreferences = mContext.getSharedPreferences("File", 0);
-                        String userinfo = sharedPreferences.getString("userinfo", "");
-//                        TextView username = (TextView) ((Activity)mContext).findViewById(R.id.username);
-//                        username.setText("환영합니다 " + userinfo + " 님");
-
-
-//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", response);
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+"/"+"E"+"/CommentAdapter/" +error.toString());
-                        Toast.makeText(mContext.getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", error.toString());
-                    }
-                }
-
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                SharedPreferences sharedPreferences = mContext.getSharedPreferences("File", 0);
-                String userinfo = sharedPreferences.getString("userinfo", "");
-                params.put("userid", userinfo);
-                params.put("c_num", num);
-//                params.put("recomment", 텍스트);
-
-                return params;
-            }
-
-//            public Map<String, String> getHeader() throws AuthFailureError{
-//                Map<String, String> params = new HashMap<String, String >();
-//                params.put("Content-Type", "application/x-www-form-urlencoded");
+//    public void delreply(final String num) {
+//        String url = "http://ccit2020.cafe24.com:8082/del_reply"; //"http://ccit2020.cafe24.com:8082/login";
+//        StringRequest request = new StringRequest(
+//                Request.Method.POST,
+//                url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        SharedPreferences sharedPreferences = mContext.getSharedPreferences("File", 0);
+//                        String userinfo = sharedPreferences.getString("userinfo", "");
+////                        TextView username = (TextView) ((Activity)mContext).findViewById(R.id.username);
+////                        username.setText("환영합니다 " + userinfo + " 님");
+//
+//
+////                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+//                        Log.v("TAG", response);
+//
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        a.appendLog(date+"/"+"E"+"/CommentAdapter/" +error.toString());
+//                        Toast.makeText(mContext.getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+//                        Log.v("TAG", error.toString());
+//                    }
+//                }
+//
+//        ) {
+//            @Override
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<String, String>();
+//                SharedPreferences sharedPreferences = mContext.getSharedPreferences("File", 0);
+//                String userinfo = sharedPreferences.getString("userinfo", "");
+//                params.put("userid", userinfo);
+//                params.put("c_num", num);
+////                params.put("recomment", 텍스트);
+//
 //                return params;
 //            }
-        };
-        request.setShouldCache(false);
+//
+////            public Map<String, String> getHeader() throws AuthFailureError{
+////                Map<String, String> params = new HashMap<String, String >();
+////                params.put("Content-Type", "application/x-www-form-urlencoded");
+////                return params;
+////            }
+//        };
+//        request.setShouldCache(false);
+//
+////        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        AppHelper.requestQueue.add(request);
+//        //Toast.makeText(mContext.getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+//    }
+    public void delreply(final String num) {
+        String url = "del_reply"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("File", 0);
+        String userinfo = sharedPreferences.getString("userinfo", "");
+        params.put("userid", userinfo);
+        params.put("c_num", num);
+        Call<String> call = api.requestPost(url,params);
 
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        AppHelper.requestQueue.add(request);
-        //Toast.makeText(mContext.getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                Log.v("retrofit2",String.valueOf(response.body()));
+            }
+
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+            }
+        });
+
     }
 
 }

@@ -33,6 +33,8 @@ import com.android.volley.Response;
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
+import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -46,6 +48,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.Callback;
 
 
 public class PostdetailActivity extends DrawerActivity {
@@ -255,235 +259,235 @@ public class PostdetailActivity extends DrawerActivity {
 
 
 
-    public void sendRequest() {
-        String url = "http://ccit2020.cafe24.com:8082/post_detail"; //"http://ccit2020.cafe24.com:8082/login";
-
-
-        StringRequest request = new StringRequest(
-                Request.Method.POST,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-
-                        TextView username = (TextView) findViewById(R.id.username);
-                        TextView title = (TextView) findViewById(R.id.Title);
-                        TextView text = (TextView) findViewById(R.id.Text);
-                        HashMap<Integer, String> map = new HashMap<>();
-                        username.setText("환영합니다 " + userinfo + " 님");
-//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
-                        Log.v("compact", response);
-                        commentlist.clear();
-//                        postlist.invalidateViews();
-                        try {
-                            JSONObject data = new JSONObject(response);
-                            JSONArray jsonArray = new JSONArray(data.getString("data"));
-                            Log.v("푸시값",data.getString("comment_push"));
-//                            if(data.getString("comment_push").equals("1")){
-//                                Notification.setImageResource(R.drawable.cbell);
-//                            }
-//                            else{
-//                                Notification.setImageResource(R.drawable.nbell);
-//                            }
-
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                Commentlist commentlist1 = new Commentlist();
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                if(!(userinfo).equals(jsonObject.getString("writer"))) {
-                                    del_post.setVisibility(View.GONE);
-                                }
-                                if(!(userinfo).equals(jsonObject.getString("writer"))) {
-                                    md_post.setVisibility(View.GONE);
-                                }
-                                Log.v("TAG", "게시글 디테일" + jsonObject.getString("Title"));
-                                //가져온 댓글 정보 넣기
-//                                Log.v("TAG",jsonObject.getString("c_activation"));
-                                commentlist1.setActivation(jsonObject.getString("c_activation"));
-//                                Log.v("TAG",String.valueOf(jsonObject.getString("c_activation").equals("null")));
-                                if (!jsonObject.getString("c_activation").equals("null")) {
-                                    commentlist1.setWriter(jsonObject.getString("c_writer"));
-                                    commentlist1.setComment(jsonObject.getString("comment"));
-                                    commentlist1.setDate(jsonObject.getString("created_at").substring(0,16));
-                                    commentlist1.setNum(jsonObject.getString("c_num"));
-                                    //대댓글 담기영역
-                                    commentlist1.setParent(jsonObject.getString("parent"));
-                                    Log.v("TAG","뭐냐고 참이 아닌데 왜들어가냐");
-
-                                }
-
-//                                commentlist1.setRecomment(jsonObject.getString("recomment"));
-
-
-                                commentlist.add(commentlist1);
-                                //중복검사
-
-
-                                title.setText(jsonObject.getString("Title"));
-                                text.setText(jsonObject.getString("Text"));
-                                post_writer.setText(jsonObject.getString("writer"));
-                                post_like.setText(jsonObject.getString("like"));
-                                imgurl = "http://ccit2020.cafe24.com:8082/img/"+jsonObject.getString("image");
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        commentAdapter.setItem(commentlist);
-                        commentAdapter.notifyDataSetChanged();
-                        Log.v("TAG",imgurl);
-
-                        ImageView imageView = (ImageView) findViewById(R.id.imageview);
-                        Picasso.get().load(imgurl).into(imageView);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
-                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", error.toString());
-                    }
-                }
-
-        ) {
-
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                Intent intent = getIntent();
-                String KEY = intent.getExtras().getString("primarykey");
-                params.put("userinfo",userinfo);
-                params.put("post_num", KEY);
-                return params;
-            }
-
-//            public Map<String, String> getHeader() throws AuthFailureError{
-//                Map<String, String> params = new HashMap<String, String >();
-//                params.put("Content-Type", "application/x-www-form-urlencoded");
-//                return params;
-//            }
-        };
-        request.setShouldCache(false);
-
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        AppHelper.requestQueue.add(request);
-//        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
-    }
-
-
-
-
-    public void sendreply() {
-        String url = "http://ccit2020.cafe24.com:8082/post_reply"; //"http://ccit2020.cafe24.com:8082/login";
-        StringRequest request = new StringRequest(
-                Request.Method.POST,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        TextView username = (TextView) findViewById(R.id.username);
-//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", response);
-                        replytext.getText().clear();
-                        reply_top_layout.setVisibility(View.GONE);
-                        imm.hideSoftInputFromWindow(replytext.getWindowToken(), 0);
-                        reply_border_layout.setBackgroundResource(R.drawable.topborder);
-                        replytext.setCursorVisible(false);
-                        commentAdapter.Number = null;
-                        a.appendLog(date+"/"+"U"+"/PostdetailActivity/reply");
-                        sendRequest();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
-                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", error.toString());
-                    }
-                }
-
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                Intent intent = getIntent();
-
-                Log.v("TAG", "리플쓸때 number존재유무" + commentAdapter.Number);
-
-                String reply = replytext.getText().toString();
-                String KEY = intent.getExtras().getString("primarykey");
-                params.put("post_num", KEY);
-                params.put("reply", reply);
-                params.put("writer", userinfo);
-                params.put("comment_num", commentAdapter.Number);
-                return params;
-            }
-
-//            public Map<String, String> getHeader() throws AuthFailureError{
-//                Map<String, String> params = new HashMap<String, String >();
-//                params.put("Content-Type", "application/x-www-form-urlencoded");
-//                return params;
-//            }
-        };
-        request.setShouldCache(false);
-
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        AppHelper.requestQueue.add(request);
-//        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
-    }
-
-    public void delpost() {
-        String url = "http://ccit2020.cafe24.com:8082/delete_post";
-        StringRequest request = new StringRequest(
-                Request.Method.POST,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-//                        TextView username = (TextView) ((Activity)mContext).findViewById(R.id.username);
+//    public void sendRequest() {
+//        String url = "http://ccit2020.cafe24.com:8082/post_detail"; //"http://ccit2020.cafe24.com:8082/login";
+//
+//
+//        StringRequest request = new StringRequest(
+//                Request.Method.POST,
+//                url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//
+//
+//                        TextView username = (TextView) findViewById(R.id.username);
+//                        TextView title = (TextView) findViewById(R.id.Title);
+//                        TextView text = (TextView) findViewById(R.id.Text);
+//                        HashMap<Integer, String> map = new HashMap<>();
 //                        username.setText("환영합니다 " + userinfo + " 님");
-
-
-//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", response);
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
-                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", error.toString());
-                    }
-                }
-
-
-
-        )
-        {
-            @Override
-            protected Map<String, String> getParams() {
-            Map<String, String> params = new HashMap<String, String>();
-            Intent intent = getIntent();
-            KEY = intent.getExtras().getString("primarykey");
-            params.put("post_num", KEY);
-            params.put("writer", userinfo);
-            return params;
-        }
-
-//            public Map<String, String> getHeader() throws AuthFailureError{
-//                Map<String, String> params = new HashMap<String, String >();
-//                params.put("Content-Type", "application/x-www-form-urlencoded");
+////                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+//                        Log.v("compact", response);
+//                        commentlist.clear();
+////                        postlist.invalidateViews();
+//                        try {
+//                            JSONObject data = new JSONObject(response);
+//                            JSONArray jsonArray = new JSONArray(data.getString("data"));
+//                            Log.v("푸시값",data.getString("comment_push"));
+////                            if(data.getString("comment_push").equals("1")){
+////                                Notification.setImageResource(R.drawable.cbell);
+////                            }
+////                            else{
+////                                Notification.setImageResource(R.drawable.nbell);
+////                            }
+//
+//                            for (int i = 0; i < jsonArray.length(); i++) {
+//                                Commentlist commentlist1 = new Commentlist();
+//                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+//                                if(!(userinfo).equals(jsonObject.getString("writer"))) {
+//                                    del_post.setVisibility(View.GONE);
+//                                }
+//                                if(!(userinfo).equals(jsonObject.getString("writer"))) {
+//                                    md_post.setVisibility(View.GONE);
+//                                }
+//                                Log.v("TAG", "게시글 디테일" + jsonObject.getString("Title"));
+//                                //가져온 댓글 정보 넣기
+////                                Log.v("TAG",jsonObject.getString("c_activation"));
+//                                commentlist1.setActivation(jsonObject.getString("c_activation"));
+////                                Log.v("TAG",String.valueOf(jsonObject.getString("c_activation").equals("null")));
+//                                if (!jsonObject.getString("c_activation").equals("null")) {
+//                                    commentlist1.setWriter(jsonObject.getString("c_writer"));
+//                                    commentlist1.setComment(jsonObject.getString("comment"));
+//                                    commentlist1.setDate(jsonObject.getString("created_at").substring(0,16));
+//                                    commentlist1.setNum(jsonObject.getString("c_num"));
+//                                    //대댓글 담기영역
+//                                    commentlist1.setParent(jsonObject.getString("parent"));
+//                                    Log.v("TAG","뭐냐고 참이 아닌데 왜들어가냐");
+//
+//                                }
+//
+////                                commentlist1.setRecomment(jsonObject.getString("recomment"));
+//
+//
+//                                commentlist.add(commentlist1);
+//                                //중복검사
+//
+//
+//                                title.setText(jsonObject.getString("Title"));
+//                                text.setText(jsonObject.getString("Text"));
+//                                post_writer.setText(jsonObject.getString("writer"));
+//                                post_like.setText(jsonObject.getString("like"));
+//                                imgurl = "http://ccit2020.cafe24.com:8082/img/"+jsonObject.getString("image");
+//                            }
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                        commentAdapter.setItem(commentlist);
+//                        commentAdapter.notifyDataSetChanged();
+//                        Log.v("TAG",imgurl);
+//
+//                        ImageView imageView = (ImageView) findViewById(R.id.imageview);
+//                        Picasso.get().load(imgurl).into(imageView);
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
+//                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+//                        Log.v("TAG", error.toString());
+//                    }
+//                }
+//
+//        ) {
+//
+//
+//            @Override
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<String, String>();
+//                Intent intent = getIntent();
+//                String KEY = intent.getExtras().getString("primarykey");
+//                params.put("userinfo",userinfo);
+//                params.put("post_num", KEY);
 //                return params;
 //            }
-        };
-        request.setShouldCache(false);
-        AppHelper.requestQueue.add(request);
-    }
+//
+////            public Map<String, String> getHeader() throws AuthFailureError{
+////                Map<String, String> params = new HashMap<String, String >();
+////                params.put("Content-Type", "application/x-www-form-urlencoded");
+////                return params;
+////            }
+//        };
+//        request.setShouldCache(false);
+//
+////        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        AppHelper.requestQueue.add(request);
+////        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+//    }
+
+
+
+
+//    public void sendreply() {
+//        String url = "http://ccit2020.cafe24.com:8082/post_reply"; //"http://ccit2020.cafe24.com:8082/login";
+//        StringRequest request = new StringRequest(
+//                Request.Method.POST,
+//                url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        TextView username = (TextView) findViewById(R.id.username);
+////                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+//                        Log.v("TAG", response);
+//                        replytext.getText().clear();
+//                        reply_top_layout.setVisibility(View.GONE);
+//                        imm.hideSoftInputFromWindow(replytext.getWindowToken(), 0);
+//                        reply_border_layout.setBackgroundResource(R.drawable.topborder);
+//                        replytext.setCursorVisible(false);
+//                        commentAdapter.Number = null;
+//                        a.appendLog(date+"/"+"U"+"/PostdetailActivity/reply");
+//                        sendRequest();
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
+//                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+//                        Log.v("TAG", error.toString());
+//                    }
+//                }
+//
+//        ) {
+//            @Override
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<String, String>();
+//                Intent intent = getIntent();
+//
+//                Log.v("TAG", "리플쓸때 number존재유무" + commentAdapter.Number);
+//
+//                String reply = replytext.getText().toString();
+//                String KEY = intent.getExtras().getString("primarykey");
+//                params.put("post_num", KEY);
+//                params.put("reply", reply);
+//                params.put("writer", userinfo);
+//                params.put("comment_num", commentAdapter.Number);
+//                return params;
+//            }
+//
+////            public Map<String, String> getHeader() throws AuthFailureError{
+////                Map<String, String> params = new HashMap<String, String >();
+////                params.put("Content-Type", "application/x-www-form-urlencoded");
+////                return params;
+////            }
+//        };
+//        request.setShouldCache(false);
+//
+////        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        AppHelper.requestQueue.add(request);
+////        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+//    }
+
+//    public void delpost() {
+//        String url = "http://ccit2020.cafe24.com:8082/delete_post";
+//        StringRequest request = new StringRequest(
+//                Request.Method.POST,
+//                url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+////                        TextView username = (TextView) ((Activity)mContext).findViewById(R.id.username);
+////                        username.setText("환영합니다 " + userinfo + " 님");
+//
+//
+////                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+//                        Log.v("TAG", response);
+//
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
+//                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+//                        Log.v("TAG", error.toString());
+//                    }
+//                }
+//
+//
+//
+//        )
+//        {
+//            @Override
+//            protected Map<String, String> getParams() {
+//            Map<String, String> params = new HashMap<String, String>();
+//            Intent intent = getIntent();
+//            KEY = intent.getExtras().getString("primarykey");
+//            params.put("post_num", KEY);
+//            params.put("writer", userinfo);
+//            return params;
+//        }
+//
+////            public Map<String, String> getHeader() throws AuthFailureError{
+////                Map<String, String> params = new HashMap<String, String >();
+////                params.put("Content-Type", "application/x-www-form-urlencoded");
+////                return params;
+////            }
+//        };
+//        request.setShouldCache(false);
+//        AppHelper.requestQueue.add(request);
+//    }
     public void sendreply(View view) {
         sendreply();
     }
@@ -508,49 +512,49 @@ public class PostdetailActivity extends DrawerActivity {
         //부모 뷰에 추가
         container.addView(view1);
     }
-    public void like_button(){
-        String url = "http://ccit2020.cafe24.com:8082/post_like"; //"http://ccit2020.cafe24.com:8082/login";
-        StringRequest request = new StringRequest(
-                Request.Method.POST,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.v("TAG", response);
-                        sendRequest();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
-                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", error.toString());
-                    }
-                }
-
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                Intent intent = getIntent();
-                KEY = intent.getExtras().getString("primarykey");
-                params.put("post_num", KEY);
-                params.put("writer", userinfo);
-                return params;
-            }
-
-//            public Map<String, String> getHeader() throws AuthFailureError{
-//                Map<String, String> params = new HashMap<String, String >();
-//                params.put("Content-Type", "application/x-www-form-urlencoded");
+//    public void like_button(){
+//        String url = "http://ccit2020.cafe24.com:8082/post_like"; //"http://ccit2020.cafe24.com:8082/login";
+//        StringRequest request = new StringRequest(
+//                Request.Method.POST,
+//                url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.v("TAG", response);
+//                        sendRequest();
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
+//                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+//                        Log.v("TAG", error.toString());
+//                    }
+//                }
+//
+//        ) {
+//            @Override
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<String, String>();
+//                Intent intent = getIntent();
+//                KEY = intent.getExtras().getString("primarykey");
+//                params.put("post_num", KEY);
+//                params.put("writer", userinfo);
 //                return params;
 //            }
-        };
-        request.setShouldCache(false);
-        AppHelper.requestQueue.add(request);
-
-
-    }
+//
+////            public Map<String, String> getHeader() throws AuthFailureError{
+////                Map<String, String> params = new HashMap<String, String >();
+////                params.put("Content-Type", "application/x-www-form-urlencoded");
+////                return params;
+////            }
+//        };
+//        request.setShouldCache(false);
+//        AppHelper.requestQueue.add(request);
+//
+//
+//    }
     //댓글 알림설정
     public void comment_push(){
         String url = "http://ccit2020.cafe24.com:8082/comment_push"; //"http://ccit2020.cafe24.com:8082/login";
@@ -605,6 +609,201 @@ public class PostdetailActivity extends DrawerActivity {
         AppHelper.requestQueue.add(request);
 
 
+    }
+    public void sendRequest() {
+        String url = "post_detail"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
+        Intent intent = getIntent();
+        String KEY = intent.getExtras().getString("primarykey");
+        params.put("userinfo",userinfo);
+        params.put("post_num", KEY);
+        Call<String> call = api.requestPost(url,params);
+
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                TextView username = (TextView) findViewById(R.id.username);
+                TextView title = (TextView) findViewById(R.id.Title);
+                TextView text = (TextView) findViewById(R.id.Text);
+                HashMap<Integer, String> map = new HashMap<>();
+                username.setText("환영합니다 " + userinfo + " 님");
+//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+                Log.v("compact", response.body().toString());
+                commentlist.clear();
+//                        postlist.invalidateViews();
+                try {
+                    JSONObject data = new JSONObject(response.body());
+                    JSONArray jsonArray = new JSONArray(data.getString("data"));
+                    Log.v("푸시값",data.getString("comment_push"));
+//                            if(data.getString("comment_push").equals("1")){
+//                                Notification.setImageResource(R.drawable.cbell);
+//                            }
+//                            else{
+//                                Notification.setImageResource(R.drawable.nbell);
+//                            }
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        Commentlist commentlist1 = new Commentlist();
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        if(!(userinfo).equals(jsonObject.getString("writer"))) {
+                            del_post.setVisibility(View.GONE);
+                        }
+                        if(!(userinfo).equals(jsonObject.getString("writer"))) {
+                            md_post.setVisibility(View.GONE);
+                        }
+                        Log.v("TAG", "게시글 디테일" + jsonObject.getString("Title"));
+                        //가져온 댓글 정보 넣기
+//                                Log.v("TAG",jsonObject.getString("c_activation"));
+                        commentlist1.setActivation(jsonObject.getString("c_activation"));
+//                                Log.v("TAG",String.valueOf(jsonObject.getString("c_activation").equals("null")));
+                        if (!jsonObject.getString("c_activation").equals("null")) {
+                            commentlist1.setWriter(jsonObject.getString("c_writer"));
+                            commentlist1.setComment(jsonObject.getString("comment"));
+                            commentlist1.setDate(jsonObject.getString("created_at").substring(0,16));
+                            commentlist1.setNum(jsonObject.getString("c_num"));
+                            //대댓글 담기영역
+                            commentlist1.setParent(jsonObject.getString("parent"));
+                            Log.v("TAG","뭐냐고 참이 아닌데 왜들어가냐");
+
+                        }
+
+//                                commentlist1.setRecomment(jsonObject.getString("recomment"));
+
+
+                        commentlist.add(commentlist1);
+                        //중복검사
+
+
+                        title.setText(jsonObject.getString("Title"));
+                        text.setText(jsonObject.getString("Text"));
+                        post_writer.setText(jsonObject.getString("writer"));
+                        post_like.setText(jsonObject.getString("like"));
+                        imgurl = "http://ccit2020.cafe24.com:8082/img/"+jsonObject.getString("image");
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                commentAdapter.setItem(commentlist);
+                commentAdapter.notifyDataSetChanged();
+                Log.v("TAG",imgurl);
+
+                ImageView imageView = (ImageView) findViewById(R.id.imageview);
+                Picasso.get().load(imgurl).into(imageView);
+            }
+
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+            }
+        });
+    }
+    public void sendreply() {
+        String url = "post_reply"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
+        Intent intent = getIntent();
+        Log.v("TAG", "리플쓸때 number존재유무" + commentAdapter.Number);
+        if(commentAdapter.Number == null){
+            commentAdapter.Number = "null";
+        }
+        String reply = replytext.getText().toString();
+        String KEY = intent.getExtras().getString("primarykey");
+        params.put("post_num", KEY);
+        params.put("reply", reply);
+        params.put("writer", userinfo);
+        params.put("comment_num", commentAdapter.Number);
+        Call<String> call = api.requestPost(url,params);
+
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                Log.v("retrofit2",response.body().toString());
+                TextView username = (TextView) findViewById(R.id.username);
+//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+                replytext.getText().clear();
+                reply_top_layout.setVisibility(View.GONE);
+                imm.hideSoftInputFromWindow(replytext.getWindowToken(), 0);
+                reply_border_layout.setBackgroundResource(R.drawable.topborder);
+                replytext.setCursorVisible(false);
+                commentAdapter.Number = null;
+                a.appendLog(date+"/"+"U"+"/PostdetailActivity/reply");
+                sendRequest();
+            }
+
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+                a.appendLog(date + "/" + "E" + "/sign_up/" + t.toString());
+                Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    public void delpost() {
+        String url = "delete_post"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
+        Intent intent = getIntent();
+        KEY = intent.getExtras().getString("primarykey");
+        params.put("post_num", KEY);
+        params.put("writer", userinfo);
+        Call<String> call = api.requestPost(url,params);
+
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                Log.v("retrofit2",String.valueOf(response.body()));
+            }
+
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+                a.appendLog(date + "/" + "E" + "/sign_up/" + t.toString());
+                Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    public void like_button(){
+        String url = "post_like"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
+        Intent intent = getIntent();
+        KEY = intent.getExtras().getString("primarykey");
+        params.put("post_num", KEY);
+        params.put("writer", userinfo);
+        Call<String> call = api.requestPost(url,params);
+
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                Log.v("retrofit2",String.valueOf(response.body()));
+                sendRequest();
+            }
+
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+                a.appendLog(date + "/" + "E" + "/sign_up/" + t.toString());
+                Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

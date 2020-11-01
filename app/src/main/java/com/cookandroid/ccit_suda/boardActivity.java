@@ -29,6 +29,8 @@ import com.android.volley.Response;
 
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.StringRequest;
+import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
+import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 import com.google.gson.Gson;
 
 
@@ -40,6 +42,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class boardActivity extends DrawerActivity {
     private long backBtnTime = 0;
@@ -57,6 +62,7 @@ public class boardActivity extends DrawerActivity {
     ArrayList<String> key3 = new ArrayList<>(3);
     ArrayList<String> key4 = new ArrayList<>(3);
     ArrayList<String> key5 = new ArrayList<>(3);
+    ApiInterface api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,135 +82,135 @@ public class boardActivity extends DrawerActivity {
     }
 
 
-    public void sendRequest() {
-        String url = "http://ccit2020.cafe24.com:8082/main"; //"http://ccit2020.cafe24.com:8082/login";
-        StringRequest request = new StringRequest(
-                Request.Method.POST,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                        String userinfo = sharedPreferences.getString("userinfo", "");
-                        TextView username = (TextView) findViewById(R.id.username);
-                        username.setText("환영합니다 " + userinfo + " 님");
-//                        processResponse(response);
-
-
-//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", response);
-                        try {
-                            JSONArray jsonArray = new JSONArray(response);
-                            Log.v("TAG", "zz" + jsonArray);
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Log.v("TAG", "원하는 json 배열 얻기" + jsonObject.getString("categorie").indexOf("비밀게시판"));
-                                if (jsonObject.getString("categorie_num").equals("1")) {
-                                    data1.add((jsonArray.getJSONObject(i).getString("Title")));
-                                    key1.add((jsonArray.getJSONObject(i).getString("post_num")));
-                                }
-                                if (jsonObject.getString("categorie_num").equals("2")) {
-                                    data2.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
-                                    key2.add((jsonArray.getJSONObject(i).getString("post_num")));
-                                }
-                                if (jsonObject.getString("categorie_num").equals("3")) {
-                                    data3.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
-                                    key3.add((jsonArray.getJSONObject(i).getString("post_num")));
-                                }
-                                if (jsonObject.getString("categorie_num").equals("4")) {
-                                    data4.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
-                                    key4.add((jsonArray.getJSONObject(i).getString("post_num")));
-                                }
-                                if (jsonObject.getString("writer").indexOf(userinfo) == 0) {
-                                    data5.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
-                                    key5.add((jsonArray.getJSONObject(i).getString("post_num")));
-                                }
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        if (data1.size() > 3) {
-                            for (int i = 0; i < 3; i++) {
-                                textview(data1.get(i), container1, key1.get(i));
-                            }
-                        } else {
-                            for (int i = 0; i < data1.size(); i++) {
-                                textview(data1.get(i), container1, key1.get(i));
-                            }
-                        }
-                        if (data2.size() > 3) {
-                            for (int i = 0; i < 3; i++) {
-                                textview(data2.get(i), container2, key2.get(i));
-                            }
-                        } else {
-                            for (int i = 0; i < data2.size(); i++) {
-                                textview(data2.get(i), container2, key2.get(i));
-                            }
-                        }
-                        if (data3.size() > 3) {
-                            for (int i = 0; i < 3; i++) {
-                                textview(data3.get(i), container3, key3.get(i));
-                            }
-                        } else {
-                            for (int i = 0; i < data3.size(); i++) {
-                                textview(data3.get(i), container1, key3.get(i));
-                            }
-                        }
-                        if (data4.size() > 3) {
-                            for (int i = 0; i < 3; i++) {
-                                textview(data4.get(i), container4, key4.get(i));
-                            }
-                        } else {
-                            for (int i = 0; i < data4.size(); i++) {
-                                textview(data4.get(i), container4, key4.get(i));
-                            }
-                        }
-                        if (data5.size() > 3) {
-                            for (int i = 0; i < 3; i++) {
-                                textview(data5.get(i), container5, key5.get(i));
-                            }
-                        } else {
-                            for (int i = 0; i < data5.size(); i++) {
-                                textview(data5.get(i), container5, key5.get(i));
-                            }
-                        }
-
-
-                        Log.v("TAG", "json데이터 배열담기" + data1);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+"/"+"E"+"/boardActivity/" +error.toString());
-                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", error.toString());
-                    }
-                }
-
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                String userinfo = sharedPreferences.getString("userinfo", "");
-                params.put("userid", userinfo);
-
-                return params;
-            }
-
-//            public Map<String, String> getHeader() throws AuthFailureError{
-//                Map<String, String> params = new HashMap<String, String >();
-//                params.put("Content-Type", "application/x-www-form-urlencoded");
+//    public void sendRequest() {
+//        String url = "http://ccit2020.cafe24.com:8082/main"; //"http://ccit2020.cafe24.com:8082/login";
+//        StringRequest request = new StringRequest(
+//                Request.Method.POST,
+//                url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+//                        String userinfo = sharedPreferences.getString("userinfo", "");
+//                        TextView username = (TextView) findViewById(R.id.username);
+//                        username.setText("환영합니다 " + userinfo + " 님");
+////                        processResponse(response);
+//
+//
+////                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+//                        Log.v("TAG", response);
+//                        try {
+//                            JSONArray jsonArray = new JSONArray(response);
+//                            Log.v("TAG", "zz" + jsonArray);
+//                            for (int i = 0; i < jsonArray.length(); i++) {
+//                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+//                                Log.v("TAG", "원하는 json 배열 얻기" + jsonObject.getString("categorie").indexOf("비밀게시판"));
+//                                if (jsonObject.getString("categorie_num").equals("1")) {
+//                                    data1.add((jsonArray.getJSONObject(i).getString("Title")));
+//                                    key1.add((jsonArray.getJSONObject(i).getString("post_num")));
+//                                }
+//                                if (jsonObject.getString("categorie_num").equals("2")) {
+//                                    data2.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+//                                    key2.add((jsonArray.getJSONObject(i).getString("post_num")));
+//                                }
+//                                if (jsonObject.getString("categorie_num").equals("3")) {
+//                                    data3.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+//                                    key3.add((jsonArray.getJSONObject(i).getString("post_num")));
+//                                }
+//                                if (jsonObject.getString("categorie_num").equals("4")) {
+//                                    data4.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+//                                    key4.add((jsonArray.getJSONObject(i).getString("post_num")));
+//                                }
+//                                if (jsonObject.getString("writer").indexOf(userinfo) == 0) {
+//                                    data5.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+//                                    key5.add((jsonArray.getJSONObject(i).getString("post_num")));
+//                                }
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                        if (data1.size() > 3) {
+//                            for (int i = 0; i < 3; i++) {
+//                                textview(data1.get(i), container1, key1.get(i));
+//                            }
+//                        } else {
+//                            for (int i = 0; i < data1.size(); i++) {
+//                                textview(data1.get(i), container1, key1.get(i));
+//                            }
+//                        }
+//                        if (data2.size() > 3) {
+//                            for (int i = 0; i < 3; i++) {
+//                                textview(data2.get(i), container2, key2.get(i));
+//                            }
+//                        } else {
+//                            for (int i = 0; i < data2.size(); i++) {
+//                                textview(data2.get(i), container2, key2.get(i));
+//                            }
+//                        }
+//                        if (data3.size() > 3) {
+//                            for (int i = 0; i < 3; i++) {
+//                                textview(data3.get(i), container3, key3.get(i));
+//                            }
+//                        } else {
+//                            for (int i = 0; i < data3.size(); i++) {
+//                                textview(data3.get(i), container1, key3.get(i));
+//                            }
+//                        }
+//                        if (data4.size() > 3) {
+//                            for (int i = 0; i < 3; i++) {
+//                                textview(data4.get(i), container4, key4.get(i));
+//                            }
+//                        } else {
+//                            for (int i = 0; i < data4.size(); i++) {
+//                                textview(data4.get(i), container4, key4.get(i));
+//                            }
+//                        }
+//                        if (data5.size() > 3) {
+//                            for (int i = 0; i < 3; i++) {
+//                                textview(data5.get(i), container5, key5.get(i));
+//                            }
+//                        } else {
+//                            for (int i = 0; i < data5.size(); i++) {
+//                                textview(data5.get(i), container5, key5.get(i));
+//                            }
+//                        }
+//
+//
+//                        Log.v("TAG", "json데이터 배열담기" + data1);
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        a.appendLog(date+"/"+"E"+"/boardActivity/" +error.toString());
+//                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+//                        Log.v("TAG", error.toString());
+//                    }
+//                }
+//
+//        ) {
+//            @Override
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<String, String>();
+//                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+//                String userinfo = sharedPreferences.getString("userinfo", "");
+//                params.put("userid", userinfo);
+//
 //                return params;
 //            }
-        };
-        request.setShouldCache(false);
-
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        AppHelper.requestQueue.add(request);
-        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
-    }
+//
+////            public Map<String, String> getHeader() throws AuthFailureError{
+////                Map<String, String> params = new HashMap<String, String >();
+////                params.put("Content-Type", "application/x-www-form-urlencoded");
+////                return params;
+////            }
+//        };
+//        request.setShouldCache(false);
+//
+////        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        AppHelper.requestQueue.add(request);
+//        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+//    }
 
 
 
@@ -239,21 +245,119 @@ public class boardActivity extends DrawerActivity {
         container.addView(view1);
     }
 
+    public void sendRequest() {
+        String url = "main"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
+        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+        String userinfo = sharedPreferences.getString("userinfo", "");
+        params.put("userid", userinfo);
+        Call<String> call = api.requestPost(url,params);
 
-//    @Override
-//    public void onBackPressed () {
-////        super.onBackPressed();
-////        long curTime = System.currentTimeMillis();
-////        long gapTime = curTime - backBtnTime;
-////
-////        if(0 <= gapTime && 2000 >= gapTime) {
-////            super.onBackPressed();
-////        }
-////        else {
-////            backBtnTime = curTime;
-////            Toast.makeText(this, "한번 더 누르면 종료됩니다.",Toast.LENGTH_SHORT).show();
-////        }
-//
-//    }
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                Log.v("retrofit2",String.valueOf(response.body()));
+                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+                String userinfo = sharedPreferences.getString("userinfo", "");
+                TextView username = (TextView) findViewById(R.id.username);
+                username.setText("환영합니다 " + userinfo + " 님");
+//                        processResponse(response);
+
+
+//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+//                Log.v("TAG", response);
+                try {
+                    JSONArray jsonArray = new JSONArray(response.body());
+                    Log.v("TAG", "zz" + jsonArray);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        Log.v("TAG", "원하는 json 배열 얻기" + jsonObject.getString("categorie").indexOf("비밀게시판"));
+                        if (jsonObject.getString("categorie_num").equals("1")) {
+                            data1.add((jsonArray.getJSONObject(i).getString("Title")));
+                            key1.add((jsonArray.getJSONObject(i).getString("post_num")));
+                        }
+                        if (jsonObject.getString("categorie_num").equals("2")) {
+                            data2.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                            key2.add((jsonArray.getJSONObject(i).getString("post_num")));
+                        }
+                        if (jsonObject.getString("categorie_num").equals("3")) {
+                            data3.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                            key3.add((jsonArray.getJSONObject(i).getString("post_num")));
+                        }
+                        if (jsonObject.getString("categorie_num").equals("4")) {
+                            data4.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                            key4.add((jsonArray.getJSONObject(i).getString("post_num")));
+                        }
+                        if (jsonObject.getString("writer").indexOf(userinfo) == 0) {
+                            data5.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
+                            key5.add((jsonArray.getJSONObject(i).getString("post_num")));
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (data1.size() > 3) {
+                    for (int i = 0; i < 3; i++) {
+                        textview(data1.get(i), container1, key1.get(i));
+                    }
+                } else {
+                    for (int i = 0; i < data1.size(); i++) {
+                        textview(data1.get(i), container1, key1.get(i));
+                    }
+                }
+                if (data2.size() > 3) {
+                    for (int i = 0; i < 3; i++) {
+                        textview(data2.get(i), container2, key2.get(i));
+                    }
+                } else {
+                    for (int i = 0; i < data2.size(); i++) {
+                        textview(data2.get(i), container2, key2.get(i));
+                    }
+                }
+                if (data3.size() > 3) {
+                    for (int i = 0; i < 3; i++) {
+                        textview(data3.get(i), container3, key3.get(i));
+                    }
+                } else {
+                    for (int i = 0; i < data3.size(); i++) {
+                        textview(data3.get(i), container1, key3.get(i));
+                    }
+                }
+                if (data4.size() > 3) {
+                    for (int i = 0; i < 3; i++) {
+                        textview(data4.get(i), container4, key4.get(i));
+                    }
+                } else {
+                    for (int i = 0; i < data4.size(); i++) {
+                        textview(data4.get(i), container4, key4.get(i));
+                    }
+                }
+                if (data5.size() > 3) {
+                    for (int i = 0; i < 3; i++) {
+                        textview(data5.get(i), container5, key5.get(i));
+                    }
+                } else {
+                    for (int i = 0; i < data5.size(); i++) {
+                        textview(data5.get(i), container5, key5.get(i));
+                    }
+                }
+
+
+                Log.v("TAG", "json데이터 배열담기" + data1);
+            }
+
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+                a.appendLog(date+"/"+"E"+"/boardActivity/" +t.toString());
+                Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }
 

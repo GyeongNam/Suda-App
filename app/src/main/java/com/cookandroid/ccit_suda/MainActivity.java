@@ -23,9 +23,10 @@ import com.android.volley.error.VolleyError;
 import com.android.volley.request.SimpleMultiPartRequest;
 import com.android.volley.request.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
+import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -36,17 +37,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+
 //import com.android.volley.AuthFailureError;
 //import com.android.volley.VolleyError;
 //import com.android.volley.toolbox.StringRequest;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     log a = new log();
     SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
     Date date1 = new Date();
     String date = format1.format(date1);
     String androids;
     String token;
+    ApiInterface api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,15 +161,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void pushlog() {                                         // 로그파일 전송
-        String android = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        String url = "http://ccit2020.cafe24.com:8082/get_logfile"; //10.0.2.2 ccit2020.cafe24.com:8082
-        SimpleMultiPartRequest smpr= new SimpleMultiPartRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.v("TAG",response);
-               // new AlertDialog.Builder(getApplicationContext()).setMessage("응답:"+response).create().show();
 
+    public void pushlog() {
+        String android = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String url = "get_logfile"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
+        //요청 객체에 보낼 데이터를 추가
+        params.put("androidid", android);
+        params.put("datea", date.toString());
+        File file = new File("/mnt/sdcard/log.file");
+        // -- retrofit2에서 파일 보내기 --
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse("/mnt/sdcard/"),
+                        file
+                );
+        MultipartBody.Part filepart = MultipartBody.Part.createFormData("logfile", file.getName(), requestFile);
+        // ------------------------
+        Call<String> call = api.requestFilePost(url,params,filepart);
+
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                Log.v("retrofit2",String.valueOf(response.body()));
                 File file = new File("/mnt/sdcard/log.file");
                 file.delete();
 
@@ -181,107 +207,83 @@ public class MainActivity extends AppCompatActivity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
-
-
             }
-        }, new Response.ErrorListener() {
+
+            // 통신실패
             @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "ERROR", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
             }
         });
-        //요청 객체에 보낼 데이터를 추가
-        smpr.addFile("logfile", "/mnt/sdcard/log.file");
-        smpr.addStringParam("androidid", android);
-        smpr.addStringParam("datea", date.toString());
-        smpr.setShouldCache(false);
-        RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
-        mRequestQueue.add(smpr);
-
     }
+
     public void sendRequest() {
+        String url = "login";
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
+        EditText userid = (EditText) findViewById(R.id.ID);
+        String value = userid.getText().toString();
+        EditText userpw = (EditText) findViewById(R.id.PW);
+        String value1 = userpw.getText().toString();
+        params.put("id", value);
+        params.put("pw", value1);
+        params.put("token",token);
+        Call<String> call = api.requestPost(url,params);
 
-        String url = "http://ccit2020.cafe24.com:8082/login"; //"http://ccit2020.cafe24.com:8082/login";
-        StringRequest request = new StringRequest(
-                Request.Method.POST,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                Log.v("retrofit2",String.valueOf(response.body()));
+                Log.v("retrofit2",String.valueOf(response));
+                CheckBox checkBox = (CheckBox) findViewById(R.id.cb_save) ;
+                Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+                if (response.body().equals("1")) {
+                    SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    EditText userid = (EditText) findViewById(R.id.ID);
+                    String userinfo = userid.getText().toString();
+                    if (checkBox.isChecked()) {
+                        Log.v("TAG", "체크됨");
+                        editor.putString("userinfo",userinfo);
+                        editor.putString("login_check",String.valueOf(checkBox.isChecked()));
+                        editor.commit();
+                        Log.v("TAG", String.valueOf(checkBox.isChecked()));
 
-                        CheckBox checkBox = (CheckBox) findViewById(R.id.cb_save) ;
-                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", response);
-
-                        if (response.equals("1")) {
-                            SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            EditText userid = (EditText) findViewById(R.id.ID);
-                            String userinfo = userid.getText().toString();
-                            if (checkBox.isChecked()) {
-                                Log.v("TAG", "체크됨");
-                                editor.putString("userinfo",userinfo);
-                                editor.putString("login_check",String.valueOf(checkBox.isChecked()));
-                                editor.commit();
-                                Log.v("TAG", String.valueOf(checkBox.isChecked()));
-
-                                a.appendLog(date + "/R/login/"+ userinfo);
-                            }
-                            else{
-                                editor.putString("userinfo",userinfo);
-                                editor.putString("login_check",String.valueOf(checkBox.isChecked()));
-                                editor.commit();
-
-                                a.appendLog(date + "/R/login/"+ userinfo);
-                            }
-                            a.appendLog(date + "/M/boardActivity/0");
-                            Intent intent = new Intent(getApplicationContext(), boardActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-
-                        } else {
-                            Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
-                        }
-
-
+                        a.appendLog(date + "/R/login/"+ userinfo);
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+"/"+"E"+"/login/" +error.toString());
-                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", error.toString());
+                    else{
+                        editor.putString("userinfo",userinfo);
+                        editor.putString("login_check",String.valueOf(checkBox.isChecked()));
+                        editor.commit();
+
+                        a.appendLog(date + "/R/login/"+ userinfo);
                     }
+                    a.appendLog(date + "/M/boardActivity/0");
+                    Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
                 }
 
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                EditText userid = (EditText) findViewById(R.id.ID);
-                String value = userid.getText().toString();
-                EditText userpw = (EditText) findViewById(R.id.PW);
-                String value1 = userpw.getText().toString();
-                params.put("id", value);
-                params.put("pw", value1);
-                params.put("token",token);
-                return params;
             }
 
-//            public Map<String, String> getHeader() throws AuthFailureError{
-//                Map<String, String> params = new HashMap<String, String >();
-//                params.put("Content-Type", "application/x-www-form-urlencoded");
-//                return params;
-//            }
-        };
-        request.setShouldCache(false);
-
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        AppHelper.requestQueue.add(request);
-
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+//                txtResult.setText( "onFailure" );
+                a.appendLog(date+"/"+"E"+"/login/" +t.toString());
+                Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+            }
+        });
     }
+
+
 
 
 }

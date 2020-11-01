@@ -30,6 +30,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.StringRequest;
+import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
+import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +42,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class DrawerActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
@@ -53,6 +58,7 @@ public class DrawerActivity extends AppCompatActivity {
     String date = format1.format(date1);
     SharedPreferences sharedPreferences;
     String userinfo;
+    ApiInterface api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +118,8 @@ public class DrawerActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
                 intent.putExtra("mypost", mypost_board.getText());
                 intent.putExtra("categorie", mypost_board.getText());
+                intent.putExtra("primarykey", mypost_board.getText());
+
                 startActivity(intent);
             }
         });
@@ -215,6 +223,7 @@ public class DrawerActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), PostListActivity.class);
                 intent.putExtra("primarykey", key);
                 intent.putExtra("categorie", view1.getText());
+                intent.putExtra("mypost","null");
                 startActivity(intent);
             }
         });
@@ -223,88 +232,160 @@ public class DrawerActivity extends AppCompatActivity {
         container.addView(view1);
     }
 
-    public void get_categorie_list() {
-        String url = "http://ccit2020.cafe24.com:8082/get_categorie_list"; //"http://ccit2020.cafe24.com:8082/login";
-        StringRequest request = new StringRequest(
-                Request.Method.GET,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.v("카테고리", response);
-                        try {
-                            JSONArray jsonArray = new JSONArray(response);
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                textview1(jsonObject.getString("categorie"), list_parent, jsonObject.getString("categorie_num"));
-                                Log.v("드로어액티비티", response);
-                            }
+//    public void get_categorie_list() {
+//        String url = "http://ccit2020.cafe24.com:8082/get_categorie_list"; //"http://ccit2020.cafe24.com:8082/login";
+//        StringRequest request = new StringRequest(
+//                Request.Method.GET,
+//                url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.v("카테고리", response);
+//                        try {
+//                            JSONArray jsonArray = new JSONArray(response);
+//                            for (int i = 0; i < jsonArray.length(); i++) {
+//                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+//                                textview1(jsonObject.getString("categorie"), list_parent, jsonObject.getString("categorie_num"));
+//                                Log.v("드로어액티비티", response);
+//                            }
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        a.appendLog(date + "/" + "E" + "/DrawerActivity/" + error.toString());
+//                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+//                        Log.v("TAG", error.toString());
+//                    }
+//                }
+//
+//        );
+//        request.setShouldCache(false);
+//
+////        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        AppHelper.requestQueue.add(request);
+//        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+//    }
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+//    public void logout() {
+//
+//        String url = "http://ccit2020.cafe24.com:8082/logout"; //"http://ccit2020.cafe24.com:8082/login";
+//        StringRequest request = new StringRequest(
+//                Request.Method.POST,
+//                url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        sharedPreferences = getSharedPreferences("File", 0);
+//                        SharedPreferences.Editor editor = sharedPreferences.edit();
+//
+//                        drawerLayout.closeDrawers();
+//                        editor.remove("userinfo");
+//                        editor.commit();
+//                        a.appendLog(date + "/M/MainActivity/logout");
+//                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        startActivity(intent);
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Log.v("TAG", error.toString());
+//                    }
+//                }
+//
+//        ) {
+//            @Override
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<String, String>();
+//                sharedPreferences = getSharedPreferences("File", 0);
+//                userinfo = sharedPreferences.getString("userinfo", "");
+//                params.put("id", userinfo);
+//                return params;
+//            }
+//        };
+//        request.setShouldCache(false);
+//        AppHelper.requestQueue.add(request);
+//
+//    }
+        public void get_categorie_list() {
+            String url = "get_categorie_list"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        Call<String> call = api.requestGet(url);
 
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date + "/" + "E" + "/DrawerActivity/" + error.toString());
-                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", error.toString());
-                    }
-                }
-
-        );
-        request.setShouldCache(false);
-
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        AppHelper.requestQueue.add(request);
-        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
-    }
-
-    public void logout() {
-
-        String url = "http://ccit2020.cafe24.com:8082/logout"; //"http://ccit2020.cafe24.com:8082/login";
-        StringRequest request = new StringRequest(
-                Request.Method.POST,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        sharedPreferences = getSharedPreferences("File", 0);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-                        drawerLayout.closeDrawers();
-                        editor.remove("userinfo");
-                        editor.commit();
-                        a.appendLog(date + "/M/MainActivity/logout");
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.v("TAG", error.toString());
-                    }
-                }
-
-        ) {
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후
             @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                sharedPreferences = getSharedPreferences("File", 0);
-                userinfo = sharedPreferences.getString("userinfo", "");
-                params.put("id", userinfo);
-                return params;
-            }
-        };
-        request.setShouldCache(false);
-        AppHelper.requestQueue.add(request);
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                   //     서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                Log.v("카테고리", response.body().toString());
+                try {
+                    JSONArray jsonArray = new JSONArray(response.body());
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        textview1(jsonObject.getString("categorie"), list_parent, jsonObject.getString("categorie_num"));
+                        Log.v("드로어액티비티", response.body().toString());
+                    }
 
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+                a.appendLog(date + "/" + "E" + "/sign_up/" + t.toString());
+                Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    public void logout() {
+        String url = "logout"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create(ApiInterface.class);
+        HashMap<String, String> params = new HashMap<>();
+        sharedPreferences = getSharedPreferences("File", 0);
+        userinfo = sharedPreferences.getString("userinfo", "");
+        params.put("id", userinfo);
+        Call<String> call = api.requestPost(url, params);
+
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                Log.v("retrofit2", String.valueOf(response.body()));
+                sharedPreferences = getSharedPreferences("File", 0);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                drawerLayout.closeDrawers();
+                editor.remove("userinfo");
+                editor.commit();
+                a.appendLog(date + "/M/MainActivity/logout");
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2", String.valueOf("error : " + t.toString()));
+                a.appendLog(date + "/" + "E" + "/sign_up/" + t.toString());
+                Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.media.audiofx.DynamicsProcessing;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,26 +33,33 @@ import com.android.volley.Response;
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.SimpleMultiPartRequest;
 import com.android.volley.request.StringRequest;
+import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
+import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static android.provider.Contacts.SettingsColumns.KEY;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
 //import com.android.volley.toolbox.StringRequest;
 
 //import com.android.volley.VolleyError;
 //import com.android.volley.toolbox.StringRequest;
 
 public class postmodified extends AppCompatActivity {
+    ApiInterface api;
     String KEY;
     boolean err = false;
     boolean chk = true;
@@ -173,85 +179,85 @@ public class postmodified extends AppCompatActivity {
         }
         sendRequest();
     }
-    public void sendRequest() {
-        String url = "http://ccit2020.cafe24.com:8082/up_post";
-
-        StringRequest request = new StringRequest(
-                Request.Method.POST,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.v("ㅁㅊ", response);
-                        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                        String userinfo = sharedPreferences.getString("userinfo", "");
-
-
-                        TextView title = (TextView) findViewById(R.id.et_postname);
-                        TextView text = (TextView) findViewById(R.id.et_postcontent);
-                        HashMap<Integer, String> map = new HashMap<>();
-                        try {
-                            JSONArray jsonArray = new JSONArray(response);
-//                            Log.v("TAG",jsonArray.getString(""));
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                Commentlist commentlist1 = new Commentlist();
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                selection = jsonObject.getInt("categorie_num")-1;
-                                Log.v("TAG", "게시글 디테일" + jsonObject.getString("Title"));
-                                title.setText(jsonObject.getString("Title"));
-                                text.setText(jsonObject.getString("Text"));
-                                spinner.setSelection(selection);
-//                                post_writer.setText(jsonObject.getString("writer"));
-                                imgurl = "http://ccit2020.cafe24.com:8082/img/"+jsonObject.getString("image");
-
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Log.v("TAG",imgurl);
-
-                        ImageView imageView = (ImageView) findViewById(R.id.imgView);
-                        Picasso.get().load(imgurl).into(imageView);
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+"/E/postmodified/" +error.toString());
-                        Log.v("TAG", error.toString());
-                    }
-                }
-
-        ) {
-
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                String userinfo = sharedPreferences.getString("userinfo", "");
-                Intent intent = getIntent();
-                KEY = intent.getExtras().getString("primarykey");
-                Log.v("확인k",KEY);
-                params.put("post_num", KEY);
-                params.put("writer", userinfo);
-                return params;
-            }
-
-//            public Map<String, String> getHeader() throws AuthFailureError{
-//                Map<String, String> params = new HashMap<String, String >();
-//                params.put("Content-Type", "application/x-www-form-urlencoded");
+//    public void sendRequest() {
+//        String url = "http://ccit2020.cafe24.com:8082/up_post";
+//
+//        StringRequest request = new StringRequest(
+//                Request.Method.POST,
+//                url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.v("ㅁㅊ", response);
+//                        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+//                        String userinfo = sharedPreferences.getString("userinfo", "");
+//
+//
+//                        TextView title = (TextView) findViewById(R.id.et_postname);
+//                        TextView text = (TextView) findViewById(R.id.et_postcontent);
+//                        HashMap<Integer, String> map = new HashMap<>();
+//                        try {
+//                            JSONArray jsonArray = new JSONArray(response);
+////                            Log.v("TAG",jsonArray.getString(""));
+//                            for (int i = 0; i < jsonArray.length(); i++) {
+//                                Commentlist commentlist1 = new Commentlist();
+//                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+//                                selection = jsonObject.getInt("categorie_num")-1;
+//                                Log.v("TAG", "게시글 디테일" + jsonObject.getString("Title"));
+//                                title.setText(jsonObject.getString("Title"));
+//                                text.setText(jsonObject.getString("Text"));
+//                                spinner.setSelection(selection);
+////                                post_writer.setText(jsonObject.getString("writer"));
+//                                imgurl = "http://ccit2020.cafe24.com:8082/img/"+jsonObject.getString("image");
+//
+//                            }
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                        Log.v("TAG",imgurl);
+//
+//                        ImageView imageView = (ImageView) findViewById(R.id.imgView);
+//                        Picasso.get().load(imgurl).into(imageView);
+//
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        a.appendLog(date+"/E/postmodified/" +error.toString());
+//                        Log.v("TAG", error.toString());
+//                    }
+//                }
+//
+//        ) {
+//
+//
+//            @Override
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<String, String>();
+//                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+//                String userinfo = sharedPreferences.getString("userinfo", "");
+//                Intent intent = getIntent();
+//                KEY = intent.getExtras().getString("primarykey");
+//                Log.v("확인k",KEY);
+//                params.put("post_num", KEY);
+//                params.put("writer", userinfo);
 //                return params;
 //            }
-        };
-        request.setShouldCache(false);
-
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        AppHelper.requestQueue.add(request);
-//        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
-    }
+//
+////            public Map<String, String> getHeader() throws AuthFailureError{
+////                Map<String, String> params = new HashMap<String, String >();
+////                params.put("Content-Type", "application/x-www-form-urlencoded");
+////                return params;
+////            }
+//        };
+//        request.setShouldCache(false);
+//
+////        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        AppHelper.requestQueue.add(request);
+////        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+//    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -321,6 +327,170 @@ public class postmodified extends AppCompatActivity {
     }
 
 
+//    public void sendPost() {
+//        EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
+//        EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);  // 글 내용 입력창
+//        ImageView InputImageView = (ImageView) findViewById(R.id.imgView);  //이미지 등록
+//
+//        SharedPreferences sharedPreferences = getSharedPreferences("File",0);
+//        String userinfo = sharedPreferences.getString("userinfo","");
+//        String name = InputPostName.getText().toString();
+//        String content = InputPostContent.getText().toString();
+//        int categorie = spinner.getSelectedItemPosition();
+//
+//        String url = "http://ccit2020.cafe24.com:8082/update_post"; //"http://ccit2020.cafe24.com:8082/add_post"; //http://ccit2020.cafe24.com:8082/login
+//        SimpleMultiPartRequest smpr= new SimpleMultiPartRequest(Request.Method.POST, url, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//                Log.v("TAG111",response);
+//                new AlertDialog.Builder(postmodified.this).setMessage("응답:"+imgPath).create().show();
+//                a.appendLog(date + "/U/postmodified/"+KEY);
+//                Intent intent = new Intent(getApplicationContext(), boardActivity.class);
+//                startActivity(intent);
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                a.appendLog(date + "/E/postmodified/"+error.toString());
+//                Toast.makeText(postmodified.this, "ERROR", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        //요청 객체에 보낼 데이터를 추가
+//        smpr.addStringParam("post_num", KEY);
+//        smpr.addStringParam("Text", content);
+//        smpr.addStringParam("Title", name);
+//        smpr.addStringParam("categorie", String.valueOf(categorie+1));
+//        smpr.addStringParam("writer", userinfo);
+//        //이미지 파일 추가
+//
+//        smpr.addFile("image", imgPath);
+//
+//
+//        smpr.setShouldCache(false);
+//        AppHelper.requestQueue.add(smpr);
+//        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+//    }
+//    public void get_categorie() {
+//        String url = "http://ccit2020.cafe24.com:8082/get_categorie"; //"http://ccit2020.cafe24.com:8082/login";
+//        StringRequest request = new StringRequest(
+//                Request.Method.GET,
+//                url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.v("카테고리",response);
+//
+//                        try {
+//                            JSONArray jsonArray = new JSONArray(response);
+//                            for(int i =0; i<jsonArray.length(); i++){
+//                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+//                                spinnerArray.add(jsonObject.getString("categorie"));
+//                            }
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//                        spinner.setAdapter(adapter);
+//
+//
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        a.appendLog(date + "/E/postmodified/"+error.toString());
+//                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+//                        Log.v("TAG", error.toString());
+//                    }
+//                }
+//
+//        ) {
+////            @Override
+////            protected Map<String, String> getParams() {
+////                Map<String, String> params = new HashMap<String, String>();
+//////                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+//////                String userinfo = sharedPreferences.getString("userinfo", "");
+//////                params.put("userid", userinfo);
+////
+////
+////
+////                return params;
+////            }
+//
+////            public Map<String, String> getHeader() throws AuthFailureError{
+////                Map<String, String> params = new HashMap<String, String >();
+////                params.put("Content-Type", "application/x-www-form-urlencoded");
+////                return params;
+////            }
+//        };
+//        request.setShouldCache(false);
+//
+////        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        AppHelper.requestQueue.add(request);
+//        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+//    }
+    public void sendRequest() {
+        String url = "up_post"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
+        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+        String userinfo = sharedPreferences.getString("userinfo", "");
+        Intent intent = getIntent();
+        KEY = intent.getExtras().getString("primarykey");
+        Log.v("확인k",KEY);
+        params.put("post_num", KEY);
+        params.put("writer", userinfo);
+        Call<String> call = api.requestPost(url,params);
+
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                Log.v("retrofit2",String.valueOf(response.body()));
+                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+                String userinfo = sharedPreferences.getString("userinfo", "");
+
+
+                TextView title = (TextView) findViewById(R.id.et_postname);
+                TextView text = (TextView) findViewById(R.id.et_postcontent);
+                HashMap<Integer, String> map = new HashMap<>();
+                try {
+                    JSONArray jsonArray = new JSONArray(response.body());
+//                            Log.v("TAG",jsonArray.getString(""));
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        Commentlist commentlist1 = new Commentlist();
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        selection = jsonObject.getInt("categorie_num")-1;
+                        Log.v("TAG", "게시글 디테일" + jsonObject.getString("Title"));
+                        title.setText(jsonObject.getString("Title"));
+                        text.setText(jsonObject.getString("Text"));
+                        spinner.setSelection(selection);
+//                                post_writer.setText(jsonObject.getString("writer"));
+                        imgurl = "http://ccit2020.cafe24.com:8082/img/"+jsonObject.getString("image");
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.v("TAG",imgurl);
+
+                ImageView imageView = (ImageView) findViewById(R.id.imgView);
+                Picasso.get().load(imgurl).into(imageView);
+            }
+
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+                a.appendLog(date + "/" + "E" + "/sign_up/" + t.toString());
+                Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     public void sendPost() {
         EditText InputPostName = (EditText) findViewById(R.id.et_postname); // 글 제목 입력창
         EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);  // 글 내용 입력창
@@ -331,98 +501,87 @@ public class postmodified extends AppCompatActivity {
         String name = InputPostName.getText().toString();
         String content = InputPostContent.getText().toString();
         int categorie = spinner.getSelectedItemPosition();
+        String url = "update_post"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
 
-        String url = "http://ccit2020.cafe24.com:8082/update_post"; //"http://ccit2020.cafe24.com:8082/add_post"; //http://ccit2020.cafe24.com:8082/login
-        SimpleMultiPartRequest smpr= new SimpleMultiPartRequest(Request.Method.POST, url, new Response.Listener<String>() {
+        //요청 객체에 보낼 데이터를 추가
+        params.put("post_num", KEY);
+        params.put("Text", content);
+        params.put("Title", name);
+        params.put("categorie", String.valueOf(categorie+1));
+        params.put("writer", userinfo);
+        //이미지 파일 추가
+
+        //이미지 파일 추가
+        MultipartBody.Part filepart = null;
+        if (imgPath != null) {
+            File file = new File(imgPath);
+
+            RequestBody requestFile =
+                    RequestBody.create(
+                            MediaType.parse(imgPath),
+                            file
+                    );
+            filepart = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+        }
+
+
+        Call<String> call = api.requestFilePost(url, params, filepart);
+
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
             @Override
-            public void onResponse(String response) {
-                Log.v("TAG111",response);
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                Log.v("retrofit2",String.valueOf(response.body()));
                 new AlertDialog.Builder(postmodified.this).setMessage("응답:"+imgPath).create().show();
                 a.appendLog(date + "/U/postmodified/"+KEY);
                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                 startActivity(intent);
             }
-        }, new Response.ErrorListener() {
+
+            // 통신실패
             @Override
-            public void onErrorResponse(VolleyError error) {
-                a.appendLog(date + "/E/postmodified/"+error.toString());
-                Toast.makeText(postmodified.this, "ERROR", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
             }
         });
-        //요청 객체에 보낼 데이터를 추가
-        smpr.addStringParam("post_num", KEY);
-        smpr.addStringParam("Text", content);
-        smpr.addStringParam("Title", name);
-        smpr.addStringParam("categorie", String.valueOf(categorie+1));
-        smpr.addStringParam("writer", userinfo);
-        //이미지 파일 추가
-
-        smpr.addFile("image", imgPath);
-
-
-        smpr.setShouldCache(false);
-        AppHelper.requestQueue.add(smpr);
-        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
     }
     public void get_categorie() {
-        String url = "http://ccit2020.cafe24.com:8082/get_categorie"; //"http://ccit2020.cafe24.com:8082/login";
-        StringRequest request = new StringRequest(
-                Request.Method.GET,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.v("카테고리",response);
+        String url = "get_categorie"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        Call<String> call = api.requestGet(url);
 
-                        try {
-                            JSONArray jsonArray = new JSONArray(response);
-                            for(int i =0; i<jsonArray.length(); i++){
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                spinnerArray.add(jsonObject.getString("categorie"));
-                            }
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                   //     서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                Log.v("retrofit2",response.body().toString());
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        spinner.setAdapter(adapter);
-
-
+                try {
+                    JSONArray jsonArray = new JSONArray(response.body());
+                    for(int i =0; i<jsonArray.length(); i++){
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        spinnerArray.add(jsonObject.getString("categorie"));
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date + "/E/postmodified/"+error.toString());
-                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", error.toString());
-                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(adapter);
+            }
 
-        ) {
-//            @Override
-//            protected Map<String, String> getParams() {
-//                Map<String, String> params = new HashMap<String, String>();
-////                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-////                String userinfo = sharedPreferences.getString("userinfo", "");
-////                params.put("userid", userinfo);
-//
-//
-//
-//                return params;
-//            }
-
-//            public Map<String, String> getHeader() throws AuthFailureError{
-//                Map<String, String> params = new HashMap<String, String >();
-//                params.put("Content-Type", "application/x-www-form-urlencoded");
-//                return params;
-//            }
-        };
-        request.setShouldCache(false);
-
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        AppHelper.requestQueue.add(request);
-        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+            }
+        });
     }
 
 }
