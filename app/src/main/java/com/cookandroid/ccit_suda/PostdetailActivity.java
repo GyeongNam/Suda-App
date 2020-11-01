@@ -637,7 +637,9 @@ public class PostdetailActivity extends DrawerActivity {
 //                        postlist.invalidateViews();
                 try {
                     JSONObject data = new JSONObject(response.body());
-                    JSONArray jsonArray = new JSONArray(data.getString("data"));
+                    JSONArray jsonArray = new JSONArray(data.getString("comment"));
+                    JSONArray jsonArray1 = new JSONArray(data.getString("data"));
+                    JSONObject postdata = jsonArray1.getJSONObject(0);
                     Log.v("푸시값",data.getString("comment_push"));
 //                            if(data.getString("comment_push").equals("1")){
 //                                Notification.setImageResource(R.drawable.cbell);
@@ -649,13 +651,7 @@ public class PostdetailActivity extends DrawerActivity {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         Commentlist commentlist1 = new Commentlist();
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        if(!(userinfo).equals(jsonObject.getString("writer"))) {
-                            del_post.setVisibility(View.GONE);
-                        }
-                        if(!(userinfo).equals(jsonObject.getString("writer"))) {
-                            md_post.setVisibility(View.GONE);
-                        }
-                        Log.v("TAG", "게시글 디테일" + jsonObject.getString("Title"));
+
                         //가져온 댓글 정보 넣기
 //                                Log.v("TAG",jsonObject.getString("c_activation"));
                         commentlist1.setActivation(jsonObject.getString("c_activation"));
@@ -677,20 +673,25 @@ public class PostdetailActivity extends DrawerActivity {
                         commentlist.add(commentlist1);
                         //중복검사
 
-
-                        title.setText(jsonObject.getString("Title"));
-                        text.setText(jsonObject.getString("Text"));
-                        post_writer.setText(jsonObject.getString("writer"));
-                        post_like.setText(jsonObject.getString("like"));
-                        imgurl = "http://ccit2020.cafe24.com:8082/img/"+jsonObject.getString("image");
                     }
+                    if(!(userinfo).equals(postdata.getString("writer"))) {
+                        del_post.setVisibility(View.GONE);
+                    }
+                    if(!(userinfo).equals(postdata.getString("writer"))) {
+                        md_post.setVisibility(View.GONE);
+                    }
+                    title.setText(postdata.getString("Title"));
+                    text.setText(postdata.getString("Text"));
+                    post_writer.setText(postdata.getString("writer"));
+                    post_like.setText(postdata.getString("like"));
+                    imgurl = "http://ccit2020.cafe24.com:8082/img/"+postdata.getString("image");
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 commentAdapter.setItem(commentlist);
                 commentAdapter.notifyDataSetChanged();
-                Log.v("TAG",imgurl);
+//                Log.v("TAG",imgurl);
 
                 ImageView imageView = (ImageView) findViewById(R.id.imageview);
                 Picasso.get().load(imgurl).into(imageView);
