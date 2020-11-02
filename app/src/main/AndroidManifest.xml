@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        android:windowSoftInputMode="adjustResize">
+        >
         <activity android:name=".chattingList"></activity>
         <activity android:name=".chatting" />
         <activity android:name=".setting" />

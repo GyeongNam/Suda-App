@@ -1,39 +1,22 @@
 package com.cookandroid.ccit_suda;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-
-import com.android.volley.error.VolleyError;
-import com.android.volley.request.StringRequest;
+import com.baoyz.widget.PullRefreshLayout;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.CallbackWithRetry;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
-import com.google.gson.Gson;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,17 +24,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 
 public class boardActivity extends DrawerActivity {
     private long backBtnTime = 0;
-
     private LinearLayout container1, container2, container3, container4, container5;
-
+    PullRefreshLayout swipe_refresh_layout;
+    ScrollView mainboard_scroll;
 
     ArrayList<String> data1 = new ArrayList<>(3);
     ArrayList<String> data2 = new ArrayList<>(3);
@@ -69,8 +49,29 @@ public class boardActivity extends DrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
-
         sendRequest();
+        swipe_refresh_layout= findViewById(R.id.swipe_refresh_layout);
+        mainboard_scroll = findViewById(R.id.mainboard_scroll);
+        mainboard_scroll.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                int scrollY = mainboard_scroll.getScrollY(); //for verticalScrollView
+                Log.v("스크롤",String.valueOf(scrollY));
+                if (scrollY == 0)
+                    swipe_refresh_layout.setEnabled(true);
+                else
+                    swipe_refresh_layout.setEnabled(false);
+            }
+        });
+
+        swipe_refresh_layout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                sendRequest();
+            }
+        });
+
+
 
 //텍스트뷰 부모 리니어레이아웃
         container1 = (LinearLayout) findViewById(R.id.freeparent);
@@ -267,8 +268,21 @@ public class boardActivity extends DrawerActivity {
                 TextView username = (TextView) findViewById(R.id.username);
                 username.setText("환영합니다 " + userinfo + " 님");
 //                        processResponse(response);
-
-
+                container1.removeAllViews();
+                container2.removeAllViews();
+                container3.removeAllViews();
+                container4.removeAllViews();
+                container5.removeAllViews();
+                data1.clear();
+                data2.clear();
+                data3.clear();
+                data4.clear();
+                data5.clear();
+                key1.clear();
+                key2.clear();
+                key3.clear();
+                key4.clear();
+                key5.clear();
 //                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
 //                Log.v("TAG", response);
                 try {
@@ -346,6 +360,7 @@ public class boardActivity extends DrawerActivity {
                         textview(data5.get(i), container5, key5.get(i));
                     }
                 }
+                swipe_refresh_layout.setRefreshing(false);
 
 
                 Log.v("TAG", "json데이터 배열담기" + data1);
@@ -357,6 +372,7 @@ public class boardActivity extends DrawerActivity {
                 Log.v("retrofit2",String.valueOf("error : "+t.toString()));
                 a.appendLog(date+"/"+"E"+"/boardActivity/" +t.toString());
                 Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+                swipe_refresh_layout.setRefreshing(false);
             }
         });
     }

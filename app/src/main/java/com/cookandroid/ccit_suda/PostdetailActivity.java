@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,6 +15,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -25,14 +24,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.widget.NestedScrollView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.baoyz.widget.PullRefreshLayout;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.CallbackWithRetry;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
@@ -50,23 +52,22 @@ import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 
 
 public class PostdetailActivity extends DrawerActivity {
     log a = new log();
-    SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     Date date1 = new Date();
     String date = format1.format(date1);
     static String input;
-    private TextView post_like,post_like_button,post_writer,reply_close;
-    TextView reply_tag,text_limit_indicate;
+    private TextView post_like, post_like_button, post_writer, reply_close;
+    TextView reply_tag, text_limit_indicate;
     private LinearLayout container;
-    LinearLayout reply_top_layout,reply_border_layout;
+    LinearLayout reply_top_layout, reply_border_layout;
     private ListView postlist;
     private String imgurl;
     InputMethodManager imm;
-//    ImageView Notification;
+    //    ImageView Notification;
     Button del_post, md_post;
     String KEY;
     SharedPreferences sharedPreferences;
@@ -77,6 +78,8 @@ public class PostdetailActivity extends DrawerActivity {
     ArrayList<Commentlist> commentlist = new ArrayList<>();
     CommentAdapter commentAdapter;
     private ArrayAdapter<String> adapter;
+    PullRefreshLayout comment_refresh;
+    ScrollView post_scrollview;
 
 
     @Override
@@ -96,19 +99,38 @@ public class PostdetailActivity extends DrawerActivity {
         reply_border_layout = findViewById(R.id.reply_border_layout);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         text_limit_indicate = findViewById(R.id.text_limit_indicate);
+        post_scrollview = findViewById(R.id.post_scrollview);
 //        Notification = findViewById(R.id.alert);
         input = "";
         Intent intent = getIntent();
         KEY = intent.getExtras().getString("primarykey");
 
+//        comment_refresh = findViewById(R.id.comment_refresh);
+//        comment_refresh.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                sendRequest();
+//            }
+//        });
+//        post_scrollview.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+//            @Override
+//            public void onScrollChanged() {
+//                int scrollY = post_scrollview.getScrollY(); //for verticalScrollView
+//                Log.v("스크롤", String.valueOf(scrollY));
+//                if (scrollY == 0)
+//                    comment_refresh.setEnabled(true);
+//                else
+//                    comment_refresh.setEnabled(false);
+//
+//            }
+//        });
 
 
-
-        post_like_button = (TextView)findViewById(R.id.post_like_button);
-        post_like = (TextView)findViewById(R.id.post_like);
-        post_writer = (TextView)findViewById(R.id.post_writer);
-        del_post = (Button)findViewById(R.id.del_post);
-        md_post = (Button)findViewById(R.id.md_post);
+                post_like_button = (TextView) findViewById(R.id.post_like_button);
+        post_like = (TextView) findViewById(R.id.post_like);
+        post_writer = (TextView) findViewById(R.id.post_writer);
+        del_post = (Button) findViewById(R.id.del_post);
+        md_post = (Button) findViewById(R.id.md_post);
         ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
 
         sharedPreferences = getSharedPreferences("File", 0);
@@ -116,17 +138,16 @@ public class PostdetailActivity extends DrawerActivity {
         reply_top_layout.setVisibility(View.GONE);
         replytext.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        if(commentAdapter.Number != null){
-                            Log.v("TAG",commentAdapter.Number);
-                        }
-                        else{
+                        if (commentAdapter.Number != null) {
+                            Log.v("TAG", commentAdapter.Number);
+                        } else {
                             reply_top_layout.setVisibility(View.VISIBLE);
                             reply_border_layout.setBackgroundResource(0);
                             reply_tag.setText("댓글 입력");
                             replytext.setCursorVisible(true);
-                            text_limit_indicate.setText(input.length()+" / 200 글자 수");
+                            text_limit_indicate.setText(input.length() + " / 200 글자 수");
                         }
 
                         break;
@@ -154,7 +175,7 @@ public class PostdetailActivity extends DrawerActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 input = replytext.getText().toString();
-                text_limit_indicate.setText(input.length()+" / 200 글자 수");
+                text_limit_indicate.setText(input.length() + " / 200 글자 수");
             }
 
             @Override
@@ -169,32 +190,32 @@ public class PostdetailActivity extends DrawerActivity {
                 replytext.getText().clear();
                 imm.hideSoftInputFromWindow(replytext.getWindowToken(), 0);
                 reply_border_layout.setBackgroundResource(R.drawable.topborder);
-                 replytext.setCursorVisible(false);
+                replytext.setCursorVisible(false);
                 commentAdapter.Number = null;
-                a.appendLog(date+"/U/commentadd/0");
+                a.appendLog(date + "/U/commentadd/0");
 
 
             }
         });
 
 
-        md_post.setOnClickListener(new View.OnClickListener(){
+        md_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(PostdetailActivity.this);
                 builder.setTitle("게시글 수정");
                 builder.setMessage("게시글 수정페이지로 이동합니다")     // 제목 부분 (직접 작성)
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {      // 버튼1 (직접 작성)
-                            public void onClick(DialogInterface dialog, int which){
+                            public void onClick(DialogInterface dialog, int which) {
                                 Intent intent = new Intent(getApplicationContext(), postmodified.class);
-                                a.appendLog(date+"/"+"M"+"/postmodified/0");
-                                intent.putExtra("primarykey",KEY);
+                                a.appendLog(date + "/" + "M" + "/postmodified/0");
+                                intent.putExtra("primarykey", KEY);
                                 startActivity(intent);
                                 Toast.makeText(getApplicationContext(), "수정페이지 이동!", Toast.LENGTH_SHORT).show(); // 실행할 코드
                             }
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {     // 버튼2 (직접 작성)
-                            public void onClick(DialogInterface dialog, int which){
+                            public void onClick(DialogInterface dialog, int which) {
                                 Toast.makeText(getApplicationContext(), "취소 누름", Toast.LENGTH_SHORT).show(); // 실행할 코드
                             }
                         })
@@ -209,11 +230,11 @@ public class PostdetailActivity extends DrawerActivity {
                 builder.setTitle("게시글 삭제");
                 builder.setMessage("게시글을 정말 삭제하시겠습니까?")     // 제목 부분 (직접 작성)
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {      // 버튼1 (직접 작성)
-                            public void onClick(DialogInterface dialog, int which){
+                            public void onClick(DialogInterface dialog, int which) {
                                 delpost();
-                                a.appendLog(date+"/"+"D"+"/PostdetailActivity/"+KEY);
+                                a.appendLog(date + "/" + "D" + "/PostdetailActivity/" + KEY);
                                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
-                                a.appendLog(date+"/"+"M"+"/boardActivity/0");
+                                a.appendLog(date + "/" + "M" + "/boardActivity/0");
                                 startActivity(intent);
                                 Toast.makeText(getApplicationContext(), "삭제되었습니다!", Toast.LENGTH_SHORT).show(); // 실행할 코드
 
@@ -221,7 +242,7 @@ public class PostdetailActivity extends DrawerActivity {
                             }
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {     // 버튼2 (직접 작성)
-                            public void onClick(DialogInterface dialog, int which){
+                            public void onClick(DialogInterface dialog, int which) {
                                 Toast.makeText(getApplicationContext(), "취소 누름", Toast.LENGTH_SHORT).show(); // 실행할 코드
                             }
                         })
@@ -257,7 +278,6 @@ public class PostdetailActivity extends DrawerActivity {
 
 
     }
-
 
 
 //    public void sendRequest() {
@@ -378,8 +398,6 @@ public class PostdetailActivity extends DrawerActivity {
 //    }
 
 
-
-
 //    public void sendreply() {
 //        String url = "http://ccit2020.cafe24.com:8082/post_reply"; //"http://ccit2020.cafe24.com:8082/login";
 //        StringRequest request = new StringRequest(
@@ -440,7 +458,7 @@ public class PostdetailActivity extends DrawerActivity {
 ////        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
 //    }
 
-//    public void delpost() {
+    //    public void delpost() {
 //        String url = "http://ccit2020.cafe24.com:8082/delete_post";
 //        StringRequest request = new StringRequest(
 //                Request.Method.POST,
@@ -513,7 +531,8 @@ public class PostdetailActivity extends DrawerActivity {
         //부모 뷰에 추가
         container.addView(view1);
     }
-//    public void like_button(){
+
+    //    public void like_button(){
 //        String url = "http://ccit2020.cafe24.com:8082/post_like"; //"http://ccit2020.cafe24.com:8082/login";
 //        StringRequest request = new StringRequest(
 //                Request.Method.POST,
@@ -557,7 +576,7 @@ public class PostdetailActivity extends DrawerActivity {
 //
 //    }
     //댓글 알림설정
-    public void comment_push(){
+    public void comment_push() {
         String url = "http://ccit2020.cafe24.com:8082/comment_push"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
@@ -585,7 +604,7 @@ public class PostdetailActivity extends DrawerActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date+"/"+"E"+"/PostdetailActivity/" +error.toString());
+                        a.appendLog(date + "/" + "E" + "/PostdetailActivity/" + error.toString());
                         Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                         Log.v("TAG", error.toString());
                     }
@@ -611,15 +630,16 @@ public class PostdetailActivity extends DrawerActivity {
 
 
     }
+
     public void sendRequest() {
         String url = "post_detail"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
-        api = HttpClient.getRetrofit().create( ApiInterface.class );
-        HashMap<String,String> params = new HashMap<>();
+        api = HttpClient.getRetrofit().create(ApiInterface.class);
+        HashMap<String, String> params = new HashMap<>();
         Intent intent = getIntent();
         String KEY = intent.getExtras().getString("primarykey");
-        params.put("userinfo",userinfo);
+        params.put("userinfo", userinfo);
         params.put("post_num", KEY);
-        Call<String> call = api.requestPost(url,params);
+        Call<String> call = api.requestPost(url, params);
 
         // 비동기로 백그라운드 쓰레드로 동작
         call.enqueue(new CallbackWithRetry<String>() {
@@ -641,7 +661,7 @@ public class PostdetailActivity extends DrawerActivity {
                     JSONArray jsonArray = new JSONArray(data.getString("comment"));
                     JSONArray jsonArray1 = new JSONArray(data.getString("data"));
                     JSONObject postdata = jsonArray1.getJSONObject(0);
-                    Log.v("푸시값",data.getString("comment_push"));
+                    Log.v("푸시값", data.getString("comment_push"));
 //                            if(data.getString("comment_push").equals("1")){
 //                                Notification.setImageResource(R.drawable.cbell);
 //                            }
@@ -660,11 +680,11 @@ public class PostdetailActivity extends DrawerActivity {
                         if (!jsonObject.getString("c_activation").equals("null")) {
                             commentlist1.setWriter(jsonObject.getString("c_writer"));
                             commentlist1.setComment(jsonObject.getString("comment"));
-                            commentlist1.setDate(jsonObject.getString("created_at").substring(0,16));
+                            commentlist1.setDate(jsonObject.getString("created_at").substring(0, 16));
                             commentlist1.setNum(jsonObject.getString("c_num"));
                             //대댓글 담기영역
                             commentlist1.setParent(jsonObject.getString("parent"));
-                            Log.v("TAG","뭐냐고 참이 아닌데 왜들어가냐");
+                            Log.v("TAG", "뭐냐고 참이 아닌데 왜들어가냐");
 
                         }
 
@@ -675,17 +695,17 @@ public class PostdetailActivity extends DrawerActivity {
                         //중복검사
 
                     }
-                    if(!(userinfo).equals(postdata.getString("writer"))) {
+                    if (!(userinfo).equals(postdata.getString("writer"))) {
                         del_post.setVisibility(View.GONE);
                     }
-                    if(!(userinfo).equals(postdata.getString("writer"))) {
+                    if (!(userinfo).equals(postdata.getString("writer"))) {
                         md_post.setVisibility(View.GONE);
                     }
                     title.setText(postdata.getString("Title"));
                     text.setText(postdata.getString("Text"));
                     post_writer.setText(postdata.getString("writer"));
                     post_like.setText(postdata.getString("like"));
-                    imgurl = "http://ccit2020.cafe24.com:8082/img/"+postdata.getString("image");
+                    imgurl = "http://ccit2020.cafe24.com:8082/img/" + postdata.getString("image");
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -696,22 +716,26 @@ public class PostdetailActivity extends DrawerActivity {
 
                 ImageView imageView = (ImageView) findViewById(R.id.imageview);
                 Picasso.get().load(imgurl).into(imageView);
+//                comment_refresh.setRefreshing(false);
             }
 
             // 통신실패
             @Override
-            public void onFailure(Call<String> call, Throwable t) { super.onFailure(call,t);
-                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+            public void onFailure(Call<String> call, Throwable t) {
+                super.onFailure(call, t);
+                Log.v("retrofit2", String.valueOf("error : " + t.toString()));
+//                comment_refresh.setRefreshing(false);
             }
         });
     }
+
     public void sendreply() {
         String url = "post_reply"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
-        api = HttpClient.getRetrofit().create( ApiInterface.class );
-        HashMap<String,String> params = new HashMap<>();
+        api = HttpClient.getRetrofit().create(ApiInterface.class);
+        HashMap<String, String> params = new HashMap<>();
         Intent intent = getIntent();
         Log.v("TAG", "리플쓸때 number존재유무" + commentAdapter.Number);
-        if(commentAdapter.Number == null){
+        if (commentAdapter.Number == null) {
             commentAdapter.Number = "null";
         }
         String reply = replytext.getText().toString();
@@ -720,7 +744,7 @@ public class PostdetailActivity extends DrawerActivity {
         params.put("reply", reply);
         params.put("writer", userinfo);
         params.put("comment_num", commentAdapter.Number);
-        Call<String> call = api.requestPost(url,params);
+        Call<String> call = api.requestPost(url, params);
 
         // 비동기로 백그라운드 쓰레드로 동작
         call.enqueue(new CallbackWithRetry<String>() {
@@ -728,7 +752,7 @@ public class PostdetailActivity extends DrawerActivity {
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
-                Log.v("retrofit2",response.body().toString());
+                Log.v("retrofit2", response.body().toString());
                 TextView username = (TextView) findViewById(R.id.username);
 //                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
                 replytext.getText().clear();
@@ -737,28 +761,30 @@ public class PostdetailActivity extends DrawerActivity {
                 reply_border_layout.setBackgroundResource(R.drawable.topborder);
                 replytext.setCursorVisible(false);
                 commentAdapter.Number = null;
-                a.appendLog(date+"/"+"U"+"/PostdetailActivity/reply");
+                a.appendLog(date + "/" + "U" + "/PostdetailActivity/reply");
                 sendRequest();
             }
 
             // 통신실패
             @Override
-            public void onFailure(Call<String> call, Throwable t) { super.onFailure(call,t);
-                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+            public void onFailure(Call<String> call, Throwable t) {
+                super.onFailure(call, t);
+                Log.v("retrofit2", String.valueOf("error : " + t.toString()));
                 a.appendLog(date + "/" + "E" + "/sign_up/" + t.toString());
                 Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
     public void delpost() {
         String url = "delete_post"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
-        api = HttpClient.getRetrofit().create( ApiInterface.class );
-        HashMap<String,String> params = new HashMap<>();
+        api = HttpClient.getRetrofit().create(ApiInterface.class);
+        HashMap<String, String> params = new HashMap<>();
         Intent intent = getIntent();
         KEY = intent.getExtras().getString("primarykey");
         params.put("post_num", KEY);
         params.put("writer", userinfo);
-        Call<String> call = api.requestPost(url,params);
+        Call<String> call = api.requestPost(url, params);
 
         // 비동기로 백그라운드 쓰레드로 동작
         call.enqueue(new CallbackWithRetry<String>() {
@@ -766,27 +792,29 @@ public class PostdetailActivity extends DrawerActivity {
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
-                Log.v("retrofit2",String.valueOf(response.body()));
+                Log.v("retrofit2", String.valueOf(response.body()));
             }
 
             // 통신실패
             @Override
-            public void onFailure(Call<String> call, Throwable t) { super.onFailure(call,t);
-                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+            public void onFailure(Call<String> call, Throwable t) {
+                super.onFailure(call, t);
+                Log.v("retrofit2", String.valueOf("error : " + t.toString()));
                 a.appendLog(date + "/" + "E" + "/sign_up/" + t.toString());
                 Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
             }
         });
     }
-    public void like_button(){
+
+    public void like_button() {
         String url = "post_like"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
-        api = HttpClient.getRetrofit().create( ApiInterface.class );
-        HashMap<String,String> params = new HashMap<>();
+        api = HttpClient.getRetrofit().create(ApiInterface.class);
+        HashMap<String, String> params = new HashMap<>();
         Intent intent = getIntent();
         KEY = intent.getExtras().getString("primarykey");
         params.put("post_num", KEY);
         params.put("writer", userinfo);
-        Call<String> call = api.requestPost(url,params);
+        Call<String> call = api.requestPost(url, params);
 
         // 비동기로 백그라운드 쓰레드로 동작
         call.enqueue(new CallbackWithRetry<String>() {
@@ -794,18 +822,25 @@ public class PostdetailActivity extends DrawerActivity {
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
-                Log.v("retrofit2",String.valueOf(response.body()));
+                Log.v("retrofit2", String.valueOf(response.body()));
                 sendRequest();
             }
 
             // 통신실패
             @Override
-            public void onFailure(Call<String> call, Throwable t) { super.onFailure(call,t);
-                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+            public void onFailure(Call<String> call, Throwable t) {
+                super.onFailure(call, t);
+                Log.v("retrofit2", String.valueOf("error : " + t.toString()));
                 a.appendLog(date + "/" + "E" + "/sign_up/" + t.toString());
                 Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    @Override
+    protected void onPause(){
+        super.onPause();
+
+
+    }
 }

@@ -10,15 +10,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.error.VolleyError;
-import com.android.volley.request.StringRequest;
+import com.baoyz.widget.PullRefreshLayout;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.CallbackWithRetry;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
@@ -31,10 +30,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 
 public class PostListActivity extends DrawerActivity {
     TextView maintitle;
@@ -49,12 +46,16 @@ public class PostListActivity extends DrawerActivity {
     SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
     Date date1 = new Date();
     String date = format1.format(date1);
+    ScrollView post_list_scrollview;
+    PullRefreshLayout post_list_refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_list);
         freeparent = findViewById(R.id.freeparent);
+        post_list_scrollview = findViewById(R.id.post_list_scrollview);
+        post_list_refresh = findViewById(R.id.post_list_refresh);
         maintitle = (TextView)findViewById(R.id.maintitle);
         alarm = (ImageView)findViewById(R.id.alarm);
         Intent intent = getIntent();
@@ -63,14 +64,32 @@ public class PostListActivity extends DrawerActivity {
         primarykey = intent.getExtras().getString("primarykey");
         categorie = intent.getExtras().getString("categorie");
         maintitle.setText(categorie);
-
+        sendRequest();
         alarm = (ImageView)findViewById(R.id.alarm);
         alarm.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 alarmRequest();
             }
         });
-        sendRequest();
+        post_list_scrollview.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                int scrollY = post_list_scrollview.getScrollY(); //for verticalScrollView
+                Log.v("스크롤",String.valueOf(scrollY));
+                if (scrollY == 0)
+                    post_list_refresh.setEnabled(true);
+                else
+                    post_list_refresh.setEnabled(false);
+            }
+        });
+
+        post_list_refresh.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                sendRequest();
+            }
+        });
+
 
     }
 //    public void alarmRequest() {
@@ -255,11 +274,15 @@ public class PostListActivity extends DrawerActivity {
             // 통신성공 후 텍스트뷰에 결과값 출력
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                post_list_refresh.setRefreshing(false);
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
                 SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
                 String userinfo = sharedPreferences.getString("userinfo", "");
                 TextView username = (TextView) findViewById(R.id.username);
                 username.setText("환영합니다 " + userinfo + " 님");
+                freeparent.removeAllViews();
+                List.clear();
+                ListKey.clear();
                 Log.v("TAG","반환값"+response.body().toString());
                 try {
                     JSONObject pdata = new JSONObject(response.body());
@@ -287,6 +310,7 @@ public class PostListActivity extends DrawerActivity {
                 for(int i=0; i<List.size(); i++){
                     textview(List.get(i),freeparent,ListKey.get(i));
                 }
+
             }
 
             // 통신실패
@@ -295,6 +319,7 @@ public class PostListActivity extends DrawerActivity {
                 Log.v("retrofit2",String.valueOf("error : "+t.toString()));
                 a.appendLog(date + "/" + "E" + "/sign_up/" + t.toString());
                 Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+                post_list_refresh.setRefreshing(false);
             }
         });
     }
