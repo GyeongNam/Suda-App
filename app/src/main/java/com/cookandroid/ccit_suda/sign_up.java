@@ -23,6 +23,7 @@ import com.android.volley.error.VolleyError;
 import com.android.volley.request.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
+import com.cookandroid.ccit_suda.retrofit2.CallbackWithRetry;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 
 import org.apache.http.params.HttpConnectionParams;
@@ -434,7 +435,7 @@ public class sign_up extends AppCompatActivity {
         Call<String> call = api.requestPost(url, params);
 
         // 비동기로 백그라운드 쓰레드로 동작
-        call.enqueue(new Callback<String>() {
+        call.enqueue(new CallbackWithRetry<String>() {
             // 통신성공 후 텍스트뷰에 결과값 출력
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
@@ -473,7 +474,7 @@ public class sign_up extends AppCompatActivity {
 
             // 통신실패
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) { super.onFailure(call,t);
                 Log.v("retrofit2", String.valueOf("error : " + t.toString()));
                 a.appendLog(date + "/" + "E" + "/sign_up/" + t.toString());
                 Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
@@ -491,7 +492,7 @@ public class sign_up extends AppCompatActivity {
         Call<String> call = api.requestPost(url,params);
 
         // 비동기로 백그라운드 쓰레드로 동작
-        call.enqueue(new Callback<String>() {
+        call.enqueue(new CallbackWithRetry<String>() {
             // 통신성공 후 텍스트뷰에 결과값 출력
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
@@ -510,7 +511,7 @@ public class sign_up extends AppCompatActivity {
 
             // 통신실패
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) { super.onFailure(call,t);
                 Log.v("retrofit2",String.valueOf("error : "+t.toString()));
                 a.appendLog(date + "/" + "E" + "/sign_up/" + t.toString());
                 Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
@@ -533,7 +534,7 @@ public class sign_up extends AppCompatActivity {
         Call<String> call = api.requestPost(url, params);
 
         // 비동기로 백그라운드 쓰레드로 동작
-        call.enqueue(new Callback<String>() {
+        call.enqueue(new CallbackWithRetry<String>() {
             // 통신성공 후 텍스트뷰에 결과값 출력
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
@@ -551,7 +552,7 @@ public class sign_up extends AppCompatActivity {
 
             // 통신실패
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) { super.onFailure(call,t);
                 Log.v("retrofit2", String.valueOf("error : " + t.toString()));
                 a.appendLog(date + "/" + "E" + "/sign_up/" + t.toString());
                 Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();

@@ -21,6 +21,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -32,14 +33,16 @@ public interface ApiInterface {
     // base_url + "api/login" 으로 POST 통신
 //    @POST("api/login")
 //    Call<ResLoginData> requestPostLogin(@Body ReqLoginData reqLoginData );   // @Body : request 파라미터
+    @Headers({"Connection: close"})
     @FormUrlEncoded
     @POST("{url}")
     Call<String> requestPost(@Path("url") String url, @FieldMap HashMap<String,String> params);
 
     // base_url + "api/users" 으로 GET 통신
+    @Headers({"Connection: close"})
     @GET("{url}")
     Call<String> requestGet(@Path("url") String url);   // @Query : url에 쿼리 파라미터 추가, encoded - true
-
+    @Headers({"Connection: close"})
     @Multipart
     @POST("{url}")
     Call<String> requestFilePost(@Path("url") String url, @PartMap HashMap<String,String> params, @Part MultipartBody.Part file);

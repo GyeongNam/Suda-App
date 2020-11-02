@@ -44,7 +44,7 @@ public class ForcedTerminationService extends Service {
     }
     public void logout3() {
 
-        String url = "http://ccit2020.cafe24.com:8082/logout"; //"http://ccit2020.cafe24.com:8082/login";
+        String url = "http://ccit2020.cafe24.com:8082/api/logout"; //"http://ccit2020.cafe24.com:8082/login";
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
