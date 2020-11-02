@@ -49,7 +49,7 @@ import retrofit2.Callback;
 public class DrawerActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private View drawerView;
-    private TextView free_board, daily_board, nomean_board, secret_board, mypost_board, setting_view;
+    private TextView free_board, daily_board, nomean_board, secret_board, mypost_board, setting_view, chat_view;
     private LinearLayout list_parent;
     String categorie;
     log a = new log();
@@ -78,6 +78,7 @@ public class DrawerActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.toolbar_lay);
         drawerView = (View) findViewById(R.id.drawer);
         mypost_board = (TextView) findViewById(R.id.mypost_board);
+        chat_view = (TextView) findViewById(R.id.chat_view);
         setting_view = (TextView) findViewById(R.id.setting_view);
         ImageButton home_button = findViewById(R.id.home_button);
 
@@ -107,6 +108,15 @@ public class DrawerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 a.appendLog(date + "/M/setting/0");
                 Intent intent = new Intent(getApplicationContext(), setting.class);
+                startActivity(intent);
+            }
+        });
+
+        chat_view.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                a.appendLog(date + "/M/setting/0");
+                Intent intent = new Intent(getApplicationContext(), chattingList.class);
                 startActivity(intent);
             }
         });
