@@ -6,7 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -67,7 +71,7 @@ public class PostdetailActivity extends DrawerActivity {
     private ListView postlist;
     private String imgurl;
     InputMethodManager imm;
-    //    ImageView Notification;
+        ImageView Notification,refresh;
     Button del_post, md_post;
     String KEY;
     SharedPreferences sharedPreferences;
@@ -79,7 +83,7 @@ public class PostdetailActivity extends DrawerActivity {
     CommentAdapter commentAdapter;
     private ArrayAdapter<String> adapter;
     PullRefreshLayout comment_refresh;
-    ScrollView post_scrollview;
+
 
 
     @Override
@@ -92,38 +96,47 @@ public class PostdetailActivity extends DrawerActivity {
         postlist.addHeaderView(header);
 
         replytext = (EditText) findViewById(R.id.replytext);
-        container = (LinearLayout) findViewById(R.id.parentlayout);
+//        container = (LinearLayout) findViewById(R.id.parentlayout);
         reply_top_layout = (LinearLayout) findViewById(R.id.reply_top_layout);
         reply_close = findViewById(R.id.reply_close);
         reply_tag = findViewById(R.id.reply_tag);
         reply_border_layout = findViewById(R.id.reply_border_layout);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         text_limit_indicate = findViewById(R.id.text_limit_indicate);
-        post_scrollview = findViewById(R.id.post_scrollview);
-//        Notification = findViewById(R.id.alert);
+//        post_scrollview = findViewById(R.id.post_scrollview);
+        Notification = findViewById(R.id.alert);
+        refresh = findViewById(R.id.refresh);
         input = "";
         Intent intent = getIntent();
         KEY = intent.getExtras().getString("primarykey");
 
-//        comment_refresh = findViewById(R.id.comment_refresh);
-//        comment_refresh.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                sendRequest();
-//            }
-//        });
-//        post_scrollview.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-//            @Override
-//            public void onScrollChanged() {
-//                int scrollY = post_scrollview.getScrollY(); //for verticalScrollView
-//                Log.v("스크롤", String.valueOf(scrollY));
-//                if (scrollY == 0)
-//                    comment_refresh.setEnabled(true);
-//                else
-//                    comment_refresh.setEnabled(false);
-//
-//            }
-//        });
+        comment_refresh = findViewById(R.id.comment_refresh);
+        comment_refresh.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                sendRequest();
+            }
+        });
+        postlist.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+                int y = postlist.getFirstVisiblePosition ();
+                int topEdge=postlist.getChildAt(0).getTop();
+                Log.v("리스트뷰 스크롤",String.valueOf(y));
+                Log.v("리스트뷰 스크롤",String.valueOf(topEdge));
+                if (topEdge == 0) {
+                    comment_refresh.setEnabled(true);
+                }
+                else {
+                    comment_refresh.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+
+            }
+        });
 
 
                 post_like_button = (TextView) findViewById(R.id.post_like_button);
@@ -158,16 +171,22 @@ public class PostdetailActivity extends DrawerActivity {
                 return false;
             }
         });
-//        Notification.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                Toast.makeText(getApplicationContext(),"눌렀음",Toast.LENGTH_SHORT).show();
-//
-//                comment_push();
-//
-//
-//            }
-//        });
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendRequest();
+            }
+        });
+        Notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Toast.makeText(getApplicationContext(),"눌렀음",Toast.LENGTH_SHORT).show();
+
+                comment_push();
+
+
+            }
+        });
         replytext.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -587,20 +606,20 @@ public class PostdetailActivity extends DrawerActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.v("TAG", response);
-//                        Drawable temp = Notification.getDrawable();
-//                        Drawable temp1 = getResources().getDrawable(R.drawable.nbell);
-//                        Bitmap tmpBitmap = ((BitmapDrawable)temp).getBitmap();
-//                        Bitmap tmpBitmap1 = ((BitmapDrawable)temp1).getBitmap();
-//                        if(tmpBitmap.equals(tmpBitmap1)){
-//                            Notification.setImageResource(R.drawable.cbell);
-//                            Toast.makeText(getApplicationContext(),"댓글 푸시 알림이 설정되었습니다.",Toast.LENGTH_SHORT).show();
-//
-//                        }
-//                        else{
-//                            Notification.setImageResource(R.drawable.nbell);
-//                            Toast.makeText(getApplicationContext(),"댓글 푸시 알림이 취소되었습니다.",Toast.LENGTH_SHORT).show();
-//
-//                        }
+                        Drawable temp = Notification.getDrawable();
+                        Drawable temp1 = getResources().getDrawable(R.drawable.nbell);
+                        Bitmap tmpBitmap = ((BitmapDrawable)temp).getBitmap();
+                        Bitmap tmpBitmap1 = ((BitmapDrawable)temp1).getBitmap();
+                        if(tmpBitmap.equals(tmpBitmap1)){
+                            Notification.setImageResource(R.drawable.cbell);
+                            Toast.makeText(getApplicationContext(),"댓글 푸시 알림이 설정되었습니다.",Toast.LENGTH_SHORT).show();
+
+                        }
+                        else{
+                            Notification.setImageResource(R.drawable.nbell);
+                            Toast.makeText(getApplicationContext(),"댓글 푸시 알림이 취소되었습니다.",Toast.LENGTH_SHORT).show();
+
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -664,12 +683,12 @@ public class PostdetailActivity extends DrawerActivity {
                     JSONArray jsonArray1 = new JSONArray(data.getString("data"));
                     JSONObject postdata = jsonArray1.getJSONObject(0);
                     Log.v("푸시값", data.getString("comment_push"));
-//                            if(data.getString("comment_push").equals("1")){
-//                                Notification.setImageResource(R.drawable.cbell);
-//                            }
-//                            else{
-//                                Notification.setImageResource(R.drawable.nbell);
-//                            }
+                            if(data.getString("comment_push").equals("1")){
+                                Notification.setImageResource(R.drawable.cbell);
+                            }
+                            else{
+                                Notification.setImageResource(R.drawable.nbell);
+                            }
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         Commentlist commentlist1 = new Commentlist();
@@ -718,7 +737,7 @@ public class PostdetailActivity extends DrawerActivity {
 
                 ImageView imageView = (ImageView) findViewById(R.id.imageview);
                 Picasso.get().load(imgurl).into(imageView);
-//                comment_refresh.setRefreshing(false);
+                comment_refresh.setRefreshing(false);
             }
 
             // 통신실패
@@ -726,7 +745,7 @@ public class PostdetailActivity extends DrawerActivity {
             public void onFailure(Call<String> call, Throwable t) {
                 super.onFailure(call, t);
                 Log.v("retrofit2", String.valueOf("error : " + t.toString()));
-//                comment_refresh.setRefreshing(false);
+                comment_refresh.setRefreshing(false);
             }
         });
     }
@@ -844,5 +863,22 @@ public class PostdetailActivity extends DrawerActivity {
         super.onPause();
 
 
+    }
+    //edittext 아웃포커스
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        View focusView = getCurrentFocus();
+        if (focusView != null) {
+            Rect rect = new Rect();
+            focusView.getGlobalVisibleRect(rect);
+            int x = (int) ev.getX(), y = (int) ev.getY();
+            if (!rect.contains(x, y)) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                if (imm != null)
+                    imm.hideSoftInputFromWindow(focusView.getWindowToken(), 0);
+                focusView.clearFocus();
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

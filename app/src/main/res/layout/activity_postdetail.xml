@@ -24,33 +24,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="수정하기" />
-<!--            <com.baoyz.widget.PullRefreshLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:id="@+id/comment_refresh">-->
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fillViewport="true"
-                    android:layout_weight="1"
-                    android:id="@+id/post_scrollview"
-                    >
-                    <LinearLayout
-                        android:id="@+id/parentlayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
+            <com.baoyz.widget.PullRefreshLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/comment_refresh">
+<!--                <ScrollView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:fillViewport="true"-->
+
+<!--                    android:id="@+id/post_scrollview"-->
+<!--                    >-->
+<!--                    <LinearLayout-->
+<!--                        android:id="@+id/parentlayout"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:orientation="vertical">-->
 
                         <ListView
                             android:id="@+id/postlist"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" >
+                            android:layout_height="wrap_content" >
                         </ListView>
 
-                    </LinearLayout>
-                </ScrollView>
-<!--            </com.baoyz.widget.PullRefreshLayout>-->
+<!--                    </LinearLayout>-->
+<!--                </ScrollView>-->
+            </com.baoyz.widget.PullRefreshLayout>
 
 
 
