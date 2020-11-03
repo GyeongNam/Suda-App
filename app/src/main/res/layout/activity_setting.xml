@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginTop="40dp"
-        android:text="알림 설정"
+        android:text="키워드 알림"
         android:textOff="OFF"
         android:textOn="ON"
         android:thumbTint="#FFFFFF"
@@ -29,15 +29,43 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Switch
+        android:id="@+id/switch2"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:text="게시판 알림"
+        android:textOff="OFF"
+        android:textOn="ON"
+        android:thumbTint="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch1" />
+
+    <Switch
+        android:id="@+id/switch3"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:text="댓글 알림"
+        android:textOff="OFF"
+        android:textOn="ON"
+        android:thumbTint="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch2" />
+
     <EditText
         android:id="@+id/editText"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:ems="10"
         android:hint="키워드를 입력하세요(3글자 이상)"
         android:inputType="textPersonName"
-        app:layout_constraintTop_toBottomOf="@+id/switch1"
+        app:layout_constraintTop_toBottomOf="@+id/switch3"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="0dp" />
 

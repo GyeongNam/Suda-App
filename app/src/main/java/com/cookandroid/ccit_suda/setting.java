@@ -54,6 +54,8 @@ public class setting extends DrawerActivity {
         layoutsetting = (LinearLayout) findViewById(R.id.settinglayout);
         list_setting = (LinearLayout) findViewById(R.id.list_setting);
         CompoundButton switch1 = (CompoundButton) findViewById(R.id.switch1);
+        CompoundButton switch2 = (CompoundButton) findViewById(R.id.switch2);
+        CompoundButton switch3 = (CompoundButton) findViewById(R.id.switch3);
         final EditText ktext = (EditText) findViewById(R.id.editText);
         Button kbutton = (Button) findViewById(R.id.kbutton);
         layoutsetting.setBackgroundResource(R.drawable.topborder);
@@ -90,9 +92,31 @@ public class setting extends DrawerActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    alsetting(1);
+                    alsetting(1 , "k");
                 } else {
-                    alsetting(0);
+                    alsetting(0, "k");
+                }
+            }
+        });
+
+        switch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    alsetting(1, "b");
+                } else {
+                    alsetting(0, "b");
+                }
+            }
+        });
+
+        switch3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    alsetting(1, "c");
+                } else {
+                    alsetting(0, "c");
                 }
             }
         });
@@ -381,21 +405,40 @@ public class setting extends DrawerActivity {
             // 통신성공 후 텍스트뷰에 결과값 출력
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
 //                Log.v("retrofit2",String.valueOf(response.body()));
                 try {
-                    JSONArray jsonArray = new JSONArray(response.body());
+                    JSONObject data = new JSONObject(response.body());
+                    JSONArray jsonArray = new JSONArray(data.getString("data"));
+                    JSONArray jsonArray1 = new JSONArray(data.getString("push"));
+                    CompoundButton switch1 = (CompoundButton) findViewById(R.id.switch1);
+                    CompoundButton switch2 = (CompoundButton) findViewById(R.id.switch2);
+                    CompoundButton switch3 = (CompoundButton) findViewById(R.id.switch3);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         textview2(jsonObject.getString("text"), list_setting, jsonObject.getString("k_num"));
-                        CompoundButton switch1 = (CompoundButton) findViewById(R.id.switch1);
-                        if (jsonObject.getInt("push") == 1) {
+
+                        Log.v("getkeyword", response.body());
+                    }
+                    for (int i = 0; i < jsonArray1.length(); i++) {
+                        JSONObject jsonObject = jsonArray1.getJSONObject(i);
+                        if (jsonObject.getInt("pushkeyword") == 1) {
                             switch1.setChecked(true);
                         } else {
                             switch1.setChecked(false);
                         }
-                        Log.v("getkeyword", response.body());
+                        if (jsonObject.getInt("pushboard") == 1) {
+                            switch2.setChecked(true);
+                        } else {
+                            switch2.setChecked(false);
+                        }
+                        if (jsonObject.getInt("pushcomment") == 1) {
+                            switch3.setChecked(true);
+                        } else {
+                            switch3.setChecked(false);
+                        }
                     }
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -411,7 +454,7 @@ public class setting extends DrawerActivity {
         });
     }
 
-    public void alsetting(final int onoff) { // 알림 on off
+    public void alsetting(final int onoff , String a) { // 알림 on off
         String url = "alsetting"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
         api = HttpClient.getRetrofit().create(ApiInterface.class);
         HashMap<String, String> params = new HashMap<>();
@@ -419,6 +462,8 @@ public class setting extends DrawerActivity {
                 String userinfo = sharedPreferences.getString("userinfo", "");
                 params.put("userid", userinfo);
                 params.put("onoff", String.valueOf(onoff));
+                params.put("key", a);
+
         Call<String> call = api.requestPost(url, params);
 
         // 비동기로 백그라운드 쓰레드로 동작
@@ -426,7 +471,7 @@ public class setting extends DrawerActivity {
             // 통신성공 후 텍스트뷰에 결과값 출력
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+            //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
                 Log.d("TAGSETTING", response.body());
             }
 

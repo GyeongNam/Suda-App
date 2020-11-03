@@ -136,6 +136,8 @@ public class PostdetailActivity extends DrawerActivity {
         sharedPreferences = getSharedPreferences("File", 0);
         userinfo = sharedPreferences.getString("userinfo", "");
         reply_top_layout.setVisibility(View.GONE);
+
+        sendRequest();
         replytext.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
@@ -272,7 +274,7 @@ public class PostdetailActivity extends DrawerActivity {
         InputMethodManager controlManager = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
 
 
-        sendRequest();
+
         commentAdapter = new CommentAdapter(this, commentlist);
         postlist.setAdapter(commentAdapter);
 

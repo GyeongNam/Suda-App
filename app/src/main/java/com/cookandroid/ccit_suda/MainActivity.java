@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity{
             String userinfo = sharedPreferences.getString("userinfo","");
             String login_check = sharedPreferences.getString("login_check","");
             Log.v("체크",login_check);
-            pushlog();
+            //pushlog();
             if(!(userinfo.equals(""))&&(login_check.equals("true"))){
                 a.appendLog(date + "/R/login/"+ userinfo);
                 a.appendLog(date + "/M/boardActivity/0");
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity{
             // 통신성공 후 텍스트뷰에 결과값 출력
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
                 Log.v("retrofit2",String.valueOf(response.body()));
                 File file = new File("/mnt/sdcard/log.file");
                 file.delete();
