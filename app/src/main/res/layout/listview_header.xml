@@ -84,14 +84,14 @@
             android:layout_marginTop="20dp"
             android:layout_marginRight="20dp"
             app:srcCompat="@drawable/refresh"/>
-        <ImageView
-            android:id="@+id/alert"
-            android:layout_marginTop="20dp"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_gravity="left"
-            android:layout_marginLeft="20dp"
-            app:srcCompat="@drawable/nbell"/>
+<!--        <ImageView-->
+<!--            android:id="@+id/alert"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:layout_width="45dp"-->
+<!--            android:layout_height="45dp"-->
+<!--            android:layout_gravity="left"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            app:srcCompat="@drawable/nbell"/>-->
 
     </FrameLayout>
 
