@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".chattingList">
+    tools:context=".chattingList"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
@@ -19,9 +20,9 @@
         android:background="#11000000"/>
 
     <ListView
-        android:layout_width="match_parent"
+        android:layout_width="565dp"
         android:layout_height="match_parent"
-        android:layout_marginBottom="50dp"/>
+        android:layout_marginBottom="50dp" />
 
 
 </LinearLayout>
