@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -296,7 +297,15 @@ public class PostdetailActivity extends DrawerActivity {
 
         commentAdapter = new CommentAdapter(this, commentlist);
         postlist.setAdapter(commentAdapter);
-
+        postlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //edittext 아웃포커스
+                if (imm != null)
+                    imm.hideSoftInputFromWindow(replytext.getWindowToken(), 0);
+                replytext.clearFocus();
+            }
+        });
 
     }
 
@@ -864,21 +873,6 @@ public class PostdetailActivity extends DrawerActivity {
 
 
     }
-    //edittext 아웃포커스
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        View focusView = getCurrentFocus();
-        if (focusView != null) {
-            Rect rect = new Rect();
-            focusView.getGlobalVisibleRect(rect);
-            int x = (int) ev.getX(), y = (int) ev.getY();
-            if (!rect.contains(x, y)) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                if (imm != null)
-                    imm.hideSoftInputFromWindow(focusView.getWindowToken(), 0);
-                focusView.clearFocus();
-            }
-        }
-        return super.dispatchTouchEvent(ev);
-    }
+
+
 }
