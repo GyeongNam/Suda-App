@@ -1,67 +1,63 @@
 package com.cookandroid.ccit_suda;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+
+import net.mrbin99.laravelechoandroid.Echo;
+import net.mrbin99.laravelechoandroid.EchoCallback;
+import net.mrbin99.laravelechoandroid.EchoOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URISyntaxException;
-
 import io.socket.client.Socket;
-import io.socket.client.IO;
-import io.socket.emitter.Emitter;
-
-import static io.socket.client.IO.socket;
 
 
 public class chatting extends AppCompatActivity {
-
+    //    String Tag = "chatting";
+//    static Socket mSocket;
+    private String TAG = "MainActivity";
     private Socket mSocket;
-    {
-        try {
-            mSocket = IO.socket("http://10.0.2.2/chartEvent");
-        }
-        catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-    }
-    Button btn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
 
-        mSocket.on("chartEvent", onMessage);
-        mSocket.connect();
-
-        btn = (Button)findViewById(R.id.sendBtn);
-        btn.setOnClickListener(new View.OnClickListener() {
+        EchoOptions options = new EchoOptions();
+        options.host = "http://10.0.2.2:6001";
+        Echo echo = new Echo(options);
+        echo.connect(new EchoCallback() {
             @Override
-            public void onClick(View v) {
-                Emitter chat =   mSocket.emit("chartEvent", "hi");
-                Log.d("send", chat.toString());
+            public void call(Object... args) {
+                Log.d("Success", String.valueOf(args));
+            }
+        }, new EchoCallback() {
+            @Override
+            public void call(Object... args) {
+                Log.d("Error", String.valueOf(args));
             }
         });
 
-    }
-    private Emitter.Listener onMessage = new Emitter.Listener() {
-        @Override
-            public void call(Object... args) {
-                runOnUiThread(new Runnable() {
+        echo.channel("laravel_database_ccit")
+                .listen("chartEvent", new EchoCallback() {
                     @Override
-                    public void run() {
-                        String data = (String) args[0];
-                        Log.e("get", data);
+                    public void call(Object... args) {
+                        // Event thrown.
+                        //JSONObject receivedData = null;
+//                        try {
+//                            receivedData = new JSONObject(args[0].toString());
+                        Log.d("웃기지마랄라", String.valueOf(args[1]));
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+
                     }
                 });
-            }
-        };
+
+    }
 }
