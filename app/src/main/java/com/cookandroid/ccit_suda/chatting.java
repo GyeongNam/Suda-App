@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -21,44 +23,45 @@ import static io.socket.client.IO.socket;
 
 
 public class chatting extends AppCompatActivity {
-//    String Tag = "chatting";
-//    static Socket mSocket;
-private String TAG = "MainActivity";
-    private Socket mSocket;
 
+    private Socket mSocket;
+    {
+        try {
+            mSocket = IO.socket("http://10.0.2.2/chartEvent");
+        }
+        catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+    Button btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
 
-        try {
-            mSocket = IO.socket("http://10.0.2.2/chartEvent");
-            mSocket.connect();
-            mSocket.on(Socket.EVENT_CONNECT, onConnect);
-            mSocket.on("chartEvent", onMessageReceived);
-        } catch(URISyntaxException e) {
-            e.printStackTrace();
-        }
-    }
-    private Emitter.Listener onConnect = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            mSocket.emit("chartEvent", "ccit");
-        }
-    };
+        mSocket.on("chartEvent", onMessage);
+        mSocket.connect();
 
-    // 서버로부터 전달받은 'chat-message' Event 처리.
-    private Emitter.Listener onMessageReceived = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            // 전달받은 데이터는 아래와 같이 추출할 수 있습니다.
-            try {
-                JSONObject receivedData = (JSONObject) args[0];
-                Log.d(TAG, receivedData.getString("msg"));
-                Log.d(TAG, receivedData.getString("data"));
-            } catch (JSONException e) {
-                e.printStackTrace();
+        btn = (Button)findViewById(R.id.sendBtn);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Emitter chat =   mSocket.emit("chartEvent", "hi");
+                Log.d("send", chat.toString());
             }
-        }
-    };
+        });
+
+    }
+    private Emitter.Listener onMessage = new Emitter.Listener() {
+        @Override
+            public void call(Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String data = (String) args[0];
+                        Log.e("get", data);
+                    }
+                });
+            }
+        };
 }
