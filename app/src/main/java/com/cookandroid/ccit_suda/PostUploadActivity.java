@@ -2,6 +2,7 @@ package com.cookandroid.ccit_suda;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -88,7 +89,6 @@ public class PostUploadActivity extends AppCompatActivity {
         final EditText InputPostContent = (EditText) findViewById(R.id.et_postcontent);   // 글 내용 입력창
         spinner = findViewById(R.id.spinner_cate);
         spinnerArray = new ArrayList<>();
-
 
         //갖고올 카테고리 함수구현
         get_categorie();
