@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Scroller;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import org.w3c.dom.Text;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,11 +51,16 @@ import static android.provider.Settings.System.DATE_FORMAT;
 public class chatting extends AppCompatActivity {
     //    String Tag = "chatting";
 //    static Socket mSocket;
+
+    ListView listView;
+    ChatListAdapter chatListAdapter;
+    ArrayList<chat_list> list_itemArrayList;
+
     private String TAG = "MainActivity";
     private Socket mSocket;
     Button sendBtn;
     LinearLayout contentFrame;
-    private ScrollView scroll;
+//    private ScrollView scroll;
     EditText replytext;
     boolean err = false;
     private ApiInterface api;
@@ -67,9 +74,20 @@ public class chatting extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
         sendBtn = findViewById(R.id.sendBtn);
-        contentFrame = findViewById(R.id.inlayout);
-        scroll = findViewById(R.id.scroll);
+//        contentFrame = findViewById(R.id.inlayout);
+//        scroll = findViewById(R.id.scroll);
         replytext = findViewById(R.id.replytext);
+        listView = findViewById(R.id.inlayout);
+
+        list_itemArrayList = new ArrayList<chat_list>();
+
+
+
+        chatListAdapter = new ChatListAdapter(chatting.this,list_itemArrayList);
+
+
+
+        listView.setAdapter(chatListAdapter);
 
         EchoOptions options = new EchoOptions();
         options.host = "http://10.0.2.2:6001";
@@ -110,12 +128,21 @@ public class chatting extends AppCompatActivity {
                 check(msgcheck);
                 if (!(msgcheck.isEmpty())) {
 //                    Toast.makeText(getApplicationContext(), "성공", Toast.LENGTH_SHORT).show();
-                    contentFrame = findViewById(R.id.inlayout);
-                    LayoutInflater inflater = getLayoutInflater();
-                    LinearLayout linearLayout = (LinearLayout) inflater.inflate( R.layout.sendmsg, null );
-                    inflater.inflate(R.layout.sendmsg,contentFrame,true);
-                    sendRequest();
-                    scrollDown();
+//                    contentFrame = findViewById(R.id.inlayout);
+//                    LayoutInflater inflater = getLayoutInflater();
+//                    LinearLayout linearLayout = (LinearLayout) inflater.inflate( R.layout.sendmsg, null );
+//                    inflater.inflate(R.layout.sendmsg,contentFrame,true);
+
+                    SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+                    String userinfo = sharedPreferences.getString("userinfo", "");
+
+                    Date now = new Date();
+                    chat_list list = new chat_list(userinfo ,now,msgcheck);
+                    list_itemArrayList.add(list);
+                    chatListAdapter.notifyDataSetChanged();
+                    replytext.setText(null); // EditText에 입력받은 값을 전송 후 초기화 시켜주는 부분
+                    talkRequest();
+//                    scrollDown();
                 } else {
                     Toast.makeText(getApplicationContext(), "대화를 입력해주세요", Toast.LENGTH_SHORT).show();
                 }
@@ -142,18 +169,18 @@ public class chatting extends AppCompatActivity {
             err = false;
         }
     }
-    public void scrollDown(){
-        scroll.post(new Runnable() {
-            @Override
-            public void run() {
-                scroll.fullScroll(ScrollView.FOCUS_DOWN);
-                Log.v("쓰레드","?");
-            }
-        });
-    }
+//    public void scrollDown(){
+//        scroll.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                scroll.fullScroll(ScrollView.FOCUS_DOWN);
+//                Log.v("쓰레드","?");
+//            }
+//        });
+//    }
 
     //        post 방식
-    public void sendRequest() {
+    public void talkRequest() {
         String url = "chartEvent"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
         api = HttpClient.getRetrofit().create( ApiInterface.class );
         HashMap<String,String> params = new HashMap<>();

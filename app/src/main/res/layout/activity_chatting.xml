@@ -10,23 +10,17 @@
     <LinearLayout
         android:id="@+id/chatview"
         android:layout_width="match_parent"
-        android:layout_height="0px"
+        android:layout_height="wrap_content"
         android:layout_weight="10"
-        android:onClick="chatview"
         android:orientation="vertical">
 
-        <ScrollView
-            android:id="@+id/scroll"
+        <ListView
+            android:id="@+id/inlayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:divider="#00000000"
+            android:transcriptMode="alwaysScroll"/>
 
-            <LinearLayout
-                android:id="@+id/inlayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"></LinearLayout>
-        </ScrollView>
     </LinearLayout>
 
     <LinearLayout

@@ -13,24 +13,21 @@
         android:layout_height="wrap_content"
         android:text="Button" />
 
-    <TextView
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="채팅방 LIST"
-        android:gravity="center"
-        android:textSize="15dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:textColor="#dd000000"
-        android:textStyle="bold"
-        android:background="#11000000"/>
+        android:elevation="1dp"
+        android:background="@android:color/background_light"
+        app:tabMode="fixed"
+        app:tabGravity="fill"
+        tools:ignore="MissingConstraints" />
 
-    <ListView
-        android:layout_width="565dp"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="50dp" >
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_below="@id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
-    </ListView>
-
-
+    </FrameLayout>
 </LinearLayout>

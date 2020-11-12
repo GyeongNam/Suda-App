@@ -5,25 +5,26 @@
     android:orientation="horizontal">
 
     <LinearLayout
+        android:id="@+id/replylayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/replylayout"
-        android:orientation="vertical"
         android:layout_marginRight="10dp"
+        android:orientation="vertical"
 
         >
 
 
         <LinearLayout
+            android:id="@+id/deletelayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/deletelayout">
+            android:layout_height="wrap_content">
+
             <TextView
+                android:id="@+id/indicate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="┗"
-                android:id="@+id/indicate"
-                android:textSize="20dp"/>
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/id"
@@ -35,29 +36,31 @@
                 android:layout_marginBottom="5dp"
                 android:text="아이디"
                 android:textSize="15sp" />
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
+
             <LinearLayout
+                android:id="@+id/no_up"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/no_up">
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="0"-->
-<!--                    android:layout_marginRight="5dp"-->
-<!--                    android:layout_marginTop="5dp"-->
-<!--                    android:layout_marginBottom="5dp"/>-->
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="추천수"-->
-<!--                    android:id="@+id/up"-->
-<!--                    android:layout_marginRight="30dp"-->
-<!--                    android:layout_marginTop="5dp"-->
-<!--                    android:layout_marginBottom="5dp"/>-->
+                android:layout_height="wrap_content">
+                <!--                <TextView-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:text="0"-->
+                <!--                    android:layout_marginRight="5dp"-->
+                <!--                    android:layout_marginTop="5dp"-->
+                <!--                    android:layout_marginBottom="5dp"/>-->
+                <!--                <TextView-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:text="추천수"-->
+                <!--                    android:id="@+id/up"-->
+                <!--                    android:layout_marginRight="30dp"-->
+                <!--                    android:layout_marginTop="5dp"-->
+                <!--                    android:layout_marginBottom="5dp"/>-->
             </LinearLayout>
 
         </LinearLayout>
@@ -67,54 +70,58 @@
             android:layout_height="wrap_content"
 
             >
+
             <TextView
                 android:id="@+id/comment"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:text="댓글내용"
-                android:layout_marginTop="10dp"
                 android:layout_marginLeft="30dp"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="댓글내용" />
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
+
             <LinearLayout
+                android:id="@+id/ifrereply"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/ifrereply">
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_margin="10dp"-->
-<!--                    android:text="추천" />-->
+                android:layout_height="wrap_content">
+                <!--                <TextView-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_margin="10dp"-->
+                <!--                    android:text="추천" />-->
 
                 <TextView
+                    android:id="@+id/rereply"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:id="@+id/rereply"
                     android:text="답글" />
 
 
             </LinearLayout>
+
             <TextView
+                android:id="@+id/del_reply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:id="@+id/del_reply"
                 android:text="삭제" />
 
         </LinearLayout>
 
         <TextView
+            android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/date"
-            android:text="2020.09.08"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="30dp"
-            android:layout_marginBottom="5dp"/>
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="2020.09.08" />
 
     </LinearLayout>
 </LinearLayout>
