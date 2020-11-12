@@ -69,7 +69,7 @@ public class Fragment3 extends Fragment {
 
                 friend_list flist = new friend_list(stext);
                 findRequest();
-//                friend_listArrayList.add(flist);
+                friend_listArrayList.add(flist);
                 flistAdapter.notifyDataSetChanged();
 
             }
@@ -110,7 +110,7 @@ public class Fragment3 extends Fragment {
                         for (int i=0; i<jsonArray.length(); i++)
                         {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                            Log.v("4", String.valueOf(jsonObject));
+                            Log.v("4", String.valueOf(jsonObject));
                             friendList.add(jsonObject.getString("id"));
                             Log.v("4", String.valueOf(jsonObject.getString("id")));
                         }
