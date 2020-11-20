@@ -347,12 +347,10 @@ public class PostListActivity extends DrawerActivity {
                 if(tmpBitmap.equals(tmpBitmap1)){
                     alarm.setImageResource(R.drawable.cbell);
                     Toast.makeText(getApplicationContext(), categorie +"  알림이 설정되었습니다.",Toast.LENGTH_SHORT).show();
-
                 }
                 else{
                     alarm.setImageResource(R.drawable.nbell);
                     Toast.makeText(getApplicationContext(),categorie +"  알림이 취소되었습니다.",Toast.LENGTH_SHORT).show();
-
                 }
             }
 

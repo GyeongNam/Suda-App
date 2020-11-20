@@ -35,10 +35,11 @@ public class Fragment3 extends Fragment {
 
     private Context context;
     private ApiInterface api;
-    private Button Search_bt;
+    private Button Search_bt, follow_bt;
     private SharedPreferences sharedPreferences;
     private EditText search_text;
-    private String stext;
+    private String stext, talkusername;
+
 
     ViewGroup rootView;
     ListView listView;
@@ -56,24 +57,26 @@ public class Fragment3 extends Fragment {
         listView = rootView.findViewById(R.id.friend_list);
         flistAdapter = new FlistAdapter(context,friend_listArrayList);
         listView.setAdapter(flistAdapter);
-
         search_text = rootView.findViewById(R.id.search_text);
+
         Search_bt = rootView.findViewById(R.id.Search_bt);
         Search_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                stext = search_text.getText().toString();
                 friend_listArrayList.clear();
-               stext = search_text.getText().toString();
-                SharedPreferences sharedPreferences = context.getSharedPreferences("File", 0);
-                String userinfo = sharedPreferences.getString("userinfo", "");
-
-                friend_list flist = new friend_list(stext);
-                findRequest();
-                friend_listArrayList.add(flist);
                 flistAdapter.notifyDataSetChanged();
+                if (stext.isEmpty() || stext.matches("\\s+")){
+                    Toast.makeText(context ,"회원 id를 입력하세요.", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    findRequest();
+                }
 
             }
         });
+
+
         return rootView;
 
     }
@@ -102,18 +105,32 @@ public class Fragment3 extends Fragment {
                 Log.v("3",String.valueOf(response.body()));
                 if (String.valueOf(flistArray).equals("[]")) {
                     Toast.makeText(context ,"일치하는 회원이 없습니다.", Toast.LENGTH_SHORT).show();
+                    friend_listArrayList.clear();
                 }
                 else {
                     try {
                         JSONArray jsonArray = new JSONArray(flistArray);
                         Log.v("13", String.valueOf(jsonArray));
+
                         for (int i=0; i<jsonArray.length(); i++)
                         {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            Log.v("4", String.valueOf(jsonObject));
-                            friendList.add(jsonObject.getString("id"));
+                            Log.v("Json", jsonObject.toString());
+//                            SharedPreferences sharedPreferences = context.getSharedPreferences("File", 0);
+//                            String userinfo = sharedPreferences.getString("userinfo", "");
+                            friend_list flist = new friend_list();
+                            flist.setFollow((jsonObject.getString("follow")));
+                            flist.setName((jsonObject.getString("id")));
+                            Log.v("7777", (jsonObject.getString("id")));
+                            Log.v("7777", (jsonObject.getString("follow")));
+                            friend_listArrayList.add(flist);
+                            flistAdapter.notifyDataSetChanged();
+
+//                            friend_list flist = new friend_list(jsonObject.getString("id"));
+//                            friend_listArrayList.add(flist);
                             Log.v("4", String.valueOf(jsonObject.getString("id")));
                         }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
