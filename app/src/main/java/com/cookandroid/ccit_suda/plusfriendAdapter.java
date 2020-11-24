@@ -47,6 +47,9 @@ public class plusfriendAdapter extends BaseAdapter {
             friendViewHolder = new FriendViewHolder();
             friendViewHolder.plusname = (TextView) convertView.findViewById(R.id.plusname);
             friendViewHolder.chatBtn = (Button) convertView.findViewById(R.id.chatbtn);
+            //아래 내용 없어서 팅겼었음
+            convertView.setTag(friendViewHolder);
+            //
 
         } else {
             friendViewHolder = (FriendViewHolder) convertView.getTag();

@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity{
             dlg.show();
             Log.v("Internet","연결안됨");
         }else {
+            Log.v("Internet","연결됨");
                             //fcm
 
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
