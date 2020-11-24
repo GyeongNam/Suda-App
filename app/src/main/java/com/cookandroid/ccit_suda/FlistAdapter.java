@@ -95,6 +95,7 @@ public class FlistAdapter extends BaseAdapter {
 //                notifyDataSetChanged();
                 followRequest(friend_lists_itemArrayList.get(position).getName(), getItemId(position), v);
 
+
             }
         });
         return convertView;
@@ -123,6 +124,7 @@ public class FlistAdapter extends BaseAdapter {
                 Log.v("통신성공",String.valueOf(response.body()));
                 Log.v("통신성공214",String.valueOf(response.body()));
                  if(response.body().equals("1")){
+
                      bt.setBackground(ContextCompat.getDrawable(context, R.drawable.follow));
                      Toast.makeText(context ,"언팔로우하셨습니다", Toast.LENGTH_SHORT).show();
                  }

@@ -119,6 +119,7 @@ public class Fragment3 extends Fragment {
 //                            SharedPreferences sharedPreferences = context.getSharedPreferences("File", 0);
 //                            String userinfo = sharedPreferences.getString("userinfo", "");
                             friend_list flist = new friend_list();
+                            Log.v("Json", jsonObject.toString());
                             flist.setFollow((jsonObject.getString("follow")));
                             flist.setName((jsonObject.getString("id")));
                             Log.v("7777", (jsonObject.getString("id")));
