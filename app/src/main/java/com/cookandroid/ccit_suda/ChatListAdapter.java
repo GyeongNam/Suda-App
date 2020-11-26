@@ -1,6 +1,7 @@
 package com.cookandroid.ccit_suda;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,15 +45,23 @@ public class ChatListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("File",0);
             convertView = LayoutInflater.from(context).inflate(R.layout.sendmsg, null);
-
             viewholder = new ViewHolder();
-
-            viewholder.nickname_textView = (TextView)convertView.findViewById(R.id.user_id1);
-            viewholder.content_textView = (TextView)convertView.findViewById(R.id.chat1);
-            viewholder.date_textView = (TextView)convertView.findViewById(R.id.message_time1);
+            int type = getItemViewType(position);
+            switch(type) {
+                case 1:
+                viewholder.nickname_textView = (TextView)convertView.findViewById(R.id.user_id1);
+                viewholder.content_textView = (TextView)convertView.findViewById(R.id.chat1);
+                viewholder.date_textView = (TextView)convertView.findViewById(R.id.message_time1);
+                break;
+                case 2:
+                    viewholder.nickname_textView = (TextView)convertView.findViewById(R.id.user_id2);
+                    viewholder.content_textView = (TextView)convertView.findViewById(R.id.chat2);
+                    viewholder.date_textView = (TextView)convertView.findViewById(R.id.message_time2);
+                    break;
+            }
             convertView.setTag(viewholder);
-
         }
         else{
             viewholder = (ViewHolder)convertView.getTag();
@@ -61,7 +70,6 @@ public class ChatListAdapter extends BaseAdapter {
         viewholder.nickname_textView.setText(list_itemArrayList.get(position).getNickname());
         viewholder.content_textView.setText(list_itemArrayList.get(position).getContent());
         viewholder.date_textView.setText(list_itemArrayList.get(position).getWrite_date().toString());
-
 
         return convertView;
     }

@@ -120,15 +120,25 @@ public class chatting extends AppCompatActivity {
                 .listen("chartEvent", new EchoCallback() {
                     @Override
                     public void call(Object... args) {
-                        // Event thrown.
-                        //JSONObject receivedData = null;
-//                        try {
-//                            receivedData = new JSONObject(args[0].toString());
+                        Date now = new Date();
                         Log.d("웃기지마랄라", String.valueOf(args[1]));
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
 
+                        try {
+
+                            JSONObject jsonObject = new JSONObject(args[1].toString());
+                            chat_list list = new chat_list(jsonObject.getString("user") ,now,jsonObject.getString("message"));
+                            list_itemArrayList.add(list);
+//                            chatListAdapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                chatListAdapter.notifyDataSetChanged();
+                                Log.e("tfmepm","1");
+                            }
+                        });
                     }
                 });
 
@@ -139,12 +149,6 @@ public class chatting extends AppCompatActivity {
 
                 check(msgcheck);
                 if (!(msgcheck.isEmpty())) {
-//                    Toast.makeText(getApplicationContext(), "성공", Toast.LENGTH_SHORT).show();
-//                    contentFrame = findViewById(R.id.inlayout);
-//                    LayoutInflater inflater = getLayoutInflater();
-//                    LinearLayout linearLayout = (LinearLayout) inflater.inflate( R.layout.sendmsg, null );
-//                    inflater.inflate(R.layout.sendmsg,contentFrame,true);
-
                     SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
                     String userinfo = sharedPreferences.getString("userinfo", "");
 
@@ -215,6 +219,12 @@ public class chatting extends AppCompatActivity {
 
             return super.onOptionsItemSelected(item);
         }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
     }
 
