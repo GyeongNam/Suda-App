@@ -149,13 +149,10 @@ public class chatting extends AppCompatActivity {
 
                 check(msgcheck);
                 if (!(msgcheck.isEmpty())) {
-                    SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                    String userinfo = sharedPreferences.getString("userinfo", "");
+
 
                     Date now = new Date();
-                    chat_list list = new chat_list(userinfo ,now,msgcheck);
-                    list_itemArrayList.add(list);
-                    chatListAdapter.notifyDataSetChanged();
+//                    chatListAdapter.notifyDataSetChanged();
                     replytext.setText(null); // EditText에 입력받은 값을 전송 후 초기화 시켜주는 부분
                     talkRequest();
 //                    scrollDown();

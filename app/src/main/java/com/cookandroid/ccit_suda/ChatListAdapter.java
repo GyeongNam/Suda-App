@@ -19,6 +19,9 @@ public class ChatListAdapter extends BaseAdapter {
         TextView nickname_textView;
         TextView content_textView;
         TextView date_textView;
+        TextView nickname_textView1;
+        TextView content_textView1;
+        TextView date_textView1;
     }
 
     public ChatListAdapter(Context context, ArrayList<chat_list> list_itemArrayList) {
@@ -43,33 +46,50 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
+        SharedPreferences sharedPreferences = context.getSharedPreferences("File", 0);
         if (convertView == null) {
-            SharedPreferences sharedPreferences = context.getSharedPreferences("File",0);
+
             convertView = LayoutInflater.from(context).inflate(R.layout.sendmsg, null);
             viewholder = new ViewHolder();
             int type = getItemViewType(position);
-            switch(type) {
-                case 1:
-                viewholder.nickname_textView = (TextView)convertView.findViewById(R.id.user_id1);
-                viewholder.content_textView = (TextView)convertView.findViewById(R.id.chat1);
-                viewholder.date_textView = (TextView)convertView.findViewById(R.id.message_time1);
-                break;
-                case 2:
-                    viewholder.nickname_textView = (TextView)convertView.findViewById(R.id.user_id2);
-                    viewholder.content_textView = (TextView)convertView.findViewById(R.id.chat2);
-                    viewholder.date_textView = (TextView)convertView.findViewById(R.id.message_time2);
-                    break;
-            }
+
+
+            viewholder.nickname_textView = (TextView) convertView.findViewById(R.id.user_id1);
+            viewholder.content_textView = (TextView) convertView.findViewById(R.id.chat1);
+            viewholder.date_textView = (TextView) convertView.findViewById(R.id.message_time1);
+
+            viewholder.nickname_textView1 = (TextView) convertView.findViewById(R.id.user_id2);
+            viewholder.content_textView1 = (TextView) convertView.findViewById(R.id.chat2);
+            viewholder.date_textView1 = (TextView) convertView.findViewById(R.id.message_time2);
+
+
             convertView.setTag(viewholder);
+        } else {
+            viewholder = (ViewHolder) convertView.getTag();
+        }
+        if(sharedPreferences.getString("userinfo","").equals(list_itemArrayList.get(position).getNickname())){
+            viewholder.nickname_textView.setText(list_itemArrayList.get(position).getNickname());
+            viewholder.content_textView.setText(list_itemArrayList.get(position).getContent());
+            viewholder.date_textView.setText(list_itemArrayList.get(position).getWrite_date().toString());
+            viewholder.nickname_textView1.setVisibility(View.GONE);
+            viewholder.content_textView1.setVisibility(View.GONE);
+            viewholder.date_textView1.setVisibility(View.GONE);
+            viewholder.nickname_textView.setVisibility(View.VISIBLE);
+            viewholder.content_textView.setVisibility(View.VISIBLE);
+            viewholder.date_textView.setVisibility(View.VISIBLE);
         }
         else{
-            viewholder = (ViewHolder)convertView.getTag();
+            viewholder.nickname_textView1.setText(list_itemArrayList.get(position).getNickname());
+            viewholder.content_textView1.setText(list_itemArrayList.get(position).getContent());
+            viewholder.date_textView1.setText(list_itemArrayList.get(position).getWrite_date().toString());
+            viewholder.nickname_textView.setVisibility(View.GONE);
+            viewholder.content_textView.setVisibility(View.GONE);
+            viewholder.date_textView.setVisibility(View.GONE);
+            viewholder.nickname_textView1.setVisibility(View.VISIBLE);
+            viewholder.content_textView1.setVisibility(View.VISIBLE);
+            viewholder.date_textView1.setVisibility(View.VISIBLE);
         }
 
-        viewholder.nickname_textView.setText(list_itemArrayList.get(position).getNickname());
-        viewholder.content_textView.setText(list_itemArrayList.get(position).getContent());
-        viewholder.date_textView.setText(list_itemArrayList.get(position).getWrite_date().toString());
 
         return convertView;
     }
