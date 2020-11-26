@@ -102,7 +102,7 @@ public class chatting extends AppCompatActivity {
         listView.setAdapter(chatListAdapter);
 
         EchoOptions options = new EchoOptions();
-        options.host = "http://10.100.111.247:6001";
+        options.host = "http://ccit2020.cafe24.com:6001";
         Echo echo = new Echo(options);
         echo.connect(new EchoCallback() {
             @Override
