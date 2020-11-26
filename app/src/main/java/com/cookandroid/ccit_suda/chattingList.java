@@ -24,8 +24,6 @@ import retrofit2.Callback;
 
 public class chattingList extends AppCompatActivity {
 
-    Button inbt;
-
     TabLayout tabs;
 
     Fragment1 fragment1;
@@ -36,17 +34,7 @@ public class chattingList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting_list);
-        inbt = (Button) findViewById(R.id.inbt);
         LinearLayout chatlayout = (LinearLayout)findViewById(R.id.c_content);
-
-        inbt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), chatting.class);
-                startActivity(intent);
-            }
-        }
-        );
 
         fragment1 = new Fragment1();
         fragment2 = new Fragment2();
@@ -69,13 +57,6 @@ public class chattingList extends AppCompatActivity {
                 else if(position == 1){
                     selected = fragment2;
 
-//                    chatlayout.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            Intent intent = new Intent(getApplicationContext(), chatting.class);
-//                            startActivity(intent);
-//                        }
-//                    });
                 }
 
 

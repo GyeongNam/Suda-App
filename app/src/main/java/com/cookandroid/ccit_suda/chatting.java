@@ -4,10 +4,14 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -21,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
@@ -64,7 +69,7 @@ public class chatting extends AppCompatActivity {
     EditText replytext;
     boolean err = false;
     private ApiInterface api;
-
+    Toolbar myToolbar;
     String msgcheck;
 
 
@@ -73,9 +78,14 @@ public class chatting extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
+
+        // Toolbar 생성.
+        myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
+
         sendBtn = findViewById(R.id.sendBtn);
-//        contentFrame = findViewById(R.id.inlayout);
-//        scroll = findViewById(R.id.scroll);
         replytext = findViewById(R.id.replytext);
         listView = findViewById(R.id.inlayout);
 
@@ -150,6 +160,60 @@ public class chatting extends AppCompatActivity {
             }
 
         });
+    }
+
+    //추가된 소스, ToolBar에 menu.xml을 인플레이트함
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //return super.onCreateOptionsMenu(menu);
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+    //ToolBar에 추가된 항목 select 이벤트를 처리하는 함수
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.invite:
+                Toast.makeText(getApplicationContext(), "친구추가 버튼임", Toast.LENGTH_LONG).show();
+                return true;
+
+            case R.id.Exit_chatroom:
+                AlertDialog.Builder builder = new AlertDialog.Builder(chatting.this);
+                builder.setTitle("채팅 나가기");       //타이틀 지정.
+                builder.setMessage("정말 나가시겠습니까?  채팅기록과 채팅방이 사라집니다...");       //메시지
+//                builder.setMessage("채팅기록과 채팅방이 사라집니다...");       //메시지
+                builder.setPositiveButton("네", new DialogInterface.OnClickListener() {        //확인 버튼을 생성 및 클릭시 동작 구현.
+                    @Override
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        //"YES" Button Click
+                        Toast.makeText(getApplicationContext(), "채팅방을 나갑니다.", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(getApplicationContext(), chattingList.class);
+                        startActivity(intent);
+
+                    }
+                });
+
+                builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {       //취소 버튼을 생성하고 클릭시 동작을 구현합니다.
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //"NO" Button Click
+                        Toast.makeText(getApplicationContext(), "NO Button Click", Toast.LENGTH_LONG).show();
+                    }
+                });
+                AlertDialog alert = builder.create();                                                       //빌더를 이용하여 AlertDialog객체를 생성합니다.
+                alert.show();
+                return true;
+
+            default:
+                Intent intent = new Intent(getApplicationContext(), chattingList.class);
+                startActivity(intent);
+
+            return super.onOptionsItemSelected(item);
+        }
+
     }
 
     public void check(String msgcheck) {
