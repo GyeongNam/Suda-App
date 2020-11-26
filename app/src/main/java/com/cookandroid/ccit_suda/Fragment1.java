@@ -81,16 +81,16 @@ public class Fragment1 extends Fragment {
                         {
                             Log.v("for문 입장?", "안녕 ");
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            Log.v("Json", jsonObject.toString());
+
                             plusfriend_list plusflist = new plusfriend_list();
                             plusflist.setFollow((jsonObject.getString("follow")));
-                            Log.v("뭐가들었을까?", (jsonObject.getString("follow")));
                             plusflist.setName((jsonObject.getString("follow")));
-//                            Log.v("7777", (jsonObject.getString("name")));
-//                            Log.v("7777", (jsonObject.getString("follow")));
+                            plusflist.setRoom(jsonObject.getString("room_idx"));
+                            Log.e("e",jsonObject.getString("follow"));
+                            Log.e("e",jsonObject.getString("room_idx"));
+
                             plusfriend_lists_listArrayList.add(plusflist);
                             plusfriendAdapter.notifyDataSetChanged();
-//                            Log.v("4", String.valueOf(jsonObject.getString("id")));
                         }
 
                     } catch (JSONException e) {

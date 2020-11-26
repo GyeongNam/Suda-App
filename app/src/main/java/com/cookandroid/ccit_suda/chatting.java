@@ -71,6 +71,7 @@ public class chatting extends AppCompatActivity {
     private ApiInterface api;
     Toolbar myToolbar;
     String msgcheck;
+    String room;
 
 
     @SuppressLint("WrongViewCast")
@@ -88,7 +89,8 @@ public class chatting extends AppCompatActivity {
         sendBtn = findViewById(R.id.sendBtn);
         replytext = findViewById(R.id.replytext);
         listView = findViewById(R.id.inlayout);
-
+        room = getIntent().getExtras().getString("room");
+        Log.e("ddd",room);
         list_itemArrayList = new ArrayList<chat_list>();
 
 
@@ -100,7 +102,7 @@ public class chatting extends AppCompatActivity {
         listView.setAdapter(chatListAdapter);
 
         EchoOptions options = new EchoOptions();
-        options.host = "http://10.0.2.2:6001";
+        options.host = "http://10.100.111.247:6001";
         Echo echo = new Echo(options);
         echo.connect(new EchoCallback() {
             @Override
@@ -114,7 +116,7 @@ public class chatting extends AppCompatActivity {
             }
         });
 
-        echo.channel("laravel_database_ccit")
+        echo.channel("laravel_database_"+room)
                 .listen("chartEvent", new EchoCallback() {
                     @Override
                     public void call(Object... args) {
@@ -252,8 +254,8 @@ public class chatting extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
         String userinfo = sharedPreferences.getString("userinfo", "");
         params.put("sendmsg", msgcheck);
-        params.put("user1", userinfo);
-        params.put("user2", other);
+        params.put("user", userinfo);
+        params.put("room", room);
 
         Call<String> call = api.requestPost(url,params);
 

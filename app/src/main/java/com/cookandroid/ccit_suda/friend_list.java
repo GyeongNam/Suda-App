@@ -7,6 +7,15 @@ import android.widget.ImageView;
 public class friend_list {
     private String name;
     private String follow;
+    private String room_idx;
+
+    public String getRoom() {
+        return room_idx;
+    }
+
+    public void setRoom(String room_idx) {
+        this.room_idx = room_idx;
+    }
 
     public String getFollow() { return follow; }
 

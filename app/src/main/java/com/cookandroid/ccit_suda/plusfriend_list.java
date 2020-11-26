@@ -3,6 +3,15 @@ package com.cookandroid.ccit_suda;
 import android.widget.Button;
 
 public class plusfriend_list {
+    public String getRoom() {
+        return room_idx;
+    }
+
+    public void setRoom(String room_idx) {
+        this.room_idx = room_idx;
+    }
+
+    private String room_idx;
     private String name ="";
     private String follow;
 //    private String Name ="";
