@@ -272,14 +272,7 @@ public class chatting extends AppCompatActivity {
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
-                TextView userid = (TextView) findViewById(R.id.user_id1);
-                TextView sendmsg = (TextView) findViewById(R.id.chat1);
-                TextView chattime = (TextView) findViewById(R.id.message_time1);
-                userid.setText(userinfo);
-                sendmsg.setText(msgcheck);
 
-                Date today = Calendar.getInstance().getTime();
-                chattime.setText(today.toString());
                 Log.v("retrofit2",String.valueOf(response.body()));
             }
             // 통신실패
