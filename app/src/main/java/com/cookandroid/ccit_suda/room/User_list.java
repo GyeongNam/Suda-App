@@ -10,9 +10,11 @@ import java.io.Serializable;
 public class User_list implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private Integer F_idx;
+    @ColumnInfo( name =  "user_name")
+    private String user_name;
 
-    public User_list(Integer f_idx, String user_name) {
-        F_idx = f_idx;
+    public User_list(Integer F_idx, String user_name) {
+        F_idx = F_idx;
         this.user_name = user_name;
     }
 
@@ -20,8 +22,8 @@ public class User_list implements Serializable {
         return F_idx;
     }
 
-    public void setF_idx(Integer f_idx) {
-        F_idx = f_idx;
+    public void setF_idx(Integer F_idx) {
+        F_idx = F_idx;
     }
 
     public String getUser_name() {
@@ -32,8 +34,7 @@ public class User_list implements Serializable {
         this.user_name = user_name;
     }
 
-    @ColumnInfo( name =  "user_name")
-    private String user_name;
+
 
 
 }

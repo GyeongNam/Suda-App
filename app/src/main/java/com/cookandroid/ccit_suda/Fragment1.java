@@ -47,6 +47,7 @@ public class Fragment1 extends Fragment {
 
         context = container.getContext();
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment1, container, false);
+        talkDatabse = TalkDatabase.getDatabase(context);
         listView = rootView.findViewById(R.id.ff_list);
         plusfriend_list plusflist = new plusfriend_list();
         Log.v("프래그먼트 실행", "ㅇㅇㅇ");
@@ -85,13 +86,17 @@ public class Fragment1 extends Fragment {
                         {
                             Log.v("for문 입장?", "안녕 ");
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-
+                            String a = jsonObject.getString("follow");
                             plusfriend_list plusflist = new plusfriend_list();
                             plusflist.setFollow((jsonObject.getString("follow")));
                             plusflist.setName((jsonObject.getString("follow")));
                             plusflist.setRoom(jsonObject.getString("room_idx"));
                             Log.e("e",jsonObject.getString("follow"));
                             Log.e("e",jsonObject.getString("room_idx"));
+                            if(!talkDatabse.talkDao().isRowIsExist_user_list(a)){
+                                user_list = new User_list(null,jsonObject.getString("follow"));
+                                talkDatabse.talkDao().insert_user_list(user_list);
+                            }
 
                             plusfriend_lists_listArrayList.add(plusflist);
                             plusfriendAdapter.notifyDataSetChanged();

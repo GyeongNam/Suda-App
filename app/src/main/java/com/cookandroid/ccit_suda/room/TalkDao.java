@@ -8,7 +8,7 @@ import java.util.List;
 
 @Dao
 public interface TalkDao {
-    @Query("SELECT * FROM Talk")
+    @Query("SELECT * FROM talk_Contents")
     List<Talk> getAll();
 
     @Insert
@@ -22,6 +22,11 @@ public interface TalkDao {
 
     @Query("DELETE FROM user_list WHERE user_name = :id")
     void delete_user_list(String id);
+    @Insert
+    void insert_user_list(User_list user_list);
+
+    @Query("SELECT EXISTS(SELECT * FROM user_list WHERE user_name = :id)")
+    boolean isRowIsExist_user_list( String id);
 
 
 
