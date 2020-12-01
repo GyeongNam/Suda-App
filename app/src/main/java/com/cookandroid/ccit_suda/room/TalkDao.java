@@ -1,5 +1,6 @@
 package com.cookandroid.ccit_suda.room;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -15,7 +16,7 @@ public interface TalkDao {
     void insert(Talk talk);
 
     @Query("SELECT * FROM user_list")
-    List<User_list> getAll_user_list();
+    LiveData<List<User_list>> getAll_user_list();
 
     @Query("DELETE FROM user_list")
     void deleteAll_user_list();

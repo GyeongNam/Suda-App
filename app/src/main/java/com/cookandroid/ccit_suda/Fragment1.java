@@ -2,18 +2,26 @@ package com.cookandroid.ccit_suda;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.cookandroid.ccit_suda.ViewModel_user_list.User_listViewModel;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
@@ -25,6 +33,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,12 +42,13 @@ public class Fragment1 extends Fragment {
 
     private Context context;
     ApiInterface api;
-    ListView listView;
-    plusfriendAdapter plusfriendAdapter;
+    RecyclerView listView;
+    PlusfriendAdapter plusfriendAdapter;
     private SharedPreferences sharedPreferences;
     ArrayList<plusfriend_list> plusfriend_lists_listArrayList;
     User_list user_list;
     TalkDatabase talkDatabse;
+    User_listViewModel viewModel;
 
 
     @Nullable
@@ -47,13 +57,21 @@ public class Fragment1 extends Fragment {
 
         context = container.getContext();
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment1, container, false);
-//        talkDatabse = TalkDatabase.getDatabase(context);
         listView = rootView.findViewById(R.id.ff_list);
+        plusfriendAdapter = new PlusfriendAdapter(context);
         plusfriend_list plusflist = new plusfriend_list();
+        talkDatabse = TalkDatabase.getDatabase(context);
+        Log.v("dd",talkDatabse.talkDao().getAll_user_list().toString());
+        viewModel = new ViewModelProvider(this).get(User_listViewModel.class);
+        viewModel.get_User_listViewModel().observe(getViewLifecycleOwner(), user ->{
+            Log.v("옵저버","띠용");
+            plusfriendAdapter.setData(user);
+        });
+        listView.setHasFixedSize(true);
         Log.v("프래그먼트 실행", "ㅇㅇㅇ");
         frienddata();
-        plusfriend_lists_listArrayList = new ArrayList<plusfriend_list>();
-        plusfriendAdapter = new plusfriendAdapter(context, plusfriend_lists_listArrayList);
+        listView.setLayoutManager(new LinearLayoutManager(context));
+
         listView.setAdapter(plusfriendAdapter);
         return rootView;
     }
@@ -77,14 +95,14 @@ public class Fragment1 extends Fragment {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
                 Log.v("통신성공",String.valueOf(response.body()));
                 String plusfriendArray = response.body();
-                Log.v("3",String.valueOf(response.body()));
+//                Log.v("3",String.valueOf(response.body()));
                     try {
                         JSONArray jsonArray = new JSONArray(plusfriendArray);
-                        Log.v("13", String.valueOf(jsonArray));
+//                        Log.v("13", String.valueOf(jsonArray));
 
                         for (int i=0; i<jsonArray.length(); i++)
                         {
-                            Log.v("for문 입장?", "안녕 ");
+//                            Log.v("for문 입장?", "안녕 ");
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             String a = jsonObject.getString("follow");
                             plusfriend_list plusflist = new plusfriend_list();
@@ -93,13 +111,16 @@ public class Fragment1 extends Fragment {
                             plusflist.setRoom(jsonObject.getString("room_idx"));
                             Log.e("e",jsonObject.getString("follow"));
                             Log.e("e",jsonObject.getString("room_idx"));
-//                            if(!talkDatabse.talkDao().isRowIsExist_user_list(a)){
-//                                user_list = new User_list(null,jsonObject.getString("follow"));
-//                                talkDatabse.talkDao().insert_user_list(user_list);
-//                            }
 
-                            plusfriend_lists_listArrayList.add(plusflist);
-                            plusfriendAdapter.notifyDataSetChanged();
+                            AsyncTask.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if(!talkDatabse.talkDao().isRowIsExist_user_list(a)){
+                                        user_list = new User_list(null,a);
+                                        talkDatabse.talkDao().insert_user_list(user_list);
+                                    }
+                                }
+                            });
                         }
 
                     } catch (JSONException e) {
