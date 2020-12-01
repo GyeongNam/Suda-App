@@ -20,7 +20,7 @@ import java.util.List;
 class PlusfriendAdapter extends RecyclerView.Adapter<PlusfriendAdapter.ViewHolder> {
     Context context;
 //    ArrayList<plusfriend_list> list_plusfriendList;
-    List<User_list> list = new ArrayList<>();
+    List<User_list> list;
 
 
     public PlusfriendAdapter(Context context) {
@@ -33,7 +33,7 @@ class PlusfriendAdapter extends RecyclerView.Adapter<PlusfriendAdapter.ViewHolde
     @NonNull
     @Override
     public PlusfriendAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.friendcard, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.friendcard, null);
         PlusfriendAdapter.ViewHolder holder = new PlusfriendAdapter.ViewHolder(view);
         return holder;
     }
@@ -42,16 +42,16 @@ class PlusfriendAdapter extends RecyclerView.Adapter<PlusfriendAdapter.ViewHolde
     public void onBindViewHolder(PlusfriendAdapter.ViewHolder holder, int position) {
         Log.v("데베",String.valueOf(list.size()));
         Log.v("데베",list.get(position).getUser_name());
-        holder.plusname.setText(list.get(position).getUser_name());
-        holder.chatBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), chatting.class);
-//                intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("room",list.get(position).getRoom());
-                v.getContext().startActivity(intent);
-            }
-        });
+//        holder.plusname.setText(String.valueOf(list.get(position).getUser_name()));
+//        holder.chatBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                Intent intent = new Intent(v.getContext(), chatting.class);
+//////                intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK);
+////                intent.putExtra("room",list.get(position).getUser_name());
+////                v.getContext().startActivity(intent);
+//            }
+//        });
     }
 
 
@@ -75,7 +75,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         super(itemView) ;
 
         // 뷰 객체에 대한 참조. (hold strong reference)
-        plusname = itemView.findViewById(R.id.plusname);
+        plusname = itemView.findViewById(R.id.talkusername);
         chatBtn = itemView.findViewById(R.id.chatbtn);
     }
 }
