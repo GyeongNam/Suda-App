@@ -35,7 +35,7 @@
         android:layout_weight="10"
         android:orientation="vertical">
 
-        <ListView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/inlayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

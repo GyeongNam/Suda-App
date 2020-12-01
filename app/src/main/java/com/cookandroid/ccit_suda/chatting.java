@@ -14,16 +14,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 import com.cookandroid.ccit_suda.room.Talk;
+import com.cookandroid.ccit_suda.room.TalkDao;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 
 import net.mrbin99.laravelechoandroid.Echo;
@@ -37,6 +41,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Observer;
 
 import io.socket.client.Socket;
 import retrofit2.Call;
@@ -47,10 +53,10 @@ public class chatting extends AppCompatActivity {
     //    String Tag = "chatting";
 //    static Socket mSocket;
 
-    ListView listView;
+    RecyclerView recyclerView;
     ChatListAdapter chatListAdapter;
     ArrayList<chat_list> list_itemArrayList;
-
+    private RecyclerView.LayoutManager mLayoutManager;
     private String TAG = "MainActivity";
     private Socket mSocket;
     Button sendBtn;
@@ -82,6 +88,8 @@ public class chatting extends AppCompatActivity {
 
         TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
 
+
+
         // Toolbar 생성.
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -90,14 +98,15 @@ public class chatting extends AppCompatActivity {
 
         sendBtn = findViewById(R.id.sendBtn);
         replytext = findViewById(R.id.replytext);
-        listView = findViewById(R.id.inlayout);
+        recyclerView = findViewById(R.id.inlayout);
         room = getIntent().getExtras().getString("room");
         Log.e("ddd",room);
         list_itemArrayList = new ArrayList<chat_list>();
         chatListAdapter = new ChatListAdapter(chatting.this,list_itemArrayList);
 
-
-        listView.setAdapter(chatListAdapter);
+        mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setAdapter(chatListAdapter);
 
         options.host = "http://ccit2020.cafe24.com:6001";
         echo = new Echo(options);
@@ -115,6 +124,10 @@ public class chatting extends AppCompatActivity {
         talkDatabase = TalkDatabase.getDatabase(this);
         echo.channel("laravel_database_"+room)
                 .listen("chartEvent", new EchoCallback() {
+//                    @Override
+//                    public void settalk(TalkDao talkDao) {
+//
+//                    }
                     @Override
                     public void call(Object... args) {
                         Date now = new Date();

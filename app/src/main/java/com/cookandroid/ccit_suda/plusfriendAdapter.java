@@ -20,6 +20,7 @@ import java.util.List;
 class PlusfriendAdapter extends RecyclerView.Adapter<PlusfriendAdapter.ViewHolder> {
     Context context;
 //    ArrayList<plusfriend_list> list_plusfriendList;
+
     List<User_list> list = new ArrayList<>();
 
 

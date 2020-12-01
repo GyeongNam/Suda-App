@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cookandroid.ccit_suda.ViewModel_user_list.User_listViewModel;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
+import com.cookandroid.ccit_suda.room.TalkDao;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
 
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -69,13 +71,13 @@ public class Fragment1 extends Fragment {
         });
         listView.setHasFixedSize(true);
         Log.v("프래그먼트 실행", "ㅇㅇㅇ");
+
         frienddata();
         listView.setLayoutManager(new LinearLayoutManager(context));
 
         listView.setAdapter(plusfriendAdapter);
         return rootView;
     }
-
     //        post 방식
     public void frienddata() {
         String url = "friendlist"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨

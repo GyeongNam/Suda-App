@@ -4,16 +4,20 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
 @Dao
 public interface TalkDao {
     @Query("SELECT * FROM talk_Contents")
-    List<Talk> getAll();
+    LiveData<List<Talk>> getAll();
 
     @Insert
     void insert(Talk talk);
+
+    @Query("SELECT * FROM talk_Contents WHERE chat_room")
+    LiveData<List<Talk>> getAll_Talk();
 
     @Query("SELECT * FROM user_list")
     LiveData<List<User_list>> getAll_user_list();
