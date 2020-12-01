@@ -47,7 +47,7 @@ public class Fragment1 extends Fragment {
 
         context = container.getContext();
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment1, container, false);
-        talkDatabse = TalkDatabase.getDatabase(context);
+//        talkDatabse = TalkDatabase.getDatabase(context);
         listView = rootView.findViewById(R.id.ff_list);
         plusfriend_list plusflist = new plusfriend_list();
         Log.v("프래그먼트 실행", "ㅇㅇㅇ");
