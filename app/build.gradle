@@ -72,6 +72,12 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
     implementation  'com.github.MrBin99:LaravelEchoAndroid:1.03'
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
+    def lifecycle_version = "2.2.0"
+    // ViewModel & LiveData
+    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
 
 
 
