@@ -12,10 +12,21 @@ public class User_list implements Serializable {
     private Integer F_idx;
     @ColumnInfo( name =  "user_name")
     private String user_name;
+    @ColumnInfo( name =  "room")
+    private String room;
+    public String getRoom() {
+        return room;
+    }
 
-    public User_list(Integer F_idx, String user_name) {
+    public void setRoom(String room) {
+        this.room = room;
+    }
+
+
+    public User_list(Integer F_idx, String user_name,String room) {
         F_idx = F_idx;
         this.user_name = user_name;
+        this.room = room;
     }
 
     public Integer getF_idx() {

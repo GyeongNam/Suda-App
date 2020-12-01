@@ -59,7 +59,7 @@ public class Fragment1 extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment1, container, false);
         listView = rootView.findViewById(R.id.ff_list);
         plusfriendAdapter = new PlusfriendAdapter(context);
-        plusfriend_list plusflist = new plusfriend_list();
+
         talkDatabse = TalkDatabase.getDatabase(context);
         Log.v("dd",talkDatabse.talkDao().getAll_user_list().toString());
         viewModel = new ViewModelProvider(this).get(User_listViewModel.class);
@@ -105,6 +105,7 @@ public class Fragment1 extends Fragment {
 //                            Log.v("for문 입장?", "안녕 ");
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             String a = jsonObject.getString("follow");
+                            String b = jsonObject.getString("room_idx");
                             plusfriend_list plusflist = new plusfriend_list();
                             plusflist.setFollow((jsonObject.getString("follow")));
                             plusflist.setName((jsonObject.getString("follow")));
@@ -116,7 +117,7 @@ public class Fragment1 extends Fragment {
                                 @Override
                                 public void run() {
                                     if(!talkDatabse.talkDao().isRowIsExist_user_list(a)){
-                                        user_list = new User_list(null,a);
+                                        user_list = new User_list(null,a,b);
                                         talkDatabse.talkDao().insert_user_list(user_list);
                                     }
                                 }
