@@ -79,7 +79,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
-
+    implementation 'com.android.support:design:28.0.0'
 
 }
 configurations.all {
