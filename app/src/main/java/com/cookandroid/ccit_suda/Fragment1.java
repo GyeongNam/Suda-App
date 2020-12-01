@@ -71,7 +71,7 @@ public class Fragment1 extends Fragment {
         Log.v("프래그먼트 실행", "ㅇㅇㅇ");
         frienddata();
         listView.setLayoutManager(new LinearLayoutManager(context));
-
+//
         listView.setAdapter(plusfriendAdapter);
         return rootView;
     }
