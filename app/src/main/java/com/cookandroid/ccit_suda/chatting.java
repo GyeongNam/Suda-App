@@ -30,6 +30,7 @@ import androidx.room.Room;
 
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
+import com.cookandroid.ccit_suda.room.talk;
 import com.cookandroid.ccit_suda.room.talkDatabase;
 import com.google.gson.JsonObject;
 
@@ -74,6 +75,8 @@ public class chatting extends AppCompatActivity {
     Toolbar myToolbar;
     String msgcheck;
     String room;
+    talkDatabase talkDatabase;
+
 
 
     @SuppressLint("WrongViewCast")
@@ -119,18 +122,31 @@ public class chatting extends AppCompatActivity {
                 Log.d("Error", String.valueOf(args));
             }
         });
-
+        talkDatabase = com.cookandroid.ccit_suda.room.talkDatabase.getDatabase(this);
         echo.channel("laravel_database_"+room)
                 .listen("chartEvent", new EchoCallback() {
                     @Override
                     public void call(Object... args) {
                         Date now = new Date();
                         Log.d("웃기지마랄라", String.valueOf(args[1]));
-
+                        String qwe;
+                        String qwe1;
+                        int qwe2;
                         try {
 
                             JSONObject jsonObject = new JSONObject(args[1].toString());
                             chat_list list = new chat_list(jsonObject.getString("user") ,now,jsonObject.getString("message"));
+                            qwe = jsonObject.getString("user");
+                            qwe1 = jsonObject.getString("message");
+                            qwe2 = Integer.parseInt(jsonObject.getString("channel"));
+                            Log.v("1",qwe);
+                            Log.v("1",qwe1);
+                            Log.v("1",String.valueOf(qwe2));
+                            Log.v("1",now.toString());
+
+                            talk t = new talk(null,qwe,qwe1,qwe2,String.valueOf(now));
+                            Log.v("1",String.valueOf(t));
+                            talkDatabase.talkDao().insert(t);
                             list_itemArrayList.add(list);
 //                            chatListAdapter.notifyDataSetChanged();
                         } catch (JSONException e) {
@@ -139,6 +155,7 @@ public class chatting extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+
                                 chatListAdapter.notifyDataSetChanged();
                                 Log.e("tfmepm","1");
                             }

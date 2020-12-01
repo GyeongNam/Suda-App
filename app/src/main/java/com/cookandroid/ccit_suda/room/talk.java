@@ -9,11 +9,11 @@ import java.util.Date;
 
 @Entity(tableName = "talk_Contents")
 public class talk implements Serializable {
-    public int getIdx() {
+    public Integer getIdx() {
         return idx;
     }
 
-    public void setIdx(int idx) {
+    public void setIdx(Integer idx) {
         this.idx = idx;
     }
 
@@ -50,13 +50,13 @@ public class talk implements Serializable {
     }
 
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "idx") private int idx;
+    @ColumnInfo(name = "idx") private Integer idx;
     @ColumnInfo(name = "user") private String user;
     @ColumnInfo(name = "chatlist")private String chatlist;
     @ColumnInfo(name = "chat_room")private int chat_room;
     @ColumnInfo(name = "date") private String date;
 
-    public talk(int idx, String user, String chatlist, int chat_room, String date) {
+    public talk(Integer idx, String user, String chatlist, int chat_room, String date) {
         this.idx = idx;
         this.user = user;
         this.chatlist = chatlist;
