@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment;
 
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
+import com.cookandroid.ccit_suda.room.TalkDatabase;
+import com.cookandroid.ccit_suda.room.User_list;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +37,8 @@ public class Fragment1 extends Fragment {
     plusfriendAdapter plusfriendAdapter;
     private SharedPreferences sharedPreferences;
     ArrayList<plusfriend_list> plusfriend_lists_listArrayList;
+    User_list user_list;
+    TalkDatabase talkDatabse;
 
 
     @Nullable

@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity(tableName = "talk_Contents")
-public class talk implements Serializable {
+public class Talk implements Serializable {
     public Integer getIdx() {
         return idx;
     }
@@ -56,7 +56,7 @@ public class talk implements Serializable {
     @ColumnInfo(name = "chat_room")private int chat_room;
     @ColumnInfo(name = "date") private String date;
 
-    public talk(Integer idx, String user, String chatlist, int chat_room, String date) {
+    public Talk(Integer idx, String user, String chatlist, int chat_room, String date) {
         this.idx = idx;
         this.user = user;
         this.chatlist = chatlist;

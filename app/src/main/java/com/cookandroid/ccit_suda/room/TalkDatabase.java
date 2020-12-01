@@ -5,19 +5,19 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-@Database(entities = {talk.class}, version = 1)
-public abstract class talkDatabase extends RoomDatabase {
+@Database(entities = {Talk.class,User_list.class}, version = 1)
+public abstract class TalkDatabase extends RoomDatabase {
 
-    public abstract talkDao talkDao();
+    public abstract TalkDao talkDao();
 
-    private  static talkDatabase INSTANCE;
+    private  static TalkDatabase INSTANCE;
 
-    public static talkDatabase getDatabase(final Context context) {
+    public static TalkDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
-            synchronized (talkDatabase.class) {
+            synchronized (TalkDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            talkDatabase.class, "talk_database").fallbackToDestructiveMigration()
+                            TalkDatabase.class, "talk_database").fallbackToDestructiveMigration()
                             .build();
                 }
             }

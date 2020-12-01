@@ -2,26 +2,19 @@ package com.cookandroid.ccit_suda;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.Scroller;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,9 +23,8 @@ import androidx.room.Room;
 
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
-import com.cookandroid.ccit_suda.room.talk;
-import com.cookandroid.ccit_suda.room.talkDatabase;
-import com.google.gson.JsonObject;
+import com.cookandroid.ccit_suda.room.Talk;
+import com.cookandroid.ccit_suda.room.TalkDatabase;
 
 import net.mrbin99.laravelechoandroid.Echo;
 import net.mrbin99.laravelechoandroid.EchoCallback;
@@ -40,20 +32,14 @@ import net.mrbin99.laravelechoandroid.EchoOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
 import io.socket.client.Socket;
 import retrofit2.Call;
 import retrofit2.Callback;
-
-import static android.provider.Settings.System.DATE_FORMAT;
 
 
 public class chatting extends AppCompatActivity {
@@ -75,7 +61,7 @@ public class chatting extends AppCompatActivity {
     Toolbar myToolbar;
     String msgcheck;
     String room;
-    talkDatabase talkDatabase;
+    TalkDatabase talkDatabase;
 
 
 
@@ -85,7 +71,7 @@ public class chatting extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
 
-        talkDatabase db = Room.databaseBuilder(this, talkDatabase.class,"talk-db").allowMainThreadQueries().build();
+        TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
 
         // Toolbar 생성.
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -122,7 +108,7 @@ public class chatting extends AppCompatActivity {
                 Log.d("Error", String.valueOf(args));
             }
         });
-        talkDatabase = com.cookandroid.ccit_suda.room.talkDatabase.getDatabase(this);
+        talkDatabase = TalkDatabase.getDatabase(this);
         echo.channel("laravel_database_"+room)
                 .listen("chartEvent", new EchoCallback() {
                     @Override
@@ -144,7 +130,7 @@ public class chatting extends AppCompatActivity {
                             Log.v("1",String.valueOf(qwe2));
                             Log.v("1",now.toString());
 
-                            talk t = new talk(null,qwe,qwe1,qwe2,String.valueOf(now));
+                            Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now));
                             Log.v("1",String.valueOf(t));
                             talkDatabase.talkDao().insert(t);
                             list_itemArrayList.add(list);
