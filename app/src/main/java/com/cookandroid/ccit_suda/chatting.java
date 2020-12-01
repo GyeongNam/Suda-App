@@ -33,6 +33,7 @@ import net.mrbin99.laravelechoandroid.EchoOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -63,6 +64,14 @@ public class chatting extends AppCompatActivity {
     String room;
     TalkDatabase talkDatabase;
 
+    EchoOptions options = new EchoOptions();
+    Echo echo;
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        echo.leave("laravel_database_"+room);
+    }
 
 
     @SuppressLint("WrongViewCast")
@@ -85,18 +94,13 @@ public class chatting extends AppCompatActivity {
         room = getIntent().getExtras().getString("room");
         Log.e("ddd",room);
         list_itemArrayList = new ArrayList<chat_list>();
-
-
-
         chatListAdapter = new ChatListAdapter(chatting.this,list_itemArrayList);
-
 
 
         listView.setAdapter(chatListAdapter);
 
-        EchoOptions options = new EchoOptions();
         options.host = "http://ccit2020.cafe24.com:6001";
-        Echo echo = new Echo(options);
+        echo = new Echo(options);
         echo.connect(new EchoCallback() {
             @Override
             public void call(Object... args) {
@@ -172,6 +176,8 @@ public class chatting extends AppCompatActivity {
         });
     }
 
+
+
     //추가된 소스, ToolBar에 menu.xml을 인플레이트함
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -226,11 +232,6 @@ public class chatting extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-    }
 
     public void check(String msgcheck) {
         if (msgcheck.equals("")) {
