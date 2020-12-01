@@ -30,6 +30,7 @@ import androidx.room.Room;
 
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
+import com.cookandroid.ccit_suda.room.talkDatabase;
 import com.google.gson.JsonObject;
 
 import net.mrbin99.laravelechoandroid.Echo;
@@ -80,6 +81,8 @@ public class chatting extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
+
+        talkDatabase db = Room.databaseBuilder(this, talkDatabase.class,"talk-db").allowMainThreadQueries().build();
 
         // Toolbar 생성.
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
