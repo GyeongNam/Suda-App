@@ -21,6 +21,7 @@ class PlusfriendAdapter extends RecyclerView.Adapter<PlusfriendAdapter.ViewHolde
     Context context;
 //    ArrayList<plusfriend_list> list_plusfriendList;
 
+
     List<User_list> list = new ArrayList<>();
 
 
