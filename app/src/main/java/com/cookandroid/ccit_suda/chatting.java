@@ -16,14 +16,18 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
+import com.cookandroid.ccit_suda.ViewModel_user_list.User_listViewModel;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 import com.cookandroid.ccit_suda.room.Talk;
@@ -42,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Observer;
 
 import io.socket.client.Socket;
 import retrofit2.Call;
@@ -55,20 +58,21 @@ public class chatting extends AppCompatActivity {
 
     RecyclerView recyclerView;
     ChatListAdapter chatListAdapter;
-    ArrayList<chat_list> list_itemArrayList;
     private RecyclerView.LayoutManager mLayoutManager;
     private String TAG = "MainActivity";
     private Socket mSocket;
     Button sendBtn;
     LinearLayout contentFrame;
-//    private ScrollView scroll;
+    private ScrollView scroll;
     EditText replytext;
     boolean err = false;
     private ApiInterface api;
     Toolbar myToolbar;
     String msgcheck;
-    String room;
+    int room;
+
     TalkDatabase talkDatabase;
+    User_listViewModel viewModel;
 
     EchoOptions options = new EchoOptions();
     Echo echo;
@@ -89,7 +93,6 @@ public class chatting extends AppCompatActivity {
         TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
 
 
-
         // Toolbar 생성.
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -99,10 +102,9 @@ public class chatting extends AppCompatActivity {
         sendBtn = findViewById(R.id.sendBtn);
         replytext = findViewById(R.id.replytext);
         recyclerView = findViewById(R.id.inlayout);
-        room = getIntent().getExtras().getString("room");
-        Log.e("ddd",room);
-        list_itemArrayList = new ArrayList<chat_list>();
-        chatListAdapter = new ChatListAdapter(chatting.this,list_itemArrayList);
+        room = Integer.parseInt(getIntent().getExtras().getString("room"));
+        Log.e("ddd", String.valueOf(room));
+        chatListAdapter = new ChatListAdapter(chatting.this);
 
         mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -122,6 +124,14 @@ public class chatting extends AppCompatActivity {
             }
         });
         talkDatabase = TalkDatabase.getDatabase(this);
+        viewModel = new ViewModelProvider(this).get(User_listViewModel.class);
+        viewModel.get_Talk_listViewModel(room).observe(this, new Observer<List<Talk>>() {
+            @Override
+            public void onChanged(List<Talk> talks) {
+                chatListAdapter.getTalkList(talks);
+            }
+        });
+
         echo.channel("laravel_database_"+room)
                 .listen("chartEvent", new EchoCallback() {
 //                    @Override
@@ -150,7 +160,7 @@ public class chatting extends AppCompatActivity {
                             Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now));
                             Log.v("1",String.valueOf(t));
                             talkDatabase.talkDao().insert(t);
-                            list_itemArrayList.add(list);
+
 //                            chatListAdapter.notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -179,7 +189,7 @@ public class chatting extends AppCompatActivity {
 //                    chatListAdapter.notifyDataSetChanged();
                     replytext.setText(null); // EditText에 입력받은 값을 전송 후 초기화 시켜주는 부분
                     talkRequest();
-//                    scrollDown();
+                    scrollDown();
                 } else {
                     Toast.makeText(getApplicationContext(), "대화를 입력해주세요", Toast.LENGTH_SHORT).show();
                 }
@@ -263,15 +273,15 @@ public class chatting extends AppCompatActivity {
             err = false;
         }
     }
-//    public void scrollDown(){
-//        scroll.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                scroll.fullScroll(ScrollView.FOCUS_DOWN);
-//                Log.v("쓰레드","?");
-//            }
-//        });
-//    }
+    public void scrollDown(){
+        recyclerView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                recyclerView.scrollToPosition(chatListAdapter.getItemCount() - 1);
+                Log.v("쓰레드","?");
+            }
+        }, 500);
+    }
 
     //        post 방식
     public void talkRequest() {
@@ -283,7 +293,7 @@ public class chatting extends AppCompatActivity {
         String userinfo = sharedPreferences.getString("userinfo", "");
         params.put("sendmsg", msgcheck);
         params.put("user", userinfo);
-        params.put("room", room);
+        params.put("room", String.valueOf(room));
 
         Call<String> call = api.requestPost(url,params);
 
