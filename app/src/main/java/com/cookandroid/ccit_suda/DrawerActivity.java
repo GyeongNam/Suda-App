@@ -6,12 +6,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -35,6 +38,7 @@ import com.android.volley.request.StringRequest;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.CallbackWithRetry;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
+import com.cookandroid.ccit_suda.room.TalkDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -171,7 +175,33 @@ public class DrawerActivity extends AppCompatActivity {
         btn_close.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                logout();
+                int status = InternetCheck.getConnectivityStatus(getApplicationContext());
+                if(status == InternetCheck.TYPE_NOT_CONNECTED){
+                    AlertDialog.Builder dlg = new AlertDialog.Builder(DrawerActivity.this);
+                    dlg.setTitle("오류"); //제목
+                    dlg.setMessage("로그아웃을 할 수 없습니다. 네트워크 연결상태를 확인해 주세요."); // 메시지
+
+//                버튼 클릭시 동작
+                    dlg.setPositiveButton("확인",new DialogInterface.OnClickListener(){
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    dlg.show();
+                    Log.v("Internet","연결안됨");
+                }
+                else{
+                    TalkDatabase talkDatabase = TalkDatabase.getDatabase(getApplicationContext());
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            talkDatabase.clearAllTables();
+                        }
+                    });
+                    logout();
+                }
+
+
             }
         }));
 
@@ -248,90 +278,6 @@ public class DrawerActivity extends AppCompatActivity {
         container.addView(view1);
     }
 
-//    public void get_categorie_list() {
-//        String url = "http://ccit2020.cafe24.com:8082/get_categorie_list"; //"http://ccit2020.cafe24.com:8082/login";
-//        StringRequest request = new StringRequest(
-//                Request.Method.GET,
-//                url,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        Log.v("카테고리", response);
-//                        try {
-//                            JSONArray jsonArray = new JSONArray(response);
-//                            for (int i = 0; i < jsonArray.length(); i++) {
-//                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                                textview1(jsonObject.getString("categorie"), list_parent, jsonObject.getString("categorie_num"));
-//                                Log.v("드로어액티비티", response);
-//                            }
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        a.appendLog(date + "/" + "E" + "/DrawerActivity/" + error.toString());
-//                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-//                        Log.v("TAG", error.toString());
-//                    }
-//                }
-//
-//        );
-//        request.setShouldCache(false);
-//
-////        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        AppHelper.requestQueue.add(request);
-//        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
-//    }
-
-//    public void logout() {
-//
-//        String url = "http://ccit2020.cafe24.com:8082/logout"; //"http://ccit2020.cafe24.com:8082/login";
-//        StringRequest request = new StringRequest(
-//                Request.Method.POST,
-//                url,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        sharedPreferences = getSharedPreferences("File", 0);
-//                        SharedPreferences.Editor editor = sharedPreferences.edit();
-//
-//                        drawerLayout.closeDrawers();
-//                        editor.remove("userinfo");
-//                        editor.commit();
-//                        a.appendLog(date + "/M/MainActivity/logout");
-//                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        startActivity(intent);
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Log.v("TAG", error.toString());
-//                    }
-//                }
-//
-//        ) {
-//            @Override
-//            protected Map<String, String> getParams() {
-//                Map<String, String> params = new HashMap<String, String>();
-//                sharedPreferences = getSharedPreferences("File", 0);
-//                userinfo = sharedPreferences.getString("userinfo", "");
-//                params.put("id", userinfo);
-//                return params;
-//            }
-//        };
-//        request.setShouldCache(false);
-//        AppHelper.requestQueue.add(request);
-//
-//    }
         public void get_categorie_list() {
             String url = "get_categorie_list"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
         api = HttpClient.getRetrofit().create( ApiInterface.class );
@@ -384,7 +330,6 @@ public class DrawerActivity extends AppCompatActivity {
                 Log.v("retrofit2", String.valueOf(response.body()));
                 sharedPreferences = getSharedPreferences("File", 0);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-
                 drawerLayout.closeDrawers();
                 editor.remove("userinfo");
                 editor.commit();
