@@ -31,8 +31,8 @@ public interface TalkDao {
     void insert_user_list(User_list user_list);
 
     @Query("SELECT EXISTS(SELECT * FROM user_list WHERE user_name = :id)")
-    boolean isRowIsExist_user_list( String id);
+    boolean isRowIsExist_user_list(String id);
 
-    @Query("SELECT * FROM user_list AS a JOIN talk_Contents AS b ON a.room = b.chat_room GROUP BY b.chat_room ")
+    @Query("SELECT * FROM user_list AS a JOIN talk_Contents AS b ON a.room = b.chat_room GROUP BY b.chat_room")
     LiveData<List<TalkAndUser_list>> friendroom_user_list();
 }

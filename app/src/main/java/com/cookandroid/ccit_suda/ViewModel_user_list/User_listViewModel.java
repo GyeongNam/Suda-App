@@ -31,6 +31,8 @@ public class User_listViewModel extends AndroidViewModel{
         return user_listRepository.getRoom_list(userinfo);
     }
 
+
+
     public User_listViewModel(@NonNull Application application) {
         super(application);
         user_listRepository = new User_listRepository(application);

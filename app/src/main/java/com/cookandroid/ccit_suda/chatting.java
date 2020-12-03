@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -53,27 +54,22 @@ import retrofit2.Callback;
 
 
 public class chatting extends AppCompatActivity {
-    //    String Tag = "chatting";
-//    static Socket mSocket;
 
     RecyclerView recyclerView;
     ChatListAdapter chatListAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private String TAG = "MainActivity";
-    private Socket mSocket;
     Button sendBtn;
-    LinearLayout contentFrame;
-    private ScrollView scroll;
     EditText replytext;
     boolean err = false;
     private ApiInterface api;
     Toolbar myToolbar;
     String msgcheck;
     int room;
-
+    SharedPreferences sharedPreferences;
     TalkDatabase talkDatabase;
     User_listViewModel viewModel;
-
+    String userinfo;
     EchoOptions options = new EchoOptions();
     Echo echo;
 
@@ -89,8 +85,10 @@ public class chatting extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
-
+        sharedPreferences = getSharedPreferences("File", 0);
+         userinfo = sharedPreferences.getString("userinfo", "");
         TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
+
 
 
         // Toolbar 생성.
@@ -105,11 +103,10 @@ public class chatting extends AppCompatActivity {
         room = Integer.parseInt(getIntent().getExtras().getString("room"));
         Log.e("ddd", String.valueOf(room));
         chatListAdapter = new ChatListAdapter(chatting.this);
-
         mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(chatListAdapter);
-
+        recyclerView.addOnScrollListener(onScrollListener);
         options.host = "http://ccit2020.cafe24.com:6001";
         echo = new Echo(options);
         echo.connect(new EchoCallback() {
@@ -129,9 +126,9 @@ public class chatting extends AppCompatActivity {
             @Override
             public void onChanged(List<Talk> talks) {
                 chatListAdapter.getTalkList(talks);
+                scrollDown();
             }
         });
-
         echo.channel("laravel_database_"+room)
                 .listen("chartEvent", new EchoCallback() {
 //                    @Override
@@ -156,23 +153,16 @@ public class chatting extends AppCompatActivity {
                             Log.v("1",qwe1);
                             Log.v("1",String.valueOf(qwe2));
                             Log.v("1",now.toString());
-
                             Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now));
                             Log.v("1",String.valueOf(t));
                             talkDatabase.talkDao().insert(t);
+
+
 
 //                            chatListAdapter.notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                chatListAdapter.notifyDataSetChanged();
-                                Log.e("tfmepm","1");
-                            }
-                        });
                     }
                 });
 
@@ -184,12 +174,10 @@ public class chatting extends AppCompatActivity {
                 check(msgcheck);
                 if (!(msgcheck.isEmpty())) {
 
-
                     Date now = new Date();
-//                    chatListAdapter.notifyDataSetChanged();
                     replytext.setText(null); // EditText에 입력받은 값을 전송 후 초기화 시켜주는 부분
                     talkRequest();
-                    scrollDown();
+
                 } else {
                     Toast.makeText(getApplicationContext(), "대화를 입력해주세요", Toast.LENGTH_SHORT).show();
                 }
@@ -199,7 +187,20 @@ public class chatting extends AppCompatActivity {
         });
     }
 
+    RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            Log.e("onScroll", "온스크롤리스너 실행?");
+            LinearLayoutManager layoutManager = LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
+            int totalItemCount = layoutManager.getItemCount();
+            int lastVisible = layoutManager.findLastCompletelyVisibleItemPosition();
 
+            if (lastVisible >= totalItemCount - 1) {
+                Log.e(TAG, "마지막위치를 잡는가?");
+            }
+        }
+    };
 
     //추가된 소스, ToolBar에 menu.xml을 인플레이트함
     @Override
@@ -289,8 +290,7 @@ public class chatting extends AppCompatActivity {
         api = HttpClient.getRetrofit().create( ApiInterface.class );
         HashMap<String,String> params = new HashMap<>();
         String other = "test";
-        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-        String userinfo = sharedPreferences.getString("userinfo", "");
+
         params.put("sendmsg", msgcheck);
         params.put("user", userinfo);
         params.put("room", String.valueOf(room));

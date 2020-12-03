@@ -21,17 +21,14 @@ public class User_listRepository {
     private  TalkDao talkDao;
 
     public LiveData<List<User_list>> getUser_list(){
-
         return talkDao.getAll_user_list();
     }
     public LiveData<List<Talk>> getAll_talk(int room){
-
         return talkDao.getAll_Talk(room);
 
     }
 
     public LiveData<List<TalkAndUser_list>> getRoom_list(String userinfo){
-
         return talkDao.friendroom_user_list();
     }
 

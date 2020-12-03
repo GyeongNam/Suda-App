@@ -59,7 +59,4 @@ public class User_list implements Serializable {
         this.user_name = user_name;
     }
 
-
-
-
 }

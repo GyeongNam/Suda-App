@@ -1,6 +1,7 @@
 package com.cookandroid.ccit_suda;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,6 +45,7 @@ public class Fragment1 extends Fragment {
     User_list user_list;
     TalkDatabase talkDatabse;
     User_listViewModel viewModel;
+    FloatingActionButton fab;
 
 
     @Nullable
@@ -53,7 +56,7 @@ public class Fragment1 extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment1, container, false);
         listView = rootView.findViewById(R.id.ff_list);
         plusfriendAdapter = new PlusfriendAdapter(context);
-
+        fab = rootView.findViewById(R.id.fab);
         talkDatabse = TalkDatabase.getDatabase(context);
         Log.v("dd",talkDatabse.talkDao().getAll_user_list().toString());
         viewModel = new ViewModelProvider(this).get(User_listViewModel.class);
@@ -61,15 +64,23 @@ public class Fragment1 extends Fragment {
             Log.v("옵저버","띠용");
             plusfriendAdapter.setData(user);
         });
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, InviteFriends.class);
+                startActivity(intent);
+            }
+        });
         listView.setHasFixedSize(true);
         Log.v("프래그먼트 실행", "ㅇㅇㅇ");
 
         frienddata();
         listView.setLayoutManager(new LinearLayoutManager(context));
-
         listView.setAdapter(plusfriendAdapter);
         return rootView;
     }
+
     //        post 방식
     public void frienddata() {
         String url = "friendlist"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
