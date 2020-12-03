@@ -16,8 +16,8 @@ public interface TalkDao {
     @Insert
     void insert(Talk talk);
 
-    @Query("SELECT * FROM talk_Contents WHERE chat_room")
-    LiveData<List<Talk>> getAll_Talk();
+    @Query("SELECT * FROM talk_Contents WHERE chat_room = :room")
+    LiveData<List<Talk>> getAll_Talk(int room);
 
     @Query("SELECT * FROM user_list")
     LiveData<List<User_list>> getAll_user_list();

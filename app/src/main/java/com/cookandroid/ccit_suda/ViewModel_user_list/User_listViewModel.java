@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.cookandroid.ccit_suda.room.Talk;
+import com.cookandroid.ccit_suda.room.Talk;
 import com.cookandroid.ccit_suda.room.TalkAndUser_list;
 import com.cookandroid.ccit_suda.room.User_list;
 
@@ -17,6 +18,9 @@ public class User_listViewModel extends AndroidViewModel{
 
     private  User_listRepository user_listRepository;
     private  LiveData<List<User_list>> user_list;
+
+
+    public LiveData<List<Talk>> get_Talk_listViewModel(int room) { return  user_listRepository.getAll_talk(room); };
 
     public LiveData<List<User_list>> get_User_listViewModel(){
         return user_list;
@@ -31,5 +35,8 @@ public class User_listViewModel extends AndroidViewModel{
         super(application);
         user_listRepository = new User_listRepository(application);
         user_list = user_listRepository.getUser_list();
+
+
     }
+
 }

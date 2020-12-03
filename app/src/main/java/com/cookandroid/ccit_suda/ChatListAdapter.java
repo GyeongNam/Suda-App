@@ -11,17 +11,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cookandroid.ccit_suda.room.Talk;
+import com.cookandroid.ccit_suda.room.User_list;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHolder> {
     private SharedPreferences sharedPreferences;
     Context context;
-    ArrayList<chat_list> list_itemArrayList;
+    List<Talk> list_itemArrayList = new ArrayList<>();
     ViewHolder viewholder;
 
-    public ChatListAdapter(Context context, ArrayList<chat_list> list_itemArrayList) {
+    public ChatListAdapter(Context context) {
         this.context = context;
-        this.list_itemArrayList = list_itemArrayList;
     }
 
     @NonNull
@@ -37,10 +40,10 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         sharedPreferences = context.getSharedPreferences("File", 0);
         String userinfo = sharedPreferences.getString("userinfo", "");
-        if(sharedPreferences.getString("userinfo","").equals(list_itemArrayList.get(position).getNickname())){
-            holder.content_textView.setText(list_itemArrayList.get(position).getContent());
-            holder.nickname_textView.setText(list_itemArrayList.get(position).getNickname());
-            holder.date_textView.setText(String.valueOf(list_itemArrayList.get(position).getWrite_date()));
+        if(sharedPreferences.getString("userinfo","").equals(list_itemArrayList.get(position).getUser())){
+            holder.content_textView.setText(list_itemArrayList.get(position).getChatlist());
+            holder.nickname_textView.setText(list_itemArrayList.get(position).getUser());
+            holder.date_textView.setText(String.valueOf(list_itemArrayList.get(position).getDate()));
             holder.nickname_textView1.setVisibility(View.GONE);
             holder.content_textView1.setVisibility(View.GONE);
             holder.date_textView1.setVisibility(View.GONE);
@@ -49,19 +52,23 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             holder.date_textView.setVisibility(View.VISIBLE);
         }
         else{
-            holder.content_textView1.setText(list_itemArrayList.get(position).getContent());
-            holder.nickname_textView1.setText(list_itemArrayList.get(position).getNickname());
-            holder.date_textView1.setText(String.valueOf(list_itemArrayList.get(position).getWrite_date()));
-            holder.nickname_textView.setVisibility(View.GONE);
-            holder.content_textView.setVisibility(View.GONE);
-            holder.date_textView.setVisibility(View.GONE);
+            holder.content_textView1.setText(list_itemArrayList.get(position).getChatlist());
+            holder.nickname_textView1.setText(list_itemArrayList.get(position).getUser());
+            holder.date_textView1.setText(String.valueOf(list_itemArrayList.get(position).getDate()));
             holder.nickname_textView1.setVisibility(View.VISIBLE);
             holder.content_textView1.setVisibility(View.VISIBLE);
             holder.date_textView1.setVisibility(View.VISIBLE);
+            holder.nickname_textView.setVisibility(View.GONE);
+            holder.content_textView.setVisibility(View.GONE);
+            holder.date_textView.setVisibility(View.GONE);
+
         }
 
     }
-
+    public void getTalkList(List<Talk> list_itemArrayList){
+        this.list_itemArrayList =  list_itemArrayList;
+        notifyDataSetChanged();
+    }
     @Override
     public int getItemCount() {
         return list_itemArrayList.size();
@@ -85,73 +92,4 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             date_textView1 = itemView.findViewById(R.id.message_time2);
         }
     }
-
-//    @Override
-//    public long getItemId(int position) {
-//        return position;
-//    }
-
-
-//    @Override
-//    public int getCount() {
-//        return list_itemArrayList.size();
-//    }
-//
-//    @Override
-//    public Object getItem(int position) {
-//        return list_itemArrayList.get(position);
-//    }
-
-
-//    @Override
-//    public View getView(int position, View convertView, ViewGroup parent) {
-//        SharedPreferences sharedPreferences = context.getSharedPreferences("File", 0);
-//        if (convertView == null) {
-//
-//            convertView = LayoutInflater.from(context).inflate(R.layout.sendmsg, null);
-//            viewholder = new ViewHolder();
-//            int type = getItemViewType(position);
-//
-//
-//            viewholder.nickname_textView = (TextView) convertView.findViewById(R.id.user_id1);
-//            viewholder.content_textView = (TextView) convertView.findViewById(R.id.chat1);
-//            viewholder.date_textView = (TextView) convertView.findViewById(R.id.message_time1);
-//
-//            viewholder.nickname_textView1 = (TextView) convertView.findViewById(R.id.user_id2);
-//            viewholder.content_textView1 = (TextView) convertView.findViewById(R.id.chat2);
-//            viewholder.date_textView1 = (TextView) convertView.findViewById(R.id.message_time2);
-//
-//
-//            convertView.setTag(viewholder);
-//        } else {
-//            viewholder = (ViewHolder) convertView.getTag();
-//        }
-//        if(sharedPreferences.getString("userinfo","").equals(list_itemArrayList.get(position).getNickname())){
-//            viewholder.nickname_textView.setText(list_itemArrayList.get(position).getNickname());
-//            viewholder.content_textView.setText(list_itemArrayList.get(position).getContent());
-//            viewholder.date_textView.setText(list_itemArrayList.get(position).getWrite_date().toString());
-//            viewholder.nickname_textView1.setVisibility(View.GONE);
-//            viewholder.content_textView1.setVisibility(View.GONE);
-//            viewholder.date_textView1.setVisibility(View.GONE);
-//            viewholder.nickname_textView.setVisibility(View.VISIBLE);
-//            viewholder.content_textView.setVisibility(View.VISIBLE);
-//            viewholder.date_textView.setVisibility(View.VISIBLE);
-//        }
-//        else{
-//            viewholder.nickname_textView1.setText(list_itemArrayList.get(position).getNickname());
-//            viewholder.content_textView1.setText(list_itemArrayList.get(position).getContent());
-//            viewholder.date_textView1.setText(list_itemArrayList.get(position).getWrite_date().toString());
-//            viewholder.nickname_textView.setVisibility(View.GONE);
-//            viewholder.content_textView.setVisibility(View.GONE);
-//            viewholder.date_textView.setVisibility(View.GONE);
-//            viewholder.nickname_textView1.setVisibility(View.VISIBLE);
-//            viewholder.content_textView1.setVisibility(View.VISIBLE);
-//            viewholder.date_textView1.setVisibility(View.VISIBLE);
-//        }
-//
-//
-//        return convertView;
-//    }
-
-
 }
