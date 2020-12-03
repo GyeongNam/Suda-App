@@ -17,7 +17,7 @@ import com.cookandroid.ccit_suda.room.User_list;
 import java.util.ArrayList;
 import java.util.List;
 
-public class plusfriendAdapter extends RecyclerView.Adapter<plusfriendAdapter.ViewHolder> {
+class plusfriendAdapter extends RecyclerView.Adapter<plusfriendAdapter.ViewHolder> {
     Context context;
 //    ArrayList<plusfriend_list> list_plusfriendList;
 
