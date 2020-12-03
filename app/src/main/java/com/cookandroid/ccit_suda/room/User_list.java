@@ -12,8 +12,21 @@ public class User_list implements Serializable {
     private Integer F_idx;
     @ColumnInfo( name =  "user_name")
     private String user_name;
+
+    public void setRoom_name(String room_name) {
+        this.room_name = room_name;
+    }
+
     @ColumnInfo( name =  "room")
     private String room;
+
+    public String getRoom_name() {
+        return room_name;
+    }
+
+    @ColumnInfo( name =  "room_name")
+    private String room_name;
+
     public String getRoom() {
         return room;
     }
@@ -23,10 +36,11 @@ public class User_list implements Serializable {
     }
 
 
-    public User_list(Integer F_idx, String user_name,String room) {
+    public User_list(Integer F_idx, String user_name,String room, String room_name) {
         F_idx = F_idx;
         this.user_name = user_name;
         this.room = room;
+        this.room_name = room_name;
     }
 
     public Integer getF_idx() {

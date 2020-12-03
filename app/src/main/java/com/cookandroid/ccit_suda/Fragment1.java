@@ -111,7 +111,7 @@ public class Fragment1 extends Fragment {
                                 @Override
                                 public void run() {
                                     if(!talkDatabse.talkDao().isRowIsExist_user_list(a)){
-                                        user_list = new User_list(null,a,b);
+                                        user_list = new User_list(null,a,b,a);
                                         talkDatabse.talkDao().insert_user_list(user_list);
                                     }
                                 }
