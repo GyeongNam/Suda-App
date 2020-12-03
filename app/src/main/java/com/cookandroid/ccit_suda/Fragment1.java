@@ -8,15 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cookandroid.ccit_suda.ViewModel_user_list.User_listViewModel;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
-import com.cookandroid.ccit_suda.room.TalkDao;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
 
@@ -34,9 +28,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -45,7 +37,7 @@ public class Fragment1 extends Fragment {
     private Context context;
     ApiInterface api;
     RecyclerView listView;
-    PlusfriendAdapter plusfriendAdapter;
+    com.cookandroid.ccit_suda.plusfriendAdapter plusfriendAdapter;
     private SharedPreferences sharedPreferences;
     ArrayList<plusfriend_list> plusfriend_lists_listArrayList;
     User_list user_list;
@@ -60,7 +52,7 @@ public class Fragment1 extends Fragment {
         context = container.getContext();
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment1, container, false);
         listView = rootView.findViewById(R.id.ff_list);
-        plusfriendAdapter = new PlusfriendAdapter(context);
+        plusfriendAdapter = new plusfriendAdapter(context);
 
         talkDatabse = TalkDatabase.getDatabase(context);
         Log.v("dd",talkDatabse.talkDao().getAll_user_list().toString());

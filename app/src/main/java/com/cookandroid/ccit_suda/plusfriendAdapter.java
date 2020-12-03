@@ -17,7 +17,7 @@ import com.cookandroid.ccit_suda.room.User_list;
 import java.util.ArrayList;
 import java.util.List;
 
-class PlusfriendAdapter extends RecyclerView.Adapter<PlusfriendAdapter.ViewHolder> {
+public class plusfriendAdapter extends RecyclerView.Adapter<plusfriendAdapter.ViewHolder> {
     Context context;
 //    ArrayList<plusfriend_list> list_plusfriendList;
 
@@ -25,7 +25,7 @@ class PlusfriendAdapter extends RecyclerView.Adapter<PlusfriendAdapter.ViewHolde
     List<User_list> list = new ArrayList<>();
 
 
-    public PlusfriendAdapter(Context context) {
+    public plusfriendAdapter(Context context) {
         this.context = context;
 
 
@@ -34,14 +34,14 @@ class PlusfriendAdapter extends RecyclerView.Adapter<PlusfriendAdapter.ViewHolde
 
     @NonNull
     @Override
-    public PlusfriendAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public plusfriendAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.friendcard, parent, false);
-        PlusfriendAdapter.ViewHolder holder = new PlusfriendAdapter.ViewHolder(view);
+        plusfriendAdapter.ViewHolder holder = new plusfriendAdapter.ViewHolder(view);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(PlusfriendAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(plusfriendAdapter.ViewHolder holder, int position) {
         Log.v("데베",String.valueOf(list.size()));
         Log.v("데베",list.get(position).getUser_name());
         holder.plusname.setText(list.get(position).getUser_name());
