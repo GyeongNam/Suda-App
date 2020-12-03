@@ -39,12 +39,13 @@ public class InviteFriends extends AppCompatActivity  {
         setContentView(R.layout.activity_invite_friends);
         PlusroomAdapter plusroomAdapter = new PlusroomAdapter(getApplicationContext(),new PlusroomAdapter.OnItemCheckListener() {
             @Override
-            public void onItemCheck(User_list item) {
+            public void onItemCheck(String item) {
+                Log.v("로그",item.toString());
                 currentSelectedItems.add(item);
             }
 
             @Override
-            public void onItemUncheck(User_list item) {
+            public void onItemUncheck(String item) {
                 currentSelectedItems.remove(item);
             }
         });
@@ -99,4 +100,5 @@ public class InviteFriends extends AppCompatActivity  {
             }
         });
     }
+
 }

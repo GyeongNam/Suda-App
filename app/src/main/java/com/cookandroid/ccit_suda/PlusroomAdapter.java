@@ -29,8 +29,8 @@ class PlusroomAdapter extends RecyclerView.Adapter<PlusroomAdapter.ViewHolder> {
 
     }
     interface OnItemCheckListener {
-        void onItemCheck(User_list item);
-        void onItemUncheck(User_list item);
+        void onItemCheck(String item);
+        void onItemUncheck(String item);
     }
 
     @NonNull
@@ -44,17 +44,17 @@ class PlusroomAdapter extends RecyclerView.Adapter<PlusroomAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(PlusroomAdapter.ViewHolder holder, int position) {
 
-        final User_list currentItem = list.get(position);
+         User_list currentItem = list.get(position);
         holder.friend_name.setText(list.get(position).getUser_name());
         holder.friend_check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                holder.friend_check.setChecked(!holder.friend_check.isChecked());
                 if (holder.friend_check.isChecked()) {
-                    onItemClick.onItemCheck(currentItem);
+                    onItemClick.onItemCheck(currentItem.getUser_name());
                     Log.v("체크",currentItem.getUser_name());
                 } else {
-                    onItemClick.onItemUncheck(currentItem);
+                    onItemClick.onItemUncheck(currentItem.getUser_name());
                     Log.v("체크안될때",currentItem.getUser_name());
                 }
             }
