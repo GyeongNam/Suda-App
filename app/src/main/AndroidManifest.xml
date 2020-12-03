@@ -24,6 +24,7 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".chattingList" />
         <activity android:name=".chatting" />
+        <activity android:name=".InviteFriends" />
         <activity android:name=".setting" />
         <activity android:name=".DrawerActivity" />
         <activity android:name=".PostdetailActivity" />
