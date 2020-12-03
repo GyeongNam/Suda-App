@@ -49,7 +49,7 @@ public class FriendroomAdapter extends RecyclerView.Adapter<FriendroomAdapter.Vi
     @Override
     public void onBindViewHolder(FriendroomAdapter.ViewHolder holder, int position) {
         String text = list.get(position).talk.getChatlist();
-        String text2 = list.get(position).user_list.getUser_name();
+        String text2 = list.get(position).user_list.getRoom_name();
         String text3 = list.get(position).talk.getDate();
         holder.textView1.setText(text);
         holder.textView2.setText(text2);
