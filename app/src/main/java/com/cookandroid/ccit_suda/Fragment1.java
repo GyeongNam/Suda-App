@@ -37,7 +37,7 @@ public class Fragment1 extends Fragment {
     private Context context;
     ApiInterface api;
     RecyclerView listView;
-    com.cookandroid.ccit_suda.plusfriendAdapter plusfriendAdapter;
+    PlusfriendAdapter plusfriendAdapter;
     private SharedPreferences sharedPreferences;
     ArrayList<plusfriend_list> plusfriend_lists_listArrayList;
     User_list user_list;
@@ -52,7 +52,7 @@ public class Fragment1 extends Fragment {
         context = container.getContext();
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment1, container, false);
         listView = rootView.findViewById(R.id.ff_list);
-        plusfriendAdapter = new plusfriendAdapter(context);
+        plusfriendAdapter = new PlusfriendAdapter(context);
 
         talkDatabse = TalkDatabase.getDatabase(context);
         Log.v("dd",talkDatabse.talkDao().getAll_user_list().toString());
