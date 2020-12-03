@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,14 +19,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 class PlusroomAdapter extends RecyclerView.Adapter<PlusroomAdapter.ViewHolder> {
+    private final OnItemCheckListener onItemClick;
     Context context;
-    List<User_list> list = new ArrayList<>();
-    public PlusroomAdapter(Context context) {
-        this.context = context;
 
+    List<User_list> list = new ArrayList<>();
+    public PlusroomAdapter(Context context,@NonNull OnItemCheckListener onItemCheckListener) {
+        this.context = context;
+        this.onItemClick = onItemCheckListener;
 
     }
-
+    interface OnItemCheckListener {
+        void onItemCheck(User_list item);
+        void onItemUncheck(User_list item);
+    }
 
     @NonNull
     @Override
@@ -37,16 +43,20 @@ class PlusroomAdapter extends RecyclerView.Adapter<PlusroomAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(PlusroomAdapter.ViewHolder holder, int position) {
-        Log.v("데베",String.valueOf(list.size()));
-        Log.v("데베",list.get(position).getUser_name());
+
+        final User_list currentItem = list.get(position);
         holder.friend_name.setText(list.get(position).getUser_name());
         holder.friend_check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(v.getContext(), chatting.class);
-////                intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK);
-//                intent.putExtra("room",list.get(position).getRoom());
-//                v.getContext().startActivity(intent);
+//                holder.friend_check.setChecked(!holder.friend_check.isChecked());
+                if (holder.friend_check.isChecked()) {
+                    onItemClick.onItemCheck(currentItem);
+                    Log.v("체크",currentItem.getUser_name());
+                } else {
+                    onItemClick.onItemUncheck(currentItem);
+                    Log.v("체크안될때",currentItem.getUser_name());
+                }
             }
         });
     }
@@ -68,13 +78,18 @@ class PlusroomAdapter extends RecyclerView.Adapter<PlusroomAdapter.ViewHolder> {
     }
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView friend_name;
-        Button friend_check;
+        CheckBox friend_check;
+        View itemView;
         ViewHolder(View itemView) {
             super(itemView) ;
-
-            // 뷰 객체에 대한 참조. (hold strong reference)
+            this.itemView = itemView;
             friend_name = itemView.findViewById(R.id.friend_name);
             friend_check = itemView.findViewById(R.id.friend_check);
+            friend_check.setClickable(false);
+            // 뷰 객체에 대한 참조. (hold strong reference)
+        }
+        public void setOnClickListener(View.OnClickListener onClickListener) {
+            itemView.setOnClickListener(onClickListener);
         }
     }
 }
