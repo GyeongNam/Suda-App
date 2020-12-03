@@ -19,7 +19,7 @@ public interface TalkDao {
     @Query("SELECT * FROM talk_Contents WHERE chat_room = :room")
     LiveData<List<Talk>> getAll_Talk(int room);
 
-    @Query("SELECT * FROM user_list")
+    @Query("SELECT * FROM user_list WHERE NOT user_name = ''")
     LiveData<List<User_list>> getAll_user_list();
 
     @Query("DELETE FROM user_list")

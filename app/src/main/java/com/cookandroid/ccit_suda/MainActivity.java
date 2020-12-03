@@ -117,15 +117,12 @@ public class MainActivity extends AppCompatActivity{
             startService(new Intent(this, ForcedTerminationService.class));
             androids = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-            if (AppHelper.requestQueue == null) {
-                AppHelper.requestQueue = Volley.newRequestQueue(getApplicationContext());
-            }
             SharedPreferences sharedPreferences = getSharedPreferences("File",0);
             String userinfo = sharedPreferences.getString("userinfo","");
             String login_check = sharedPreferences.getString("login_check","");
             Log.v("체크",login_check);
             //pushlog();
-            if(!(userinfo.equals(""))&&(login_check.equals("true"))){
+            if(!(userinfo.equals(""))){
                 a.appendLog(date + "/R/login/"+ userinfo);
                 a.appendLog(date + "/M/boardActivity/0");
                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
@@ -242,29 +239,15 @@ public class MainActivity extends AppCompatActivity{
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
                 Log.v("retrofit2",String.valueOf(response.body()));
                 Log.v("retrofit2",String.valueOf(response));
-                CheckBox checkBox = (CheckBox) findViewById(R.id.cb_save) ;
                 Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
                 if (response.body().equals("1")) {
                     SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     EditText userid = (EditText) findViewById(R.id.ID);
                     String userinfo = userid.getText().toString();
-                    if (checkBox.isChecked()) {
-                        Log.v("TAG", "체크됨");
-                        editor.putString("userinfo",userinfo);
-                        editor.putString("login_check",String.valueOf(checkBox.isChecked()));
-                        editor.commit();
-                        Log.v("TAG", String.valueOf(checkBox.isChecked()));
-
-                        a.appendLog(date + "/R/login/"+ userinfo);
-                    }
-                    else{
-                        editor.putString("userinfo",userinfo);
-                        editor.putString("login_check",String.valueOf(checkBox.isChecked()));
-                        editor.commit();
-
-                        a.appendLog(date + "/R/login/"+ userinfo);
-                    }
+                    editor.putString("userinfo",userinfo);
+                    editor.commit();
+                    a.appendLog(date + "/R/login/"+ userinfo);
                     a.appendLog(date + "/M/boardActivity/0");
                     Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
