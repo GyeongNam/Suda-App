@@ -28,6 +28,8 @@ import retrofit2.Callback;
 
 public class ForcedTerminationService extends Service {
     public IBinder onBind(Intent intent){
+
+
         return null;
     }
     //자동로그인 체크 안했을시 로그인 데이터 파기

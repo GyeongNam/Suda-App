@@ -12,40 +12,42 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.error.VolleyError;
-import com.android.volley.request.SimpleMultiPartRequest;
-import com.android.volley.request.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.CallbackWithRetry;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
+import com.cookandroid.ccit_suda.room.Talk;
+import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import net.mrbin99.laravelechoandroid.Echo;
+import net.mrbin99.laravelechoandroid.EchoCallback;
+import net.mrbin99.laravelechoandroid.EchoOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.Callback;
 
 //import com.android.volley.AuthFailureError;
 //import com.android.volley.VolleyError;
@@ -59,11 +61,29 @@ public class MainActivity extends AppCompatActivity{
     String androids;
     String token;
     ApiInterface api;
-
+    SharedPreferences sharedPreferences;
+    String userinfo;
+    TalkDatabase talkDatabase;
+    EchoOptions options = new EchoOptions();
+    Echo echo;
+    ArrayList array = new ArrayList();
+//    @Override
+//    public void onDestroy(){
+//        super.onDestroy();
+//        Log.e("배열",String.valueOf(array.get(0)));
+//        Log.e("배열",String.valueOf(array.get(1)));
+//        for (int i =0; i<array.size(); i++) {
+//
+//            echo.leave("laravel_database_"+array.get(i));
+//        }
+//    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
+        talkDatabase = TalkDatabase.getDatabase(this);
         int status = InternetCheck.getConnectivityStatus(getApplicationContext());
         if(status == InternetCheck.TYPE_NOT_CONNECTED){
             AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity.this);
@@ -82,17 +102,6 @@ public class MainActivity extends AppCompatActivity{
             Log.v("Internet","연결안됨");
         }else {
             Log.v("Internet","연결됨");
-                            //fcm
-
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//                NotificationChannel notificationChannel = new NotificationChannel("suda", "suda", NotificationManager.IMPORTANCE_DEFAULT);
-//                notificationChannel.setDescription("channel description"); notificationChannel.enableLights(true);
-//                notificationChannel.setLightColor(Color.GREEN); notificationChannel.enableVibration(true);
-//                notificationChannel.setVibrationPattern(new long[]{100, 200, 100, 200});
-//                notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-//                notificationManager.createNotificationChannel(notificationChannel);
-//            }
 
             FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                 @Override
@@ -111,18 +120,17 @@ public class MainActivity extends AppCompatActivity{
             });
             FirebaseMessaging.getInstance().setAutoInitEnabled(true);
 
-
-
             //인터넷 연결상태일시에 아래코드들 실행
             startService(new Intent(this, ForcedTerminationService.class));
             androids = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-
             SharedPreferences sharedPreferences = getSharedPreferences("File",0);
             String userinfo = sharedPreferences.getString("userinfo","");
             String login_check = sharedPreferences.getString("login_check","");
             Log.v("체크",login_check);
             //pushlog();
             if(!(userinfo.equals(""))){
+//                echoconnet();
+
                 a.appendLog(date + "/R/login/"+ userinfo);
                 a.appendLog(date + "/M/boardActivity/0");
                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
@@ -130,8 +138,6 @@ public class MainActivity extends AppCompatActivity{
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
-
-
 
 
 
@@ -144,25 +150,104 @@ public class MainActivity extends AppCompatActivity{
                     a.appendLog(date + "/M/sign_up/0");
                     Intent intent = new Intent(getApplicationContext(), sign_up.class);
                     startActivity(intent);
-
                 }
             });
             btn2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-//                Toast.makeText(getApplicationContext(),value+'\n'+value1,Toast.LENGTH_SHORT).show();
                     sendRequest();
                 }
             });
 
-
-
         }
-
-
     }
 
+    public void echoconnet(){
+        sharedPreferences = getSharedPreferences("File", 0);
+        userinfo = sharedPreferences.getString("userinfo", "");
+
+        String url = "echoroom";
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
+
+        params.put("userinfo", userinfo);
+        Log.e("userinfos",userinfo);
+        Call<String> call = api.requestPost(url,params);
+
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new CallbackWithRetry<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                Log.v("retrofit2",String.valueOf(response.body()));
+                try {
+                    JSONArray jsonArray = new JSONArray(response.body());
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        String room = jsonObject.getString("chat_room");
+
+                        EchoOptions options = new EchoOptions();
+                        Echo echo;
+
+                        options.host = "http://ccit2020.cafe24.com:6001";
+                        echo = new Echo(options);
+
+                        echo.connect(new EchoCallback() {
+                            @Override
+                            public void call(Object... args) {
+                                Log.d("Success", String.valueOf(args));
+                            }
+                        }, new EchoCallback() {
+                            @Override
+                            public void call(Object... args) {
+                                Log.d("Error", String.valueOf(args));
+                            }
+                        });
+                        array.add(room);
+                        echo.channel("laravel_database_"+room)
+                                .listen("chartEvent", new EchoCallback() {
+                                    @Override
+                                    public void call(Object... args) {
+                                        Date now = new Date();
+                                        Log.d("웃기지마랄라", String.valueOf(args[1]));
+                                        String qwe;
+                                        String qwe1;
+                                        int qwe2;
+                                        try {
+                                            JSONObject jsonObject = new JSONObject(args[1].toString());
+                                            chat_list list = new chat_list(jsonObject.getString("user") ,now,jsonObject.getString("message"));
+                                            qwe = jsonObject.getString("user");
+                                            qwe1 = jsonObject.getString("message");
+                                            qwe2 = Integer.parseInt(jsonObject.getString("channel"));
+                                            Log.v("1",qwe);
+                                            Log.v("1",qwe1);
+                                            Log.v("1",String.valueOf(qwe2));
+                                            Log.v("1",now.toString());
+                                            Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now));
+                                            Log.v("1",String.valueOf(t));
+                                            talkDatabase.talkDao().insert(t);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) { super.onFailure(call,t);
+//                txtResult.setText( "onFailure" );
+                a.appendLog(date+"/"+"E"+"/login/" +t.toString());
+                Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+            }
+        });
+    }
 
     public void pushlog() {
         String android = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -192,10 +277,7 @@ public class MainActivity extends AppCompatActivity{
                 Log.v("retrofit2",String.valueOf(response.body()));
                 File file = new File("/mnt/sdcard/log.file");
                 file.delete();
-
-
                 a.appendLog(date + "/R/android/"+ androids);
-
                 SharedPreferences sharedPreferences = getSharedPreferences("File",0);
                 String userinfo = sharedPreferences.getString("userinfo","");
                 String login_check = sharedPreferences.getString("login_check","");
@@ -271,8 +353,6 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
-
-    //edittext 아웃포커스
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         View focusView = getCurrentFocus();

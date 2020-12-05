@@ -23,11 +23,16 @@ import com.cookandroid.ccit_suda.room.Talk;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
 
+import net.mrbin99.laravelechoandroid.Echo;
+import net.mrbin99.laravelechoandroid.EchoCallback;
+import net.mrbin99.laravelechoandroid.EchoOptions;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -93,11 +98,10 @@ public class InviteFriends extends AppCompatActivity  {
 
     //        post 방식
     public void fuckRequest() {
-        String chat_room;
-        String room_name;
         SharedPreferences sharedPreferences = getSharedPreferences("File",0);
         String userinfo = sharedPreferences.getString("userinfo","");
         editText =findViewById(R.id.roomName);
+
 
         String url = "getroom"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
         api = HttpClient.getRetrofit().create( ApiInterface.class );
@@ -114,6 +118,9 @@ public class InviteFriends extends AppCompatActivity  {
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
                 try{
+                    TalkDatabase talkDatabase;
+                    talkDatabase = TalkDatabase.getDatabase(getApplicationContext());
+
                     Log.v("retrofit2", String.valueOf(response.body()));
                     JSONArray jsonArray = new JSONArray(response.body());
                     Log.v("TAG", "zz" + jsonArray);
@@ -129,6 +136,52 @@ public class InviteFriends extends AppCompatActivity  {
                             talkDatabse.talkDao().insert_user_list(user_list);
                         }
                     });
+                    EchoOptions options = new EchoOptions();
+                    Echo echo;
+
+                    options.host = "http://ccit2020.cafe24.com:6001";
+                    echo = new Echo(options);
+
+                    echo.connect(new EchoCallback() {
+                        @Override
+                        public void call(Object... args) {
+                            Log.d("Success", String.valueOf(args));
+                        }
+                    }, new EchoCallback() {
+                        @Override
+                        public void call(Object... args) {
+                            Log.d("Error", String.valueOf(args));
+                        }
+                    });
+
+                    echo.channel("laravel_database_"+chat_room)
+                            .listen("chartEvent", new EchoCallback() {
+                                @Override
+                                public void call(Object... args) {
+                                    Date now = new Date();
+                                    Log.d("웃기지마랄라", String.valueOf(args[1]));
+                                    String qwe;
+                                    String qwe1;
+                                    int qwe2;
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(args[1].toString());
+                                        chat_list list = new chat_list(jsonObject.getString("user") ,now,jsonObject.getString("message"));
+                                        qwe = jsonObject.getString("user");
+                                        qwe1 = jsonObject.getString("message");
+                                        qwe2 = Integer.parseInt(jsonObject.getString("channel"));
+                                        Log.v("1",qwe);
+                                        Log.v("1",qwe1);
+                                        Log.v("1",String.valueOf(qwe2));
+                                        Log.v("1",now.toString());
+                                        Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now));
+                                        Log.v("1",String.valueOf(t));
+                                        talkDatabase.talkDao().insert(t);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+
                     Intent intent = new Intent(getApplicationContext(), chatting.class);
                     intent.putExtra("room",chat_room);
                     startActivity(intent);

@@ -22,8 +22,18 @@ import androidx.core.content.ContextCompat;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.CallbackWithRetry;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
+import com.cookandroid.ccit_suda.room.Talk;
+import com.cookandroid.ccit_suda.room.TalkDatabase;
+
+import net.mrbin99.laravelechoandroid.Echo;
+import net.mrbin99.laravelechoandroid.EchoCallback;
+import net.mrbin99.laravelechoandroid.EchoOptions;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import retrofit2.Call;
@@ -36,6 +46,8 @@ public class FlistAdapter extends BaseAdapter {
     ApiInterface api;
     SharedPreferences sharedPreferences;
     int position;
+    EchoOptions options = new EchoOptions();
+    Echo echo;
     private ImageView follow_bt;
     class ViewHolder {
         TextView talkuser;
@@ -108,7 +120,8 @@ public class FlistAdapter extends BaseAdapter {
         HashMap<String,String> params = new HashMap<>();
         sharedPreferences = context.getSharedPreferences("File", 0);
         String userinfo = sharedPreferences.getString("userinfo", "");
-
+        TalkDatabase talkDatabse;
+        talkDatabse = TalkDatabase.getDatabase(context);
         params.put("user1", userinfo);
         Log.v("user기록", userinfo.toString());
         params.put("user2", name);
@@ -123,16 +136,68 @@ public class FlistAdapter extends BaseAdapter {
                 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
                 Log.v("통신성공",String.valueOf(response.body()));
                 Log.v("통신성공214",String.valueOf(response.body()));
-                 if(response.body().equals("1")){
+                String data = response.body();
+                String[] data1 = data.split(",");
 
+                Log.v("통신성공2143",data1[0]);
+                Log.v("통신성공2144",data1[1]);
+
+                options.host = "http://ccit2020.cafe24.com:6001";
+                echo = new Echo(options);
+                echo.connect(new EchoCallback() {
+                    @Override
+                    public void call(Object... args) {
+                        Log.d("Success", String.valueOf(args));
+                    }
+                }, new EchoCallback() {
+                    @Override
+                    public void call(Object... args) {
+                        Log.d("Error", String.valueOf(args));
+                    }
+                });
+
+                 if(data1[0].equals("1")){
+                     
+                     echo.leave("laravel_database_"+data1[1]);
                      bt.setBackground(ContextCompat.getDrawable(context, R.drawable.follow));
                      Toast.makeText(context ,"언팔로우하셨습니다", Toast.LENGTH_SHORT).show();
                  }
                  else{
 
+                     echo.channel("laravel_database_"+data1[1])
+                             .listen("chartEvent", new EchoCallback() {
+                                 @Override
+                                 public void call(Object... args) {
+                                     Date now = new Date();
+                                     Log.d("웃기지마랄라", String.valueOf(args[1]));
+                                     String qwe;
+                                     String qwe1;
+                                     int qwe2;
+                                     try {
+                                         JSONObject jsonObject = new JSONObject(args[1].toString());
+                                         chat_list list = new chat_list(jsonObject.getString("user") ,now,jsonObject.getString("message"));
+                                         qwe = jsonObject.getString("user");
+                                         qwe1 = jsonObject.getString("message");
+                                         qwe2 = Integer.parseInt(jsonObject.getString("channel"));
+                                         Log.v("1",qwe);
+                                         Log.v("1",qwe1);
+                                         Log.v("1",String.valueOf(qwe2));
+                                         Log.v("1",now.toString());
+                                         Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now));
+                                         Log.v("1",String.valueOf(t));
+                                         talkDatabse.talkDao().insert(t);
+                                     } catch (JSONException e) {
+                                         e.printStackTrace();
+                                     }
+                                 }
+                             });
+
                      bt.setBackground(ContextCompat.getDrawable(context, R.drawable.unfollow));
                      Toast.makeText(context ,"팔로우하셨습니다", Toast.LENGTH_SHORT).show();
+
                  }
+
+
 
             }
             // 통신실패

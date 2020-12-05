@@ -70,14 +70,9 @@ public class chatting extends AppCompatActivity {
     TalkDatabase talkDatabase;
     User_listViewModel viewModel;
     String userinfo;
-    EchoOptions options = new EchoOptions();
-    Echo echo;
 
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        echo.leave("laravel_database_"+room);
-    }
+
+
 
 
     @SuppressLint("WrongViewCast")
@@ -86,7 +81,7 @@ public class chatting extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
         sharedPreferences = getSharedPreferences("File", 0);
-         userinfo = sharedPreferences.getString("userinfo", "");
+        userinfo = sharedPreferences.getString("userinfo", "");
         TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
 
 
@@ -107,19 +102,8 @@ public class chatting extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(chatListAdapter);
         recyclerView.addOnScrollListener(onScrollListener);
-        options.host = "http://ccit2020.cafe24.com:6001";
-        echo = new Echo(options);
-        echo.connect(new EchoCallback() {
-            @Override
-            public void call(Object... args) {
-                Log.d("Success", String.valueOf(args));
-            }
-        }, new EchoCallback() {
-            @Override
-            public void call(Object... args) {
-                Log.d("Error", String.valueOf(args));
-            }
-        });
+
+
         talkDatabase = TalkDatabase.getDatabase(this);
         viewModel = new ViewModelProvider(this).get(User_listViewModel.class);
         viewModel.get_Talk_listViewModel(room).observe(this, new Observer<List<Talk>>() {
@@ -129,55 +113,16 @@ public class chatting extends AppCompatActivity {
                 scrollDown();
             }
         });
-        echo.channel("laravel_database_"+room)
-                .listen("chartEvent", new EchoCallback() {
-//                    @Override
-//                    public void settalk(TalkDao talkDao) {
-//
-//                    }
-                    @Override
-                    public void call(Object... args) {
-                        Date now = new Date();
-                        Log.d("웃기지마랄라", String.valueOf(args[1]));
-                        String qwe;
-                        String qwe1;
-                        int qwe2;
-                        try {
-
-                            JSONObject jsonObject = new JSONObject(args[1].toString());
-                            chat_list list = new chat_list(jsonObject.getString("user") ,now,jsonObject.getString("message"));
-                            qwe = jsonObject.getString("user");
-                            qwe1 = jsonObject.getString("message");
-                            qwe2 = Integer.parseInt(jsonObject.getString("channel"));
-                            Log.v("1",qwe);
-                            Log.v("1",qwe1);
-                            Log.v("1",String.valueOf(qwe2));
-                            Log.v("1",now.toString());
-                            Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now));
-                            Log.v("1",String.valueOf(t));
-                            talkDatabase.talkDao().insert(t);
-
-
-
-//                            chatListAdapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                  msgcheck = replytext.getText().toString();
-
                 check(msgcheck);
                 if (!(msgcheck.isEmpty())) {
-
                     Date now = new Date();
                     replytext.setText(null); // EditText에 입력받은 값을 전송 후 초기화 시켜주는 부분
                     talkRequest();
-
                 } else {
                     Toast.makeText(getApplicationContext(), "대화를 입력해주세요", Toast.LENGTH_SHORT).show();
                 }
@@ -302,7 +247,7 @@ public class chatting extends AppCompatActivity {
             // 통신성공 후 텍스트뷰에 결과값 출력
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+            //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
 
                 Log.v("retrofit2",String.valueOf(response.body()));
             }
