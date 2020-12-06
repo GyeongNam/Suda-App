@@ -13,34 +13,22 @@ public class User_list implements Serializable {
     @ColumnInfo( name =  "user_name")
     private String user_name;
 
-    public void setRoom_name(String room_name) {
-        this.room_name = room_name;
+    public String getRoom_number() {
+        return room_number;
     }
 
-    @ColumnInfo( name =  "room")
-    private String room;
-
-    public String getRoom_name() {
-        return room_name;
+    public void setRoom_number(String room_number) {
+        this.room_number = room_number;
     }
 
-    @ColumnInfo( name =  "room_name")
-    private String room_name;
+    @ColumnInfo( name =  "room_number")
+    private String room_number;
 
-    public String getRoom() {
-        return room;
-    }
-
-    public void setRoom(String room) {
-        this.room = room;
-    }
-
-
-    public User_list(Integer F_idx, String user_name,String room, String room_name) {
+    public User_list(Integer F_idx, String user_name,String room_number) {
         F_idx = F_idx;
         this.user_name = user_name;
-        this.room = room;
-        this.room_name = room_name;
+        this.room_number = room_number;
+
     }
 
     public Integer getF_idx() {

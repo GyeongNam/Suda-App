@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.cookandroid.ccit_suda.ViewModel_user_list.User_listViewModel;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
+import com.cookandroid.ccit_suda.room.Room_list;
 import com.cookandroid.ccit_suda.room.Talk;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
@@ -46,7 +47,7 @@ public class InviteFriends extends AppCompatActivity  {
     Button chatbutton;
     EditText editText;
     ApiInterface api;
-    User_list user_list;
+    Room_list room_list;
 
     private List currentSelectedItems = new ArrayList<>();
 
@@ -123,19 +124,26 @@ public class InviteFriends extends AppCompatActivity  {
 
                     Log.v("retrofit2", String.valueOf(response.body()));
                     JSONArray jsonArray = new JSONArray(response.body());
+                    for(int i = 0; i<jsonArray.length(); i++){
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        String user_name = jsonObject.getString("user");
+                        String chat_room = jsonObject.getString("chat_room");
+                        String room_name = jsonObject.getString("room_name");
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                room_list = new Room_list(null,user_name,chat_room,room_name);
+                                talkDatabse.talkDao().insert_room_list(room_list);
+                            }
+                        });
+                    }
                     Log.v("TAG", "zz" + jsonArray);
 
                     JSONObject jsonObject = jsonArray.getJSONObject(0);
                     String chat_room = jsonObject.getString("chat_room");
                     String room_name = jsonObject.getString("room_name");
                     Log.e("Intent",chat_room);
-                    AsyncTask.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            user_list = new User_list(null,null,chat_room,room_name);
-                            talkDatabse.talkDao().insert_user_list(user_list);
-                        }
-                    });
+
                     EchoOptions options = new EchoOptions();
                     Echo echo;
 

@@ -3,6 +3,7 @@ package com.cookandroid.ccit_suda;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,8 +20,10 @@ import com.baoyz.widget.PullRefreshLayout;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.CallbackWithRetry;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
+import com.cookandroid.ccit_suda.room.Room_list;
 import com.cookandroid.ccit_suda.room.Talk;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
+import com.cookandroid.ccit_suda.room.User_list;
 
 import net.mrbin99.laravelechoandroid.Echo;
 import net.mrbin99.laravelechoandroid.EchoCallback;
@@ -56,43 +59,13 @@ public class boardActivity extends DrawerActivity {
     ArrayList<String> key5 = new ArrayList<>(3);
     ApiInterface api;
     TalkDatabase talkDatabase;
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        EchoOptions options = new EchoOptions();
-//        Echo echo;
-//
-//        options.host = "http://ccit2020.cafe24.com:6061";
-//        echo = new Echo(options);
-//
-//        echo.connect(new EchoCallback() {
-//            @Override
-//            public void call(Object... args) {
-//                Log.d("Success", String.valueOf(args));
-//            }
-//        }, new EchoCallback() {
-//            @Override
-//            public void call(Object... args) {
-//                Log.d("Error", String.valueOf(args));
-//            }
-//        });
-//
-//        String a =sharedPreferences.getString("room","");
-//
-//
-//        a = a.replace("[","");
-//        a = a.replace("]","");
-//        a = a.replace(" ","");
-//        String[] b = a.split(",");
-////        Log.e("보드파괴",sharedPreferences.getString("room",""));
+
         echo.disconnect();
-//        for(int i = 0; i<array.size(); i++){
-//
-//            echo.leave("laravel_database_"+array.get(i));
-//            Log.e("보드파괴",array.get(i).toString());
-//        }
+
 
     }
 
@@ -101,16 +74,16 @@ public class boardActivity extends DrawerActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
         sendRequest();
-        swipe_refresh_layout= findViewById(R.id.swipe_refresh_layout);
+        swipe_refresh_layout = findViewById(R.id.swipe_refresh_layout);
         mainboard_scroll = findViewById(R.id.mainboard_scroll);
-        TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
+        TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class, "talk-db").allowMainThreadQueries().build();
         talkDatabase = TalkDatabase.getDatabase(this);
         echoconnet();
         mainboard_scroll.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
                 int scrollY = mainboard_scroll.getScrollY(); //for verticalScrollView
-                Log.v("스크롤",String.valueOf(scrollY));
+                Log.v("스크롤", String.valueOf(scrollY));
                 if (scrollY == 0)
                     swipe_refresh_layout.setEnabled(true);
                 else
@@ -124,7 +97,6 @@ public class boardActivity extends DrawerActivity {
                 sendRequest();
             }
         });
-
 
 
 //텍스트뷰 부모 리니어레이아웃
@@ -154,10 +126,11 @@ public class boardActivity extends DrawerActivity {
 
         view1.setOnClickListener(new View.OnClickListener() {
             log a = new log();
+
             @Override
             public void onClick(View v) {
                 Log.v("TAG", key);
-                a.appendLog(date + "/M/PostdetailActivity/"+key);
+                a.appendLog(date + "/M/PostdetailActivity/" + key);
                 Intent intent = new Intent(getApplicationContext(), PostdetailActivity.class);
                 intent.putExtra("primarykey", key);
                 startActivity(intent);
@@ -170,12 +143,12 @@ public class boardActivity extends DrawerActivity {
 
     public void sendRequest() {
         String url = "main"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
-        api = HttpClient.getRetrofit().create( ApiInterface.class );
-        HashMap<String,String> params = new HashMap<>();
+        api = HttpClient.getRetrofit().create(ApiInterface.class);
+        HashMap<String, String> params = new HashMap<>();
         SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
         String userinfo = sharedPreferences.getString("userinfo", "");
         params.put("userid", userinfo);
-        Call<String> call = api.requestPost(url,params);
+        Call<String> call = api.requestPost(url, params);
 
         // 비동기로 백그라운드 쓰레드로 동작
         call.enqueue(new CallbackWithRetry<String>() {
@@ -183,7 +156,7 @@ public class boardActivity extends DrawerActivity {
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
-                Log.v("retrofit2",String.valueOf(response.body()));
+                Log.v("retrofit2", String.valueOf(response.body()));
                 SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
                 String userinfo = sharedPreferences.getString("userinfo", "");
                 TextView username = (TextView) findViewById(R.id.username);
@@ -289,101 +262,145 @@ public class boardActivity extends DrawerActivity {
 
             // 통신실패
             @Override
-            public void onFailure(Call<String> call, Throwable t) { super.onFailure(call,t);
-                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
-                a.appendLog(date+"/"+"E"+"/boardActivity/" +t.toString());
+            public void onFailure(Call<String> call, Throwable t) {
+                super.onFailure(call, t);
+                Log.v("retrofit2", String.valueOf("error : " + t.toString()));
+                a.appendLog(date + "/" + "E" + "/boardActivity/" + t.toString());
                 Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
                 swipe_refresh_layout.setRefreshing(false);
             }
         });
     }
 
-    public void echoconnet(){
+    public void echoconnet() {
         sharedPreferences = getSharedPreferences("File", 0);
         userinfo = sharedPreferences.getString("userinfo", "");
 
         String url = "echoroom";
-        api = HttpClient.getRetrofit().create( ApiInterface.class );
-        HashMap<String,String> params = new HashMap<>();
+        api = HttpClient.getRetrofit().create(ApiInterface.class);
+        HashMap<String, String> params = new HashMap<>();
 
         params.put("userinfo", userinfo);
-        Log.e("userinfos",userinfo);
-        Call<String> call = api.requestPost(url,params);
+        Log.e("userinfos", userinfo);
+        Call<String> call = api.requestPost(url, params);
 
         // 비동기로 백그라운드 쓰레드로 동작
         call.enqueue(new CallbackWithRetry<String>() {
             // 통신성공 후 텍스트뷰에 결과값 출력
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-                Log.v("retrofit2",String.valueOf(response.body()));
+                Log.v("retrofit2", String.valueOf(response.body()));
+
+                //방번호 테이블 insert
                 try {
-                    JSONArray jsonArray = new JSONArray(response.body());
+                    JSONObject data = new JSONObject(response.body());
+                    JSONArray room_list_array = new JSONArray(data.getString("room_list"));
+                    JSONArray user_list_array = new JSONArray(data.getString("user_list"));
+                    for (int i = 0; i < room_list_array.length(); i++) {
+                        JSONObject room_list = room_list_array.getJSONObject(i);
+                        String user = room_list.getString("user");
+                        String chat_room = room_list.getString("chat_room");
+                        String room_name = room_list.getString("room_name");
+                        Room_list room_data = new Room_list(null, user, chat_room, room_name);
 
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        String room = jsonObject.getString("chat_room");
-
-
-
-                        options.host = "http://ccit2020.cafe24.com:6001";
-                        echo = new Echo(options);
-
-                        echo.connect(new EchoCallback() {
+                        AsyncTask.execute(new Runnable() {
                             @Override
-                            public void call(Object... args) {
-                                Log.d("Success", String.valueOf(args));
-                            }
-                        }, new EchoCallback() {
-                            @Override
-                            public void call(Object... args) {
-                                Log.d("Error", String.valueOf(args));
+                            public void run() {
+                                if(!talkDatabase.talkDao().isRowIsExist_user_room_list(user,chat_room)){
+                                    talkDatabase.talkDao().insert_room_list(room_data);
+                                }
                             }
                         });
-                        array.add(room);
-                        echo.channel("laravel_database_"+room)
-                                .listen("chartEvent", new EchoCallback() {
+                    }
+                    //insert end
+
+                    //유저리스트 테이블 insert
+                    for (int i = 0; i < user_list_array.length(); i++) {
+                        JSONObject jsonObject = user_list_array.getJSONObject(i);
+                        String follow = jsonObject.getString("follow");
+                        String room = jsonObject.getString("room_idx");
+
+                        User_list user_list = new User_list(null,follow,room);
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(!talkDatabase.talkDao().isRowIsExist_user_list(follow)){
+                                    talkDatabase.talkDao().insert_user_list(user_list);
+                                }
+                            }
+                        });
+
+                    }
+                    //insert end
+
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            for(int i = 0; i < talkDatabase.talkDao().get_room_number(userinfo).size(); i++){
+                                Log.e("룸 리스트",String.valueOf(talkDatabase.talkDao().get_room_number(userinfo).get(i).getRoom_number()));
+                                String room_number = talkDatabase.talkDao().get_room_number(userinfo).get(i).getRoom_number();
+                                array.add(room_number);
+                                options.host = "http://ccit2020.cafe24.com:6001";
+                                echo = new Echo(options);
+
+                                echo.connect(new EchoCallback() {
                                     @Override
                                     public void call(Object... args) {
-                                        Date now = new Date();
-                                        Log.d("웃기지마랄라", String.valueOf(args[1]));
-                                        String qwe;
-                                        String qwe1;
-                                        int qwe2;
-                                        try {
-                                            JSONObject jsonObject = new JSONObject(args[1].toString());
-                                            chat_list list = new chat_list(jsonObject.getString("user") ,now,jsonObject.getString("message"));
-                                            qwe = jsonObject.getString("user");
-                                            qwe1 = jsonObject.getString("message");
-                                            qwe2 = Integer.parseInt(jsonObject.getString("channel"));
-                                            Log.v("1",qwe);
-                                            Log.v("1",qwe1);
-                                            Log.v("1",String.valueOf(qwe2));
-                                            Log.v("1",now.toString());
-                                            Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now));
-                                            Log.v("1",String.valueOf(t));
-                                            talkDatabase.talkDao().insert(t);
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
+                                        Log.d("Success", String.valueOf(args));
+                                    }
+                                }, new EchoCallback() {
+                                    @Override
+                                    public void call(Object... args) {
+                                        Log.d("Error", String.valueOf(args));
                                     }
                                 });
-                    }
+                                echo.channel("laravel_database_" + room_number)
+                                        .listen("chartEvent", new EchoCallback() {
+                                            @Override
+                                            public void call(Object... args) {
+                                                Date now = new Date();
+                                                Log.d("웃기지마랄라", String.valueOf(args[1]));
+                                                String user;
+                                                String message;
+                                                int channel;
+                                                try {
+                                                    JSONObject jsonObject = new JSONObject(args[1].toString());
+                                                    chat_list list = new chat_list(jsonObject.getString("user"), now, jsonObject.getString("message"));
+                                                    user = jsonObject.getString("user");
+                                                    message = jsonObject.getString("message");
+                                                    channel = Integer.parseInt(jsonObject.getString("channel"));
+                                                    Talk t = new Talk(null, user, message, channel, String.valueOf(now));
+                                                    Log.v("1", String.valueOf(t));
+                                                    talkDatabase.talkDao().insert(t);
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        });
+
+                            }
+                        }
+                    });
+
+
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("room",array.toString());
+                editor.putString("room", array.toString());
                 editor.apply();
             }
 
             // 통신실패
             @Override
-            public void onFailure(Call<String> call, Throwable t) { super.onFailure(call,t);
+            public void onFailure(Call<String> call, Throwable t) {
+                super.onFailure(call, t);
 //                txtResult.setText( "onFailure" );
-                a.appendLog(date+"/"+"E"+"/login/" +t.toString());
+                a.appendLog(date + "/" + "E" + "/login/" + t.toString());
                 Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+                Log.v("retrofit2", String.valueOf("error : " + t.toString()));
             }
         });
     }

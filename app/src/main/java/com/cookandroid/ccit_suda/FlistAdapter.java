@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.cookandroid.ccit_suda.retrofit2.CallbackWithRetry;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 import com.cookandroid.ccit_suda.room.Talk;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
+import com.cookandroid.ccit_suda.room.User_list;
 
 import net.mrbin99.laravelechoandroid.Echo;
 import net.mrbin99.laravelechoandroid.EchoCallback;
@@ -126,6 +128,7 @@ public class FlistAdapter extends BaseAdapter {
         Log.v("user기록", userinfo.toString());
         params.put("user2", name);
         Log.v("talkuser기록", name);
+
         Log.v("버튼의 위치", String.valueOf(btpo));
         Call<String> call = api.requestPost(url,params);
         // 비동기로 백그라운드 쓰레드로 동작
@@ -134,13 +137,25 @@ public class FlistAdapter extends BaseAdapter {
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
                 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
-                Log.v("통신성공",String.valueOf(response.body()));
-                Log.v("통신성공214",String.valueOf(response.body()));
+
                 String data = response.body();
                 String[] data1 = data.split(",");
 
                 Log.v("통신성공2143",data1[0]);
                 Log.v("통신성공2144",data1[1]);
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(!talkDatabse.talkDao().isRowIsExist_user_list(name)){
+                            User_list user_list = new User_list(null,name,data1[1]);
+                            talkDatabse.talkDao().insert_user_list(user_list);
+                        }
+                        else{
+                            talkDatabse.talkDao().delete_user_list(name);
+                        }
+                    }
+                });
+
 
                 options.host = "http://ccit2020.cafe24.com:6001";
                 echo = new Echo(options);
@@ -158,7 +173,7 @@ public class FlistAdapter extends BaseAdapter {
 
                  if(data1[0].equals("1")){
                      
-                     echo.leave("laravel_database_"+data1[1]);
+                     echo.leave("laravel_database_"+data1[1].trim());
                      bt.setBackground(ContextCompat.getDrawable(context, R.drawable.follow));
                      Toast.makeText(context ,"언팔로우하셨습니다", Toast.LENGTH_SHORT).show();
                  }
@@ -179,10 +194,6 @@ public class FlistAdapter extends BaseAdapter {
                                          qwe = jsonObject.getString("user");
                                          qwe1 = jsonObject.getString("message");
                                          qwe2 = Integer.parseInt(jsonObject.getString("channel"));
-                                         Log.v("1",qwe);
-                                         Log.v("1",qwe1);
-                                         Log.v("1",String.valueOf(qwe2));
-                                         Log.v("1",now.toString());
                                          Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now));
                                          Log.v("1",String.valueOf(t));
                                          talkDatabse.talkDao().insert(t);

@@ -1,15 +1,11 @@
 package com.cookandroid.ccit_suda.ViewModel_user_list;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.cookandroid.ccit_suda.room.Talk;
-import com.cookandroid.ccit_suda.room.Talk;
-import com.cookandroid.ccit_suda.room.TalkAndUser_list;
+import com.cookandroid.ccit_suda.room.TalkAndRoom_list;
 import com.cookandroid.ccit_suda.room.TalkDao;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
@@ -28,8 +24,8 @@ public class User_listRepository {
 
     }
 
-    public LiveData<List<TalkAndUser_list>> getRoom_list(String userinfo){
-        return talkDao.friendroom_user_list();
+    public LiveData<List<TalkAndRoom_list>> getRoom_list(String userinfo){
+        return talkDao.friendroom_user_list(userinfo);
     }
 
     public User_listRepository(Application application) {

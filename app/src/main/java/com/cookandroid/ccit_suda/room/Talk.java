@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity(tableName = "talk_Contents")
+@Entity(tableName = "talk_contents")
 public class Talk implements Serializable {
     public Integer getIdx() {
         return idx;

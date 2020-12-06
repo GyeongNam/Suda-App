@@ -2,6 +2,8 @@ package com.cookandroid.ccit_suda.friendroom;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,15 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cookandroid.ccit_suda.R;
 import com.cookandroid.ccit_suda.chatting;
 import com.cookandroid.ccit_suda.room.Talk;
-import com.cookandroid.ccit_suda.room.TalkAndUser_list;
-import com.cookandroid.ccit_suda.room.User_list;
+import com.cookandroid.ccit_suda.room.TalkAndRoom_list;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FriendroomAdapter extends RecyclerView.Adapter<FriendroomAdapter.ViewHolder> {
-    List<TalkAndUser_list> list = new ArrayList<TalkAndUser_list>();
+    List<TalkAndRoom_list> list = new ArrayList<>();
     Context context;
+
 
     // 생성자에서 데이터 리스트 객체를 전달받음.
     public FriendroomAdapter(Context context) {
@@ -40,7 +42,7 @@ public class FriendroomAdapter extends RecyclerView.Adapter<FriendroomAdapter.Vi
         return vh ;
     }
 
-    public void setData(List<TalkAndUser_list> list){
+    public void setData(List<TalkAndRoom_list> list){
         this.list = list;
         notifyDataSetChanged();
     }
@@ -48,8 +50,17 @@ public class FriendroomAdapter extends RecyclerView.Adapter<FriendroomAdapter.Vi
     // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
     @Override
     public void onBindViewHolder(FriendroomAdapter.ViewHolder holder, int position) {
+//        String text = list.get(position).getChatlist();
+//        String text2 = list.get(position).getUser();
+//        String text3 = list.get(position).getDate();
+        SharedPreferences sharedPreferences = context.getSharedPreferences("File",0);
+        String userinfo = sharedPreferences.getString("userinfo","");
         String text = list.get(position).talk.getChatlist();
-        String text2 = list.get(position).user_list.getRoom_name();
+        String text2 = list.get(position).room_list.getUser();
+        if(!list.get(position).room_list.getRoom_name().equals("null")){
+            Log.e("단체 채팅방 이름으로 변경","true");
+            text2 = list.get(position).room_list.getRoom_name();
+        }
         String text3 = list.get(position).talk.getDate();
         holder.textView1.setText(text);
         holder.textView2.setText(text2);
@@ -60,7 +71,10 @@ public class FriendroomAdapter extends RecyclerView.Adapter<FriendroomAdapter.Vi
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), chatting.class);
 //                intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("room",list.get(position).user_list.getRoom());
+//                Log.e("방버호",String.valueOf(list.get(position).getChat_room()));
+//                intent.putExtra("room",String.valueOf(list.get(position).getChat_room()));
+                Log.e("방버호",String.valueOf(list.get(position).talk.getChat_room()));
+                intent.putExtra("room",String.valueOf(list.get(position).talk.getChat_room()));
                 v.getContext().startActivity(intent);
             }
         });

@@ -1,15 +1,13 @@
 package com.cookandroid.ccit_suda.ViewModel_user_list;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.cookandroid.ccit_suda.room.Talk;
-import com.cookandroid.ccit_suda.room.Talk;
-import com.cookandroid.ccit_suda.room.TalkAndUser_list;
+import com.cookandroid.ccit_suda.room.TalkAndRoom_list;
 import com.cookandroid.ccit_suda.room.User_list;
 
 import java.util.List;
@@ -26,7 +24,7 @@ public class User_listViewModel extends AndroidViewModel{
         return user_list;
     }
 
-    public LiveData<List<TalkAndUser_list>> get_Romm_listViewModel(String userinfo){
+    public LiveData<List<TalkAndRoom_list>> get_Romm_listViewModel(String userinfo){
 
         return user_listRepository.getRoom_list(userinfo);
     }

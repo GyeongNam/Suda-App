@@ -98,8 +98,6 @@ public class Fragment3 extends Fragment {
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
-                Log.v("1",String.valueOf(response.body()));
-                Log.v("2",String.valueOf(response));
 
                  String flistArray = response.body();
                 Log.v("3",String.valueOf(response.body()));

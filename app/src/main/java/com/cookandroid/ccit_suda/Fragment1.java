@@ -100,21 +100,16 @@ public class Fragment1 extends Fragment {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
                 Log.v("통신성공",String.valueOf(response.body()));
                 String plusfriendArray = response.body();
-//                Log.v("3",String.valueOf(response.body()));
+
                     try {
                         JSONArray jsonArray = new JSONArray(plusfriendArray);
-//                        Log.v("13", String.valueOf(jsonArray));
+
 
                         for (int i=0; i<jsonArray.length(); i++)
                         {
-//                            Log.v("for문 입장?", "안녕 ");
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             String a = jsonObject.getString("follow");
                             String b = jsonObject.getString("room_idx");
-                            plusfriend_list plusflist = new plusfriend_list();
-                            plusflist.setFollow((jsonObject.getString("follow")));
-                            plusflist.setName((jsonObject.getString("follow")));
-                            plusflist.setRoom(jsonObject.getString("room_idx"));
                             Log.e("e",jsonObject.getString("follow"));
                             Log.e("e",jsonObject.getString("room_idx"));
 
@@ -122,7 +117,7 @@ public class Fragment1 extends Fragment {
                                 @Override
                                 public void run() {
                                     if(!talkDatabse.talkDao().isRowIsExist_user_list(a)){
-                                        user_list = new User_list(null,a,b,a);
+                                        user_list = new User_list(null,a,b);
                                         talkDatabse.talkDao().insert_user_list(user_list);
                                     }
                                 }

@@ -50,7 +50,7 @@ class PlusfriendAdapter extends RecyclerView.Adapter<PlusfriendAdapter.ViewHolde
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), chatting.class);
 //                intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("room",list.get(position).getRoom());
+                intent.putExtra("room",list.get(position).getRoom_number());
                 v.getContext().startActivity(intent);
             }
         });

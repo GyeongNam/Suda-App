@@ -248,7 +248,7 @@ public class chatting extends AppCompatActivity {
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
             //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
-
+                Log.v("retrofit2",String.valueOf(response));
                 Log.v("retrofit2",String.valueOf(response.body()));
             }
             // 통신실패

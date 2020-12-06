@@ -3,14 +3,11 @@ package com.cookandroid.ccit_suda.room;
 import androidx.room.Embedded;
 import androidx.room.Relation;
 
-import java.util.List;
+public class TalkAndRoom_list {
 
-public class TalkAndUser_list {
     @Embedded
-    public User_list user_list;
+    public Room_list room_list;
     @Relation(parentColumn = "room_number", entityColumn ="chat_room")
     public Talk talk;
 
-
 }
-
