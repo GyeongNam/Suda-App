@@ -59,21 +59,27 @@ public class boardActivity extends DrawerActivity {
     ArrayList<String> key5 = new ArrayList<>(3);
     ApiInterface api;
     TalkDatabase talkDatabase;
-
+    private BackPressCloseHandler backPressCloseHandler;
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
         echo.disconnect();
+        Log.e("호출","액티비티 파괴");
 
 
     }
-
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        backPressCloseHandler.onBackPressed();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
         sendRequest();
+        backPressCloseHandler = new BackPressCloseHandler(this);
         swipe_refresh_layout = findViewById(R.id.swipe_refresh_layout);
         mainboard_scroll = findViewById(R.id.mainboard_scroll);
         TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class, "talk-db").allowMainThreadQueries().build();

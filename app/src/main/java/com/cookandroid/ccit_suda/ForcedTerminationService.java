@@ -20,6 +20,8 @@ import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
 
+import net.mrbin99.laravelechoandroid.Echo;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +37,6 @@ public class ForcedTerminationService extends Service {
     //자동로그인 체크 안했을시 로그인 데이터 파기
     public void onDestroy(){
         super.onDestroy();
-
         Log.v("TAG","앱이 종료됨");
 
     }
