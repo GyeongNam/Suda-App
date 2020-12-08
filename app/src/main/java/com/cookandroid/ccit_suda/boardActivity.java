@@ -60,20 +60,23 @@ public class boardActivity extends DrawerActivity {
     ApiInterface api;
     TalkDatabase talkDatabase;
     private BackPressCloseHandler backPressCloseHandler;
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
         echo.disconnect();
-        Log.e("호출","액티비티 파괴");
+        Log.e("호출", "액티비티 파괴");
 
 
     }
+
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
         backPressCloseHandler.onBackPressed();
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -312,7 +315,7 @@ public class boardActivity extends DrawerActivity {
                         AsyncTask.execute(new Runnable() {
                             @Override
                             public void run() {
-                                if(!talkDatabase.talkDao().isRowIsExist_user_room_list(user,chat_room)){
+                                if (!talkDatabase.talkDao().isRowIsExist_user_room_list(user, chat_room)) {
                                     talkDatabase.talkDao().insert_room_list(room_data);
                                 }
                             }
@@ -326,11 +329,11 @@ public class boardActivity extends DrawerActivity {
                         String follow = jsonObject.getString("follow");
                         String room = jsonObject.getString("room_idx");
 
-                        User_list user_list = new User_list(null,follow,room);
+                        User_list user_list = new User_list(null, follow, room);
                         AsyncTask.execute(new Runnable() {
                             @Override
                             public void run() {
-                                if(!talkDatabase.talkDao().isRowIsExist_user_list(follow)){
+                                if (!talkDatabase.talkDao().isRowIsExist_user_list(follow)) {
                                     talkDatabase.talkDao().insert_user_list(user_list);
                                 }
                             }
@@ -342,24 +345,26 @@ public class boardActivity extends DrawerActivity {
                     AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
-                            for(int i = 0; i < talkDatabase.talkDao().get_room_number(userinfo).size(); i++){
-                                Log.e("룸 리스트",String.valueOf(talkDatabase.talkDao().get_room_number(userinfo).get(i).getRoom_number()));
-                                String room_number = talkDatabase.talkDao().get_room_number(userinfo).get(i).getRoom_number();
-                                array.add(room_number);
-                                options.host = "http://ccit2020.cafe24.com:6001";
-                                echo = new Echo(options);
+                            options.host = "http://ccit2020.cafe24.com:6001";
+                            echo = new Echo(options);
 
-                                echo.connect(new EchoCallback() {
-                                    @Override
-                                    public void call(Object... args) {
-                                        Log.d("Success", String.valueOf(args));
-                                    }
-                                }, new EchoCallback() {
-                                    @Override
-                                    public void call(Object... args) {
-                                        Log.d("Error", String.valueOf(args));
-                                    }
-                                });
+                            echo.connect(new EchoCallback() {
+                                @Override
+                                public void call(Object... args) {
+                                    Log.d("Success", String.valueOf(args));
+                                }
+                            }, new EchoCallback() {
+                                @Override
+                                public void call(Object... args) {
+                                    Log.d("Error", String.valueOf(args));
+                                }
+                            });
+                            for (int i = 0; i < talkDatabase.talkDao().get_room_number(userinfo).size(); i++) {
+                                Log.e("룸 리스트", String.valueOf(talkDatabase.talkDao().get_room_number(userinfo).get(i).getRoom_number()));
+                                String room_number = talkDatabase.talkDao().get_room_number(userinfo).get(i).getRoom_number();
+                                Log.e("dzdz",room_number);
+                                array.add(room_number);
+
                                 echo.channel("laravel_database_" + room_number)
                                         .listen("chartEvent", new EchoCallback() {
                                             @Override
@@ -375,6 +380,7 @@ public class boardActivity extends DrawerActivity {
                                                     user = jsonObject.getString("user");
                                                     message = jsonObject.getString("message");
                                                     channel = Integer.parseInt(jsonObject.getString("channel"));
+
                                                     Talk t = new Talk(null, user, message, channel, String.valueOf(now));
                                                     Log.v("1", String.valueOf(t));
                                                     talkDatabase.talkDao().insert(t);
@@ -385,9 +391,84 @@ public class boardActivity extends DrawerActivity {
                                         });
 
                             }
+//초대되었을때 열어주는 채널
+                            Log.e("npe",String.valueOf(userinfo));
+                            echo.channel("laravel_database_" + userinfo)
+                                    .listen("chartEvent", new EchoCallback() {
+                                        @Override
+                                        public void call(Object... args) {
+                                            Date now = new Date();
+                                            Log.d("웃기지마랄라", String.valueOf(args[1]));
+                                            String user;
+                                            String room_name;
+                                            String chat_room;
+                                            try {
+                                                JSONObject jsonObject = new JSONObject(args[1].toString());
+                                                user = jsonObject.getString("user");
+                                                chat_room = jsonObject.getString("message");
+                                                room_name = jsonObject.getString("room_name");
+                                                JSONArray jsonArray = new JSONArray(user);
+                                                for(int i=0; i<jsonArray.length();i++){
+                                                   String a = jsonArray.getString(i);
+                                                    Log.e("jsonarray", a);
+                                                    //초대된 방 roo_list 테이블에 데이터 insert
+                                                    Room_list room_list = new Room_list(null, a, chat_room, room_name);
+                                                    if (!talkDatabase.talkDao().isRowIsExist_user_room_list(a, chat_room)) {
+                                                        talkDatabase.talkDao().insert_room_list(room_list);
+                                                    }
+
+                                                }
+                                                Log.e("jsonarray", jsonArray.toString());
+
+
+
+
+                                                Echo echo2;
+                                                echo2 = new Echo(options);
+                                                echo2.connect(new EchoCallback() {
+                                                    @Override
+                                                    public void call(Object... args) {
+                                                        Log.d("Success", String.valueOf(args));
+                                                    }
+                                                }, new EchoCallback() {
+                                                    @Override
+                                                    public void call(Object... args) {
+                                                        Log.d("Error", String.valueOf(args));
+                                                    }
+                                                });
+                                                echo2.channel("laravel_database_" + chat_room)
+                                                        .listen("chartEvent", new EchoCallback() {
+                                                            @Override
+                                                            public void call(Object... args) {
+                                                                Date now = new Date();
+                                                                Log.d("웃기지마랄라", String.valueOf(args[1]));
+                                                                String user;
+                                                                String message;
+                                                                int channel;
+                                                                try {
+                                                                    JSONObject jsonObject = new JSONObject(args[1].toString());
+                                                                    chat_list list = new chat_list(jsonObject.getString("user"), now, jsonObject.getString("message"));
+                                                                    user = jsonObject.getString("user");
+                                                                    message = jsonObject.getString("message");
+                                                                    channel = Integer.parseInt(jsonObject.getString("channel"));
+                                                                    Talk t = new Talk(null, user, message, channel, String.valueOf(now));
+                                                                    Log.v("1", String.valueOf(t));
+                                                                    talkDatabase.talkDao().insert(t);
+                                                                } catch (JSONException e) {
+                                                                    e.printStackTrace();
+                                                                }
+                                                            }
+                                                        });
+//                                                Talk t = new Talk(null, user, message, channel, String.valueOf(now));
+//                                                Log.v("1", String.valueOf(t));
+//                                                talkDatabase.talkDao().insert(t);
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
                         }
                     });
-
 
 
                 } catch (JSONException e) {

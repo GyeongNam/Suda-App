@@ -107,7 +107,7 @@ public class InviteFriends extends AppCompatActivity  {
         String url = "getroom"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
         api = HttpClient.getRetrofit().create( ApiInterface.class );
         HashMap<String,String> params = new HashMap<>();
-        params.put("key", currentSelectedItems.toString());
+        params.put("key", currentSelectedItems.toString()+","+userinfo);
         params.put("roomname", editText.getText().toString());
         params.put("userinfo", userinfo);
         Call<String> call = api.requestPost(url,params);
@@ -162,33 +162,33 @@ public class InviteFriends extends AppCompatActivity  {
                         }
                     });
 
-                    echo.channel("laravel_database_"+chat_room)
-                            .listen("chartEvent", new EchoCallback() {
-                                @Override
-                                public void call(Object... args) {
-                                    Date now = new Date();
-                                    Log.d("웃기지마랄라", String.valueOf(args[1]));
-                                    String qwe;
-                                    String qwe1;
-                                    int qwe2;
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(args[1].toString());
-                                        chat_list list = new chat_list(jsonObject.getString("user") ,now,jsonObject.getString("message"));
-                                        qwe = jsonObject.getString("user");
-                                        qwe1 = jsonObject.getString("message");
-                                        qwe2 = Integer.parseInt(jsonObject.getString("channel"));
-                                        Log.v("1",qwe);
-                                        Log.v("1",qwe1);
-                                        Log.v("1",String.valueOf(qwe2));
-                                        Log.v("1",now.toString());
-                                        Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now));
-                                        Log.v("1",String.valueOf(t));
-                                        talkDatabase.talkDao().insert(t);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
+//                    echo.channel("laravel_database_"+chat_room)
+//                            .listen("chartEvent", new EchoCallback() {
+//                                @Override
+//                                public void call(Object... args) {
+//                                    Date now = new Date();
+//                                    Log.d("웃기지마랄라", String.valueOf(args[1]));
+//                                    String qwe;
+//                                    String qwe1;
+//                                    int qwe2;
+//                                    try {
+//                                        JSONObject jsonObject = new JSONObject(args[1].toString());
+//                                        chat_list list = new chat_list(jsonObject.getString("user") ,now,jsonObject.getString("message"));
+//                                        qwe = jsonObject.getString("user");
+//                                        qwe1 = jsonObject.getString("message");
+//                                        qwe2 = Integer.parseInt(jsonObject.getString("channel"));
+//                                        Log.v("1",qwe);
+//                                        Log.v("1",qwe1);
+//                                        Log.v("1",String.valueOf(qwe2));
+//                                        Log.v("1",now.toString());
+//                                        Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now));
+//                                        Log.v("1",String.valueOf(t));
+//                                        talkDatabase.talkDao().insert(t);
+//                                    } catch (JSONException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                            });
 
                     Intent intent = new Intent(getApplicationContext(), chatting.class);
                     intent.putExtra("room",chat_room);
