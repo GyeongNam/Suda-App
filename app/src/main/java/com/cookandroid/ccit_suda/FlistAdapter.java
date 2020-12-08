@@ -194,6 +194,7 @@ public class FlistAdapter extends BaseAdapter {
                                          qwe = jsonObject.getString("user");
                                          qwe1 = jsonObject.getString("message");
                                          qwe2 = Integer.parseInt(jsonObject.getString("channel"));
+                                         Log.e("qwe2",jsonObject.getString("qwe2"));
                                          Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now));
                                          Log.v("1",String.valueOf(t));
                                          talkDatabse.talkDao().insert(t);
@@ -207,9 +208,6 @@ public class FlistAdapter extends BaseAdapter {
                      Toast.makeText(context ,"팔로우하셨습니다", Toast.LENGTH_SHORT).show();
 
                  }
-
-
-
             }
             // 통신실패
             @Override

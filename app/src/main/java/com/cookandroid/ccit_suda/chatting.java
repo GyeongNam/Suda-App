@@ -74,6 +74,11 @@ public class chatting extends AppCompatActivity {
 
 
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e("호출","액티비티 파괴");
+    }
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -126,9 +131,7 @@ public class chatting extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "대화를 입력해주세요", Toast.LENGTH_SHORT).show();
                 }
-
             }
-
         });
     }
 
@@ -140,7 +143,6 @@ public class chatting extends AppCompatActivity {
             LinearLayoutManager layoutManager = LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
             int totalItemCount = layoutManager.getItemCount();
             int lastVisible = layoutManager.findLastCompletelyVisibleItemPosition();
-
             if (lastVisible >= totalItemCount - 1) {
                 Log.e(TAG, "마지막위치를 잡는가?");
             }
@@ -169,14 +171,14 @@ public class chatting extends AppCompatActivity {
                 builder.setTitle("채팅 나가기");       //타이틀 지정.
                 builder.setMessage("정말 나가시겠습니까?  채팅기록과 채팅방이 사라집니다...");       //메시지
 //                builder.setMessage("채팅기록과 채팅방이 사라집니다...");       //메시지
-                builder.setPositiveButton("네", new DialogInterface.OnClickListener() {        //확인 버튼을 생성 및 클릭시 동작 구현.
+                builder.setPositiveButton("네", new DialogInterface.OnClickListener() {
+                    //확인 버튼을 생성 및 클릭시 동작 구현.
                     @Override
-
                     public void onClick(DialogInterface dialog, int which) {
                         //"YES" Button Click
+
                         Toast.makeText(getApplicationContext(), "채팅방을 나갑니다.", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(getApplicationContext(), chattingList.class);
-                        startActivity(intent);
+                        finish();
 
                     }
                 });
@@ -193,8 +195,7 @@ public class chatting extends AppCompatActivity {
                 return true;
 
             default:
-                Intent intent = new Intent(getApplicationContext(), chattingList.class);
-                startActivity(intent);
+                finish();
 
             return super.onOptionsItemSelected(item);
         }
