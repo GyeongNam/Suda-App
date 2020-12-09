@@ -139,6 +139,7 @@ public class FlistAdapter extends BaseAdapter {
                 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
 
                 String data = response.body();
+                Log.v("통신성공2143",String.valueOf(data));
                 String[] data1 = data.split(",");
 
                 Log.v("통신성공2143",data1[0]);
