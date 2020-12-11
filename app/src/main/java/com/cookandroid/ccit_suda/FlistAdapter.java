@@ -189,14 +189,15 @@ public class FlistAdapter extends BaseAdapter {
                                      String qwe;
                                      String qwe1;
                                      int qwe2;
+                                     String chat_idx;
                                      try {
                                          JSONObject jsonObject = new JSONObject(args[1].toString());
                                          chat_list list = new chat_list(jsonObject.getString("user") ,now,jsonObject.getString("message"));
                                          qwe = jsonObject.getString("user");
                                          qwe1 = jsonObject.getString("message");
                                          qwe2 = Integer.parseInt(jsonObject.getString("channel"));
-                                         Log.e("qwe2",jsonObject.getString("qwe2"));
-                                         Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now));
+                                         chat_idx = jsonObject.getString("chat_idx");
+                                         Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now),chat_idx);
                                          Log.v("1",String.valueOf(t));
                                          talkDatabse.talkDao().insert(t);
                                      } catch (JSONException e) {
