@@ -12,8 +12,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,18 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.error.VolleyError;
-import com.android.volley.request.StringRequest;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.CallbackWithRetry;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
@@ -48,10 +40,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 
 public class DrawerActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
@@ -83,7 +73,7 @@ public class DrawerActivity extends AppCompatActivity {
         super.setContentView(fullView);
         list_parent = findViewById(R.id.list_parent);
         drawerLayout = (DrawerLayout) findViewById(R.id.toolbar_lay);
-        drawerView = (View) findViewById(R.id.drawer);
+        drawerView = (View) findViewById(R.id.drawerView);
         mypost_board = (TextView) findViewById(R.id.mypost_board);
         chat_view = (TextView) findViewById(R.id.chat_view);
         setting_view = (TextView) findViewById(R.id.setting_view);

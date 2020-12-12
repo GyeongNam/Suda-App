@@ -22,6 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".ChatDrawer"></activity>
         <activity android:name=".chattingList" />
         <activity android:name=".chatting" />
         <activity android:name=".InviteFriends" />
