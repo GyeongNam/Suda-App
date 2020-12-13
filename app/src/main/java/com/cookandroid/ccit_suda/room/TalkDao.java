@@ -52,4 +52,8 @@ public interface TalkDao {
     @Query("SELECT room_number FROM room_list WHERE user_name = :id")
     List<Room_list> get_room_number(String id);
 
+    @Query("SELECT chat_room, chat_idx FROM talk_contents GROUP BY chat_room ORDER BY chat_idx DESC")
+    List<Talk> get_lately_chat_list();
+    @Query("SELECT EXISTS(SELECT * FROM talk_contents WHERE chat_idx = :idx)")
+    boolean isRowIsExist_talk_list(String idx);
 }

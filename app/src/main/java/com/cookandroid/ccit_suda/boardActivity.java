@@ -24,6 +24,7 @@ import com.cookandroid.ccit_suda.room.Room_list;
 import com.cookandroid.ccit_suda.room.Talk;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
+import com.google.gson.Gson;
 
 import net.mrbin99.laravelechoandroid.Echo;
 import net.mrbin99.laravelechoandroid.EchoCallback;
@@ -38,6 +39,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import retrofit2.Call;
+import retrofit2.Callback;
 
 public class boardActivity extends DrawerActivity {
     private long backBtnTime = 0;
@@ -46,6 +48,7 @@ public class boardActivity extends DrawerActivity {
     ScrollView mainboard_scroll;
     EchoOptions options = new EchoOptions();
     Echo echo;
+    TalkDatabase db;
     ArrayList array = new ArrayList();
     ArrayList<String> data1 = new ArrayList<>(3);
     ArrayList<String> data2 = new ArrayList<>(3);
@@ -85,9 +88,20 @@ public class boardActivity extends DrawerActivity {
         backPressCloseHandler = new BackPressCloseHandler(this);
         swipe_refresh_layout = findViewById(R.id.swipe_refresh_layout);
         mainboard_scroll = findViewById(R.id.mainboard_scroll);
-        TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class, "talk-db").allowMainThreadQueries().build();
+        db = Room.databaseBuilder(this, TalkDatabase.class, "talk-db").allowMainThreadQueries().build();
         talkDatabase = TalkDatabase.getDatabase(this);
-        echoconnet();
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Gson gson = new Gson();
+
+                Log.e("쿼리문",gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
+                send_lately_chat_idx(gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
+            }
+        });
+
+//        echoconnet();
         mainboard_scroll.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
@@ -362,7 +376,7 @@ public class boardActivity extends DrawerActivity {
                             for (int i = 0; i < talkDatabase.talkDao().get_room_number(userinfo).size(); i++) {
                                 Log.e("룸 리스트", String.valueOf(talkDatabase.talkDao().get_room_number(userinfo).get(i).getRoom_number()));
                                 String room_number = talkDatabase.talkDao().get_room_number(userinfo).get(i).getRoom_number();
-                                Log.e("dzdz",room_number);
+                                Log.e("dzdz", room_number);
                                 array.add(room_number);
 
                                 echo.channel("laravel_database_" + room_number)
@@ -383,7 +397,7 @@ public class boardActivity extends DrawerActivity {
                                                     channel = Integer.parseInt(jsonObject.getString("channel"));
                                                     chat_idx = jsonObject.getString("chat_idx");
 
-                                                    Talk t = new Talk(null, user, message, channel, String.valueOf(now),chat_idx);
+                                                    Talk t = new Talk(null, user, message, channel, String.valueOf(now), chat_idx);
                                                     Log.v("1", String.valueOf(t));
                                                     talkDatabase.talkDao().insert(t);
                                                 } catch (JSONException e) {
@@ -394,7 +408,7 @@ public class boardActivity extends DrawerActivity {
 
                             }
 //초대되었을때 열어주는 채널
-                            Log.e("npe",String.valueOf(userinfo));
+                            Log.e("npe", String.valueOf(userinfo));
                             echo.channel("laravel_database_" + userinfo)
                                     .listen("chartEvent", new EchoCallback() {
                                         @Override
@@ -410,8 +424,8 @@ public class boardActivity extends DrawerActivity {
                                                 chat_room = jsonObject.getString("message");
                                                 room_name = jsonObject.getString("room_name");
                                                 JSONArray jsonArray = new JSONArray(user);
-                                                for(int i=0; i<jsonArray.length();i++){
-                                                   String a = jsonArray.getString(i);
+                                                for (int i = 0; i < jsonArray.length(); i++) {
+                                                    String a = jsonArray.getString(i);
                                                     Log.e("jsonarray", a);
                                                     //초대된 방 roo_list 테이블에 데이터 insert
                                                     Room_list room_list = new Room_list(null, a, chat_room, room_name);
@@ -421,8 +435,6 @@ public class boardActivity extends DrawerActivity {
 
                                                 }
                                                 Log.e("jsonarray", jsonArray.toString());
-
-
 
 
                                                 Echo echo2;
@@ -455,7 +467,7 @@ public class boardActivity extends DrawerActivity {
                                                                     message = jsonObject.getString("message");
                                                                     channel = Integer.parseInt(jsonObject.getString("channel"));
                                                                     chat_idx = jsonObject.getString("chat_idx");
-                                                                    Talk t = new Talk(null, user, message, channel, String.valueOf(now),chat_idx);
+                                                                    Talk t = new Talk(null, user, message, channel, String.valueOf(now), chat_idx);
                                                                     Log.v("1", String.valueOf(t));
                                                                     talkDatabase.talkDao().insert(t);
                                                                 } catch (JSONException e) {
@@ -495,5 +507,97 @@ public class boardActivity extends DrawerActivity {
             }
         });
     }
+
+//    public void send_lately_chat_idx(String data) {
+//        String url = "test"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+//        api = HttpClient.getRetrofit().create(ApiInterface.class);
+//        HashMap<String, String> params = new HashMap<>();
+//        params.put("key", data);
+//        params.put("user", userinfo);
+//        Log.e("data", data);
+//        Call<String> call = api.requestPost(url, params);
+//
+//        // 비동기로 백그라운드 쓰레드로 동작
+//        call.enqueue(new CallbackWithRetry<String>() {
+//            // 통신성공 후 텍스트뷰에 결과값 출력
+//            @Override
+//            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+////서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+//                Log.e("data", data);
+//                Log.e("retrofit22", String.valueOf(response.body()));
+//            }
+//
+//            // 통신실패
+//            @Override
+//            public void onFailure(Call<String> call, Throwable t) {
+//                Log.v("retrofit2", String.valueOf("error : " + t.toString()));
+//            }
+//        });
+//    }
+    public void send_lately_chat_idx(String data) {
+        String url = "get_lately_chat_list"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
+        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+        String userinfo = sharedPreferences.getString("userinfo", "");
+        params.put("key", data);
+        params.put("user", userinfo);
+        Call<String> call = api.requestPost(url,params);
+
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+                
+                Log.e("retrofit2",String.valueOf(response.body()));
+
+                try {
+                    JSONArray jsonArray = new JSONArray(response.body());
+                    Log.e("길이",String.valueOf(jsonArray.length()));
+                    for(int i = 0; i<jsonArray.length(); i++){
+                        Log.e("상위배열",String.valueOf(i));
+                        Log.e("상위배열",String.valueOf(jsonArray.getJSONArray(i)));
+                        JSONArray jsonArray1 = new JSONArray(String.valueOf(jsonArray.getJSONArray(i)));
+                        Log.e("흠",String.valueOf(jsonArray1));
+                        Log.e("흠","x");
+                        Log.e("array길이",String.valueOf(jsonArray1.length()));
+                        for(int a = 0; a< jsonArray1.length(); a++){
+                            Log.e("하우ㅢ배열",String.valueOf(a));
+                            JSONObject jsonObject = jsonArray1.getJSONObject(a);
+                            String chatnum = jsonObject.getString("chatnum");
+                            String user =  jsonObject.getString("user");
+                            String message =   jsonObject.getString("message");
+                            String ch_idx = jsonObject.getString("ch_idx");
+                            String created_at =   jsonObject.getString("created_at");
+                            Talk talk = new Talk(null,user,message,Integer.parseInt(ch_idx),created_at,chatnum);
+                            AsyncTask.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (!talkDatabase.talkDao().isRowIsExist_talk_list(chatnum)) {
+                                        talkDatabase.talkDao().insert(talk);
+                                    }
+                                }
+                            });
+                        }
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                echoconnet();
+
+
+            }
+
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+            }
+        });
+    }
 }
+
 
