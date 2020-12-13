@@ -173,194 +173,39 @@ public class setting extends DrawerActivity {
         //부모 뷰에 추가
         container.addView(view2);
     }
-//    public void removekeyword(final String keyword){
-//        String url = "http://ccit2020.cafe24.com:8082/removekeyword"; //"http://ccit2020.cafe24.com:8082/login";
-//        StringRequest request = new StringRequest(
-//                Request.Method.POST,
-//                url,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        Log.d("removeTAGSETTING", response);
-//                        list_setting.removeAllViews();
-//                        getkeyword();
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        a.appendLog(date+"/"+"E"+"/setting/" +error.toString());
-//                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-//                        Log.v("TAG", error.toString());
-//                    }
-//                }
-//
-//        ) {
-//            @Override
-//            protected Map<String, String> getParams() {
-//                Map<String, String> params = new HashMap<String, String>();
-//                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-//                String userinfo = sharedPreferences.getString("userinfo", "");
-//                params.put("userid", userinfo);
-//                params.put("keyword", keyword);
-//
-//                return params;
-//            }
-//
-////            public Map<String, String> getHeader() throws AuthFailureError{
-////                Map<String, String> params = new HashMap<String, String >();
-////                params.put("Content-Type", "application/x-www-form-urlencoded");
-////                return params;
-////            }
-//        };
-//        request.setShouldCache(false);
-//
-////        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        AppHelper.requestQueue.add(request);
-//        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
-//    } // 키워드 삭제하기
+    public void keywordadd(final String keyword) { // 키워드 삭제하기
+        String url = "keywordadd"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        api = HttpClient.getRetrofit().create(ApiInterface.class);
+        HashMap<String, String> params = new HashMap<>();
+        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+        String userinfo = sharedPreferences.getString("userinfo", "");
+        params.put("userid", userinfo);
+        params.put("keyword", keyword);
+        Call<String> call = api.requestPost(url, params);
 
-//    public void getkeyword(){
-//        String url = "http://ccit2020.cafe24.com:8082/getkeyword"; //"http://ccit2020.cafe24.com:8082/login";
-//        StringRequest request = new StringRequest(
-//                Request.Method.POST,
-//                url,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        try {
-//                            JSONArray jsonArray = new JSONArray(response);
-//                            for (int i = 0; i < jsonArray.length(); i++) {
-//                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                                textview2(jsonObject.getString("text"), list_setting, jsonObject.getString("k_num"));
-//                                CompoundButton switch1 = (CompoundButton) findViewById(R.id.switch1);
-//                                if(jsonObject.getInt("push") == 1){
-//                                    switch1.setChecked(true);
-//                                }
-//                                else {
-//                                    switch1.setChecked(false);
-//                                }
-//                                Log.v("getkeyword", response);
-//                            }
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-////                            Log.v("getkeyword", response);
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        a.appendLog(date+"/"+"E"+"/PostListActivity/" +error.toString());
-//                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-//                        Log.v("TAG", error.toString());
-//                    }
-//                }
-//
-//        ) {
-//            @Override
-//            protected Map<String, String> getParams() {
-//                Map<String, String> params = new HashMap<String, String>();
-//                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-//                String userinfo = sharedPreferences.getString("userinfo", "");
-//                params.put("userid", userinfo);
-//
-//                return params;
-//            }
-//
-////            public Map<String, String> getHeader() throws AuthFailureError{
-////                Map<String, String> params = new HashMap<String, String >();
-////                params.put("Content-Type", "application/x-www-form-urlencoded");
-////                return params;
-////            }
-//        };
-//        request.setShouldCache(false);
-//
-////        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        AppHelper.requestQueue.add(request);
-//        //Toast.makeText(getApplicationContext(), "요청 보냄", Toast.LENGTH_SHORT).show();
-//    } // 키워드 리스트 가겨오기
-
-//    public void alsetting(String userinfo, final int onoff) {
-//        String url = "http://ccit2020.cafe24.com:8082/alsetting"; //"http://ccit2020.cafe24.com:8082/login";
-//        StringRequest request = new StringRequest(
-//                Request.Method.POST,
-//                url,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        Log.d("TAGSETTING", response);
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        a.appendLog(date+"/"+"E"+"/PostListActivity/" +error.toString());
-//                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-//                        Log.v("TAG", error.toString());
-//                    }
-//                }
-//
-//        ) {
-//            @Override
-//            protected Map<String, String> getParams() {
-//                Map<String, String> params = new HashMap<String, String>();
-//                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-//                String userinfo = sharedPreferences.getString("userinfo", "");
-//                params.put("userid", userinfo);
-//                params.put("onoff", String.valueOf(onoff));
-//
-//                return params;
-//            }
-//        };
-//        request.setShouldCache(false);
-//        AppHelper.requestQueue.add(request);
-//
-//    } // 알림 on off
-
-    public void keywordadd(final String keyword) {
-        String url = "http://ccit2020.cafe24.com:8082/keywordadd"; //"http://ccit2020.cafe24.com:8082/login";
-        StringRequest request = new StringRequest(
-                Request.Method.POST,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("TAGSETTING", response);
-                        list_setting.removeAllViews();
-                        getkeyword();
-
-//                        Intent intent = getIntent();
-//                        finish();
-//                        startActivity(intent);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        a.appendLog(date + "/" + "E" + "/PostListActivity/" + error.toString());
-                        Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
-                        Log.v("TAG", error.toString());
-                    }
-                }
-
-        ) {
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new CallbackWithRetry<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
             @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                String userinfo = sharedPreferences.getString("userinfo", "");
-                params.put("userid", userinfo);
-                params.put("keyword", keyword);
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
 
-                return params;
+                Log.d("removeTAGSETTING", response.body().toString());
+                list_setting.removeAllViews();
+                getkeyword();
             }
-        };
-        request.setShouldCache(false);
 
-        AppHelper.requestQueue.add(request);
-    } // 키워드 추가
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) { super.onFailure(call,t);
+                Log.v("retrofit2", String.valueOf("error : " + t.toString()));
+                a.appendLog(date + "/" + "E" + "/PostListActivity/" + t.toString());
+                Toast.makeText(getApplicationContext(), "서버와 통신이 원할하지 않습니다. 네트워크 연결상태를 확인해 주세요.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+     // 키워드 추가
 
     public void removekeyword(final String keyword) { // 키워드 삭제하기
         String url = "removekeyword"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
