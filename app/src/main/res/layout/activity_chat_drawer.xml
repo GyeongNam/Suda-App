@@ -26,6 +26,7 @@
         android:text="대화 상대" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_p_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 

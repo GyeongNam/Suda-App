@@ -234,38 +234,6 @@ public class chatting extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //return super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
-//            case R.id.invite:
-//                Toast.makeText(getApplicationContext(), "친구추가 버튼임", Toast.LENGTH_LONG).show();
-//                return true;
-//
-//            case R.id.Exit_chatroom:
-//                AlertDialog.Builder builder = new AlertDialog.Builder(chatting.this);
-//                builder.setTitle("채팅 나가기");       //타이틀 지정.
-//                builder.setMessage("정말 나가시겠습니까?  채팅기록과 채팅방이 사라집니다...");       //메시지
-////                builder.setMessage("채팅기록과 채팅방이 사라집니다...");       //메시지
-//                builder.setPositiveButton("네", new DialogInterface.OnClickListener() {
-//                    //확인 버튼을 생성 및 클릭시 동작 구현.
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        //"YES" Button Click
-//
-//                        Toast.makeText(getApplicationContext(), "채팅방을 나갑니다.", Toast.LENGTH_LONG).show();
-//                        finish();
-//
-//                    }
-//                });
-//
-//                builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {       //취소 버튼을 생성하고 클릭시 동작을 구현합니다.
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        //"NO" Button Click
-//                        Toast.makeText(getApplicationContext(), "NO Button Click", Toast.LENGTH_LONG).show();
-//                    }
-//                });
-//                AlertDialog alert = builder.create();                                                       //빌더를 이용하여 AlertDialog객체를 생성합니다.
-//                alert.show();
-//                return true;
-//
             case R.id.chatmenu:
                 drawerLayout.openDrawer(chatdrawer);
                 Toast.makeText(getApplicationContext(), "드로워를 엽니다", Toast.LENGTH_LONG).show();

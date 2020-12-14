@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.cookandroid.ccit_suda.room.Room_list;
 import com.cookandroid.ccit_suda.room.Talk;
 import com.cookandroid.ccit_suda.room.TalkAndRoom_list;
 import com.cookandroid.ccit_suda.room.User_list;
@@ -20,15 +21,15 @@ public class User_listViewModel extends AndroidViewModel{
 
     public LiveData<List<Talk>> get_Talk_listViewModel(int room) { return  user_listRepository.getAll_talk(room); };
 
-    public LiveData<List<User_list>> get_User_listViewModel(){
-        return user_list;
-    }
+    public LiveData<List<User_list>> get_User_listViewModel(){ return user_list; }
 
     public LiveData<List<TalkAndRoom_list>> get_Romm_listViewModel(String userinfo){
 
         return user_listRepository.getRoom_list(userinfo);
     }
-
+    public LiveData<List<Room_list>> get_Room_friend_list(String username) {
+        return user_listRepository.getRoom_friend_list(username);
+    }
 
 
     public User_listViewModel(@NonNull Application application) {

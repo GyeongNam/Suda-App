@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 
+import com.cookandroid.ccit_suda.room.Room_list;
 import com.cookandroid.ccit_suda.room.Talk;
 import com.cookandroid.ccit_suda.room.TalkAndRoom_list;
 import com.cookandroid.ccit_suda.room.TalkDao;
@@ -26,6 +27,9 @@ public class User_listRepository {
 
     public LiveData<List<TalkAndRoom_list>> getRoom_list(String userinfo){
         return talkDao.friendroom_user_list(userinfo);
+    }
+    public LiveData<List<Room_list>> getRoom_friend_list(String username){
+        return talkDao.getAll_chat_user_list(username);
     }
 
     public User_listRepository(Application application) {

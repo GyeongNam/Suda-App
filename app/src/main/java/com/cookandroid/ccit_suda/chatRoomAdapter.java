@@ -7,7 +7,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.cookandroid.ccit_suda.room.Talk;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class chatRoomAdapter extends BaseAdapter {
     Context context;
@@ -52,5 +55,8 @@ public class chatRoomAdapter extends BaseAdapter {
         Last_talk_time.setText(list_chatroomArrayList.get(position).getLast_talk_time());
 
         return convertView;
+    }
+
+    public void getTalkUserList(List<Talk> talks) {
     }
 }

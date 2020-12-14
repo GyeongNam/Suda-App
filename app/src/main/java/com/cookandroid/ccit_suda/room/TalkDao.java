@@ -49,6 +49,9 @@ public interface TalkDao {
     @Insert
     void insert_room_list(Room_list room_list);
 
+    @Query("SELECT user_name FROM room_list WHERE room_number = :username")
+    LiveData<List<Room_list>> getAll_chat_user_list(String username);
+
     @Query("SELECT room_number FROM room_list WHERE user_name = :id")
     List<Room_list> get_room_number(String id);
 
