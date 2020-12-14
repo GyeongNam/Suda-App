@@ -48,7 +48,8 @@ public class Chatroom_UserList_Adapter extends RecyclerView.Adapter<Chatroom_Use
         notifyDataSetChanged();
     }
 
-    public Chatroom_UserList_Adapter(ChatDrawer chatDrawer) {
+    public Chatroom_UserList_Adapter(Context context) {
+        this.context = context;
     }
 
     @Override

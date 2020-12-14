@@ -1,5 +1,6 @@
  package com.cookandroid.ccit_suda;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
@@ -34,7 +35,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 public class ChatDrawer extends AppCompatActivity {
-
+     DrawerLayout drawerLayout;
+     View chatdrawer;
+    FrameLayout activityContainer;
+    Button chat_close;
     ApiInterface api;
     SharedPreferences sharedPreferences;
     Chatroom_UserList_Adapter chatroom_userList_adapter;
@@ -48,12 +52,9 @@ public class ChatDrawer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_drawer);
-        TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
-
-
         recyclerView = findViewById(R.id.chat_p_list);
         recyclerView.setLayoutManager(cLayoutManager);
-        chatroom_userList_adapter = new Chatroom_UserList_Adapter(ChatDrawer.this);
+        chatroom_userList_adapter = new Chatroom_UserList_Adapter(this);
         cLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(cLayoutManager);
         recyclerView.setAdapter(chatroom_userList_adapter);
@@ -68,11 +69,25 @@ public class ChatDrawer extends AppCompatActivity {
             @Override
             public void onChanged(List<Room_list> lists) {
                 chatroom_userList_adapter.getfList(lists);
+
             }
         });
 
     }
 
+    @Override
+    public void setContentView(int layoutResID) {
+
+        TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
+
+        drawerLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.activity_chatting,null);
+        activityContainer = (FrameLayout) drawerLayout.findViewById(R.id.activity_content);
+        getLayoutInflater().inflate(layoutResID, activityContainer, true);
+        super.setContentView(drawerLayout);
+        chatdrawer = (View) findViewById(R.id.chatDrawerView);
+
+
+    }
 
     //        post 방식
     public void chatpeople() {
@@ -81,9 +96,8 @@ public class ChatDrawer extends AppCompatActivity {
         HashMap<String,String> params = new HashMap<>();
         sharedPreferences = getSharedPreferences("File", 0);
         String userinfo = sharedPreferences.getString("userinfo", "");
-        params.put("key", userinfo);
-//        params.put();
-//        params.put("room", String.valueOf(room));
+        params.put("????", userinfo);
+//        params.put("", );
         Call<String> call = api.requestPost(url,params);
 
         // 비동기로 백그라운드 쓰레드로 동작
@@ -102,5 +116,6 @@ public class ChatDrawer extends AppCompatActivity {
             }
         });
     }
+
 }
 
