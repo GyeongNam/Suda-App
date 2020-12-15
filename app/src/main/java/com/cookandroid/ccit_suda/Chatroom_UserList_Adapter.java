@@ -26,6 +26,12 @@ public class Chatroom_UserList_Adapter extends RecyclerView.Adapter<Chatroom_Use
     Context context;
     ViewHolder viewholder;
 
+    public Chatroom_UserList_Adapter(Context context) {
+        this.context = context;
+        this.list_chatroom_UserList = list_chatroom_UserList;
+    }
+
+
     @NonNull
     @Override
     public Chatroom_UserList_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -46,10 +52,6 @@ public class Chatroom_UserList_Adapter extends RecyclerView.Adapter<Chatroom_Use
     public void getfList(List<Room_list> list_chatroom_UserList) {
         this.list_chatroom_UserList =  list_chatroom_UserList;
         notifyDataSetChanged();
-    }
-
-    public Chatroom_UserList_Adapter(Context context) {
-        this.context = context;
     }
 
     @Override

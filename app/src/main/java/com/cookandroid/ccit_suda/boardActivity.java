@@ -96,7 +96,7 @@ public class boardActivity extends DrawerActivity {
             public void run() {
                 Gson gson = new Gson();
 
-                Log.e("쿼리문", gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
+                Log.e("쿼리문",gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
                 send_lately_chat_idx(gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
             }
         });
@@ -510,13 +510,13 @@ public class boardActivity extends DrawerActivity {
 
     public void send_lately_chat_idx(String data) {
         String url = "get_lately_chat_list"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
-        api = HttpClient.getRetrofit().create(ApiInterface.class);
-        HashMap<String, String> params = new HashMap<>();
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
         SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
         String userinfo = sharedPreferences.getString("userinfo", "");
         params.put("key", data);
         params.put("user", userinfo);
-        Call<String> call = api.requestPost(url, params);
+        Call<String> call = api.requestPost(url,params);
 
         // 비동기로 백그라운드 쓰레드로 동작
         call.enqueue(new Callback<String>() {
@@ -524,32 +524,39 @@ public class boardActivity extends DrawerActivity {
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
-
-                Log.e("retrofit2", String.valueOf(response.body()));
+                
+                Log.e("retrofit2",String.valueOf(response.body()));
 
                 try {
                     JSONArray jsonArray = new JSONArray(response.body());
-                    Log.e("길이", String.valueOf(jsonArray.length()));
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        Log.e("하우ㅢ배열", String.valueOf(i));
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        String chatnum = jsonObject.getString("chatnum");
-                        String user = jsonObject.getString("user");
-                        String message = jsonObject.getString("message");
-                        String ch_idx = jsonObject.getString("ch_idx");
-                        String created_at = jsonObject.getString("created_at");
-                        Talk talk = new Talk(null, user, message, Integer.parseInt(ch_idx), created_at, chatnum);
-                        AsyncTask.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!talkDatabase.talkDao().isRowIsExist_talk_list(chatnum)) {
-                                    talkDatabase.talkDao().insert(talk);
+                    Log.e("길이",String.valueOf(jsonArray.length()));
+                    for(int i = 0; i<jsonArray.length(); i++){
+                        Log.e("상위배열",String.valueOf(i));
+                        Log.e("상위배열",String.valueOf(jsonArray.getJSONArray(i)));
+                        JSONArray jsonArray1 = new JSONArray(String.valueOf(jsonArray.getJSONArray(i)));
+                        Log.e("흠",String.valueOf(jsonArray1));
+                        Log.e("흠","x");
+                        Log.e("array길이",String.valueOf(jsonArray1.length()));
+                        for(int a = 0; a< jsonArray1.length(); a++){
+                            Log.e("하우ㅢ배열",String.valueOf(a));
+                            JSONObject jsonObject = jsonArray1.getJSONObject(a);
+                            String chatnum = jsonObject.getString("chatnum");
+                            String user =  jsonObject.getString("user");
+                            String message =   jsonObject.getString("message");
+                            String ch_idx = jsonObject.getString("ch_idx");
+                            String created_at =   jsonObject.getString("created_at");
+                            Talk talk = new Talk(null,user,message,Integer.parseInt(ch_idx),created_at,chatnum);
+                            AsyncTask.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (!talkDatabase.talkDao().isRowIsExist_talk_list(chatnum)) {
+                                        talkDatabase.talkDao().insert(talk);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
+
                     }
-
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -561,7 +568,7 @@ public class boardActivity extends DrawerActivity {
             // 통신실패
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.v("retrofit2", String.valueOf("error : " + t.toString()));
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
             }
         });
     }

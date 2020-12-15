@@ -61,7 +61,7 @@ public class chatting extends ChatDrawer {
     ChatListAdapter chatListAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private String TAG = "MainActivity";
-    Button sendBtn;
+    Button sendBtn ;
     EditText replytext;
     boolean err = false;
     private ApiInterface api;
@@ -73,8 +73,8 @@ public class chatting extends ChatDrawer {
     User_listViewModel viewModel;
     String userinfo;
 
-
-
+    private DrawerLayout drawerLayout;
+    private View chatdrawer;
 
 
 
@@ -92,14 +92,17 @@ public class chatting extends ChatDrawer {
         sharedPreferences = getSharedPreferences("File", 0);
         userinfo = sharedPreferences.getString("userinfo", "");
         TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
+
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        chatdrawer = (View) findViewById(R.id.chatDrawerView);
         drawerLayout.addDrawerListener(listener);
-
-
         ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
         btn_open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 drawerLayout.openDrawer(chatdrawer);
+                Toast.makeText(getApplicationContext(), "버튼으로 염", Toast.LENGTH_LONG).show();
 
 
 
@@ -183,7 +186,7 @@ public class chatting extends ChatDrawer {
         //return super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case R.id.chatmenu:
-                drawerLayout.openDrawer(activityContainer);
+                drawerLayout.openDrawer(chatdrawer);
                 Toast.makeText(getApplicationContext(), "드로워를 엽니다", Toast.LENGTH_LONG).show();
                 return true;
 
@@ -252,55 +255,5 @@ public class chatting extends ChatDrawer {
             }
         });
     }
-    DrawerLayout.DrawerListener listener = new DrawerLayout.DrawerListener() {
 
-//        drawerLayout.openDrawer(drawerView);
-
-        @Override
-        public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-        }
-
-        @Override
-        public void onDrawerOpened(@NonNull View drawerView) {
-            chat_close = findViewById(R.id.chat_close);
-            chat_close.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(chatting.this);
-                    builder.setTitle("채팅 나가기");       //타이틀 지정.
-                    builder.setMessage("정말 나가시겠습니까?  채팅기록과 채팅방이 사라집니다...");       //메시지
-                    builder.setMessage("채팅기록과 채팅방이 사라집니다...");       //메시지
-                    builder.setPositiveButton("네", new DialogInterface.OnClickListener() {
-                        //확인 버튼을 생성 및 클릭시 동작 구현.
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //"YES" Button Click
-
-                            Toast.makeText(getApplicationContext(), "채팅방을 나갑니다.", Toast.LENGTH_LONG).show();
-                            finish();
-
-                        }
-                    });
-
-                    builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {       //취소 버튼을 생성하고 클릭시 동작을 구현합니다.
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //"NO" Button Click
-                            Toast.makeText(getApplicationContext(), "NO Button Click", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                    AlertDialog alert = builder.create();                                                       //빌더를 이용하여 AlertDialog객체를 생성합니다.
-                    alert.show();
-                }
-            });
-        }
-
-        @Override
-        public void onDrawerClosed(@NonNull View drawerView) {
-        }
-
-        @Override
-        public void onDrawerStateChanged(int newState) {
-        }
-    };
 }

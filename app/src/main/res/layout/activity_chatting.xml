@@ -101,11 +101,7 @@
 
     </LinearLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/activity_content"
-        ></FrameLayout>
+    <include layout="@layout/activity_chat_drawer" />
 
 
 </androidx.drawerlayout.widget.DrawerLayout>
