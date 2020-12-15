@@ -65,7 +65,7 @@ public class chatting extends ChatDrawer {
     EditText replytext;
     boolean err = false;
     private ApiInterface api;
-    Toolbar myToolbar;
+
     String msgcheck;
     int room;
     SharedPreferences sharedPreferences;
@@ -73,8 +73,6 @@ public class chatting extends ChatDrawer {
     User_listViewModel viewModel;
     String userinfo;
 
-    private DrawerLayout drawerLayout;
-    private View chatdrawer;
 
 
 
@@ -94,29 +92,10 @@ public class chatting extends ChatDrawer {
         TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
 
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        chatdrawer = (View) findViewById(R.id.chatDrawerView);
-        drawerLayout.addDrawerListener(listener);
-        ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
-        btn_open.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.openDrawer(chatdrawer);
-                Toast.makeText(getApplicationContext(), "버튼으로 염", Toast.LENGTH_LONG).show();
 
 
 
-            }
-        });
 
-        // Toolbar 생성.
-
-
-        myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("");
 
         sendBtn = findViewById(R.id.sendBtn);
         replytext = findViewById(R.id.replytext);
@@ -181,22 +160,7 @@ public class chatting extends ChatDrawer {
 //        return true;
 //    }
 //    ToolBar에 추가된 항목 select 이벤트를 처리하는 함수
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //return super.onOptionsItemSelected(item);
-        switch (item.getItemId()) {
-            case R.id.chatmenu:
-                drawerLayout.openDrawer(chatdrawer);
-                Toast.makeText(getApplicationContext(), "드로워를 엽니다", Toast.LENGTH_LONG).show();
-                return true;
 
-            default:
-                finish();
-
-            return super.onOptionsItemSelected(item);
-        }
-
-    }
 
 
     public void check(String msgcheck) {
