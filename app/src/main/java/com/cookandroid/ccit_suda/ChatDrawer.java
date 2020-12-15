@@ -1,6 +1,8 @@
  package com.cookandroid.ccit_suda;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -16,6 +18,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -49,14 +52,26 @@ public class ChatDrawer extends AppCompatActivity {
     private String room1;
     Button chat_close;
     Toolbar myToolbar;
-     DrawerLayout drawerLayout;
-     View chatdrawer;
+    private DrawerLayout drawerLayout;
+    private View chatdrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_toolbar);
         TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
+
+
+
+
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        DrawerLayout fullView = (DrawerLayout) getLayoutInflater().inflate(R.layout.chat_toolbar, null);
+        FrameLayout activityContainer = (FrameLayout) fullView.findViewById(R.id.activity_content);
+        getLayoutInflater().inflate(layoutResID, activityContainer, true);
+        super.setContentView(fullView);
         room1 = getIntent().getExtras().getString("room");
 
 
@@ -70,20 +85,9 @@ public class ChatDrawer extends AppCompatActivity {
         chatroom_userList_adapter = new Chatroom_UserList_Adapter(this);
         userinfo = String.valueOf(getIntent().getExtras().getString("userinfo"));
         Log.e("ddd", String.valueOf(userinfo));
-
-
-
-    }
-
-    @Override
-    public void setContentView(int layoutResID) {
-        DrawerLayout fullView = (DrawerLayout) getLayoutInflater().inflate(R.layout.chat_toolbar, null);
-        FrameLayout activityContainer = (FrameLayout) fullView.findViewById(R.id.activity_content);
-        getLayoutInflater().inflate(layoutResID, activityContainer, true);
-        super.setContentView(fullView);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         chatdrawer = (View) findViewById(R.id.chatDrawerView);
-        drawerLayout.addDrawerListener(listener);
+        drawerLayout.setDrawerListener(listener);
         // Toolbar 생성.
         ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
         chatdrawer.setOnTouchListener(new View.OnTouchListener() {
@@ -116,6 +120,12 @@ public class ChatDrawer extends AppCompatActivity {
                 Log.e("채팅방 인원 목록",String.valueOf(lists));
             }
         });
+    }
+
+    @Nullable
+    @Override
+    public ActionBarDrawerToggle.Delegate getDrawerToggleDelegate() {
+        return super.getDrawerToggleDelegate();
     }
 
     DrawerLayout.DrawerListener listener = new DrawerLayout.DrawerListener() {
@@ -171,22 +181,5 @@ public class ChatDrawer extends AppCompatActivity {
         public void onDrawerStateChanged(int newState) {
         }
     };
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //return super.onOptionsItemSelected(item);
-        switch (item.getItemId()) {
-            case R.id.chatmenu:
-                drawerLayout.openDrawer(chatdrawer);
-                Toast.makeText(getApplicationContext(), "드로워를 엽니다", Toast.LENGTH_LONG).show();
-                return true;
-
-            default:
-                finish();
-
-                return super.onOptionsItemSelected(item);
-        }
-
-    }
 }
 

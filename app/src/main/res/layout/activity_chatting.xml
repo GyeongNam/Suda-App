@@ -75,7 +75,5 @@
 
     </LinearLayout>
 
-    <include layout="@layout/activity_chat_drawer" />
-
 
 </LinearLayout>
