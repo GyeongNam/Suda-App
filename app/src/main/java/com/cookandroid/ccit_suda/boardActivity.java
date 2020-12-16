@@ -532,22 +532,16 @@ public class boardActivity extends DrawerActivity {
                 try {
                     JSONArray jsonArray = new JSONArray(response.body());
                     Log.e("길이",String.valueOf(jsonArray.length()));
-                    for(int i = 0; i<jsonArray.length(); i++){
-                        Log.e("상위배열",String.valueOf(i));
-                        Log.e("상위배열",String.valueOf(jsonArray.getJSONArray(i)));
-                        JSONArray jsonArray1 = new JSONArray(String.valueOf(jsonArray.getJSONArray(i)));
-                        Log.e("흠",String.valueOf(jsonArray1));
-                        Log.e("흠","x");
-                        Log.e("array길이",String.valueOf(jsonArray1.length()));
-                        for(int a = 0; a< jsonArray1.length(); a++){
-                            Log.e("하우ㅢ배열",String.valueOf(a));
-                            JSONObject jsonObject = jsonArray1.getJSONObject(a);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            Log.e("하우ㅢ배열", String.valueOf(i));
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
                             String chatnum = jsonObject.getString("chatnum");
-                            String user =  jsonObject.getString("user");
-                            String message =   jsonObject.getString("message");
+                            String user = jsonObject.getString("user");
+                            String message = jsonObject.getString("message");
                             String ch_idx = jsonObject.getString("ch_idx");
-                            String created_at =   jsonObject.getString("created_at");
-                            Talk talk = new Talk(null,user,message,Integer.parseInt(ch_idx),created_at,chatnum);
+                            String created_at = jsonObject.getString("created_at");
+                            Talk talk = new Talk(null, user, message, Integer.parseInt(ch_idx), created_at, chatnum);
+
                             AsyncTask.execute(new Runnable() {
                                 @Override
                                 public void run() {
@@ -557,8 +551,6 @@ public class boardActivity extends DrawerActivity {
                                 }
                             });
                         }
-
-                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
