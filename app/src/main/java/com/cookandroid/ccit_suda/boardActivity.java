@@ -427,6 +427,8 @@ public class boardActivity extends DrawerActivity {
                                                 for (int i = 0; i < jsonArray.length(); i++) {
                                                     String a = jsonArray.getString(i);
                                                     Log.e("jsonarray", a);
+                                                    Log.e("jsonarray", chat_room);
+                                                    Log.e("jsonarray", room_name);
                                                     //초대된 방 roo_list 테이블에 데이터 insert
                                                     Room_list room_list = new Room_list(null, a, chat_room, room_name);
                                                     if (!talkDatabase.talkDao().isRowIsExist_user_room_list(a, chat_room)) {
