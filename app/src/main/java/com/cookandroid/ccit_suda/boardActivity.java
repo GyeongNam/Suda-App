@@ -137,7 +137,7 @@ public class boardActivity extends DrawerActivity {
         //TextView 생성
         final TextView view1 = new TextView(this);
         view1.setText(a);
-        view1.setTextSize(20);
+        view1.setTextSize(12);
         view1.setTextColor(Color.BLACK);
 
         //layout_width, layout_height, gravity 설정

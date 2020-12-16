@@ -4,7 +4,7 @@
     android:layout_width="240dp"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="#009688"
+    android:background="#FFFFFF"
     android:orientation="vertical">
     >
     <TextView
@@ -53,6 +53,7 @@
         android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="로그아웃" />
+        android:text="로그아웃"
+        android:textColor="@color/solid_black"/>
 
 </LinearLayout>

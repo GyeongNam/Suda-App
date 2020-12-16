@@ -29,7 +29,6 @@
         <activity android:name=".setting" />
         <activity android:name=".DrawerActivity" />
         <activity android:name=".PostdetailActivity" />
-        <activity android:name=".materialdesign" />
         <activity
             android:name=".postmodified"
             android:windowSoftInputMode="adjustResize|adjustPan" />

@@ -60,10 +60,6 @@ public class ChatDrawer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_toolbar);
         TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
-
-
-
-
     }
 
     @Override
@@ -73,7 +69,6 @@ public class ChatDrawer extends AppCompatActivity {
         getLayoutInflater().inflate(layoutResID, activityContainer, true);
         super.setContentView(fullView);
         room1 = getIntent().getExtras().getString("room");
-
 
 
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
