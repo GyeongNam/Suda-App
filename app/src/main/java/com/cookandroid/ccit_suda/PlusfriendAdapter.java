@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -72,7 +73,7 @@ class PlusfriendAdapter extends RecyclerView.Adapter<PlusfriendAdapter.ViewHolde
     }
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView plusname;
-        Button chatBtn;
+        ImageButton chatBtn;
         ViewHolder(View itemView) {
             super(itemView) ;
 

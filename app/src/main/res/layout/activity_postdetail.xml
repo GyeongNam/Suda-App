@@ -8,134 +8,135 @@
     tools:context=".PostdetailActivity">
 
 
-        <LinearLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/del_post"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="글 삭제" />
+
+        <Button
+            android:id="@+id/md_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="수정하기" />
+
+        <com.baoyz.widget.PullRefreshLayout
+            android:id="@+id/comment_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <!--                <ScrollView-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:fillViewport="true"-->
+
+            <!--                    android:id="@+id/post_scrollview"-->
+            <!--                    >-->
+            <!--                    <LinearLayout-->
+            <!--                        android:id="@+id/parentlayout"-->
+            <!--                        android:layout_width="match_parent"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:orientation="vertical">-->
+
+            <ListView
+                android:id="@+id/postlist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></ListView>
+
+            <!--                    </LinearLayout>-->
+            <!--                </ScrollView>-->
+        </com.baoyz.widget.PullRefreshLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <Button
-                android:id="@+id/del_post"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="글 삭제" />
-
-            <Button
-                android:id="@+id/md_post"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="수정하기" />
-            <com.baoyz.widget.PullRefreshLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:id="@+id/comment_refresh">
-<!--                <ScrollView-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:fillViewport="true"-->
-
-<!--                    android:id="@+id/post_scrollview"-->
-<!--                    >-->
-<!--                    <LinearLayout-->
-<!--                        android:id="@+id/parentlayout"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:orientation="vertical">-->
-
-                        <ListView
-                            android:id="@+id/postlist"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
-                        </ListView>
-
-<!--                    </LinearLayout>-->
-<!--                </ScrollView>-->
-            </com.baoyz.widget.PullRefreshLayout>
-
-
-
-
-
             <LinearLayout
+                android:id="@+id/reply_top_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:paddingTop="5dp"
-                    android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/topborder"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:id="@+id/reply_close"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:background="@drawable/topborder"
-                    android:paddingBottom="5dp"
-                    android:id="@+id/reply_top_layout">
+                    android:layout_marginLeft="20dp"
+                    android:text="×"
+                    android:textSize="25dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
                     <TextView
+                        android:id="@+id/reply_tag"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="×"
-                        android:textSize="25dp"
-                        android:layout_marginLeft="20dp"
-                        android:id="@+id/reply_close"/>
-                    <LinearLayout
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="170dp"
+                        android:text="댓글 입력"
+                        android:textSize="18dp"></TextView>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/text_limit_indicate"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:layout_marginLeft="170dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="댓글 입력"
-                            android:id="@+id/reply_tag"
-                            android:textSize="18dp">
-                        </TextView>
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1" />
-                        <TextView
-                            android:id="@+id/text_limit_indicate"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="글자수 제한 영역"
-                            android:layout_marginRight="10dp"/>
-                    </LinearLayout>
-
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:id="@+id/reply_border_layout"
-                    android:background="@drawable/topborder">
-
-                    <EditText
-                        android:layout_marginLeft="10dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
-                        android:padding="5dp"
-                        android:maxHeight="100dp"
-                        android:maxLength="200"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:id="@+id/replytext"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="5"
-                        android:layout_gravity="center"
-                        android:background="@drawable/edge"
-                        />
-
-                    <Button
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:onClick="sendreply"
-                        android:text="등록"
-                        android:layout_marginRight="10dp"/>
+                        android:text="글자수 제한 영역" />
                 </LinearLayout>
+
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/reply_border_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/topborder"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/replytext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="5"
+                    android:background="@drawable/edge"
+                    android:maxHeight="100dp"
+                    android:maxLength="200"
+                    android:padding="5dp" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:onClick="sendreply"
+                    android:text="등록" />
+            </LinearLayout>
         </LinearLayout>
+
+    </LinearLayout>
 
 
 

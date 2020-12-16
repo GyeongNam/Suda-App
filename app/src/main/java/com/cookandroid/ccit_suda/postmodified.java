@@ -141,7 +141,7 @@ public class postmodified extends AppCompatActivity {
             }
         });
 
-        Button back = (Button) findViewById(R.id.bt_backlist);   // 돌아가기 버튼
+        ImageButton back = (ImageButton) findViewById(R.id.bt_backlist);   // 돌아가기 버튼
         Button upload = (Button) findViewById(R.id.bt_upload);    // 글 작성 버튼
 
         back.setOnClickListener(new View.OnClickListener() {         // 뒤로가기

@@ -74,9 +74,7 @@
                     <ListView
                         android:id="@+id/freeboard"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:divider="#00000000"
-                        android:listSelector="@android:color/transparent" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

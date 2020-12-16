@@ -33,7 +33,10 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="right"
-                app:srcCompat="@android:drawable/ic_dialog_dialer" />
+                android:backgroundTint="#FFFFFF"
+                android:scaleType="fitXY"
+                android:src="@drawable/list"
+                android:tint="#00BCD4" />
 
         </androidx.appcompat.widget.Toolbar>
 
