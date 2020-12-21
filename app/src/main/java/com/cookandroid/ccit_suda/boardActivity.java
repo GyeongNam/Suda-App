@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,27 +44,19 @@ import retrofit2.Callback;
 
 public class boardActivity extends DrawerActivity {
     private long backBtnTime = 0;
-    private LinearLayout container1, container2, container3, container4, container5;
+    private LinearLayout inflate;
     PullRefreshLayout swipe_refresh_layout;
     ScrollView mainboard_scroll;
     EchoOptions options = new EchoOptions();
     Echo echo;
     TalkDatabase db;
     ArrayList array = new ArrayList();
-    ArrayList<String> data1 = new ArrayList<>(3);
-    ArrayList<String> data2 = new ArrayList<>(3);
-    ArrayList<String> data3 = new ArrayList<>(3);
-    ArrayList<String> data4 = new ArrayList<>(3);
-    ArrayList<String> data5 = new ArrayList<>(3);
-    ArrayList<String> key1 = new ArrayList<>(3);
-    ArrayList<String> key2 = new ArrayList<>(3);
-    ArrayList<String> key3 = new ArrayList<>(3);
-    ArrayList<String> key4 = new ArrayList<>(3);
-    ArrayList<String> key5 = new ArrayList<>(3);
     ApiInterface api;
     TalkDatabase talkDatabase;
     private BackPressCloseHandler backPressCloseHandler;
-
+    View child,view;
+    TextView board_categorie;
+    LinearLayout mypostparent;
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -84,6 +77,7 @@ public class boardActivity extends DrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
+        mypostparent = findViewById(R.id.mypostparent);
         sendRequest();
         backPressCloseHandler = new BackPressCloseHandler(this);
         swipe_refresh_layout = findViewById(R.id.swipe_refresh_layout);
@@ -123,12 +117,7 @@ public class boardActivity extends DrawerActivity {
 
 
 //텍스트뷰 부모 리니어레이아웃
-        container1 = (LinearLayout) findViewById(R.id.freeparent);
-        container2 = (LinearLayout) findViewById(R.id.dailyparent);
-        container3 = (LinearLayout) findViewById(R.id.secretparent);
-        container4 = (LinearLayout) findViewById(R.id.nomeanparent);
-        container5 = (LinearLayout) findViewById(R.id.mypostparent);
-        Log.v("TAG", container1.getClass().getName());
+        inflate = findViewById(R.id.inflate);
 
     }
 
@@ -161,6 +150,7 @@ public class boardActivity extends DrawerActivity {
         });
 
         //부모 뷰에 추가
+
         container.addView(view1);
     }
 
@@ -180,107 +170,45 @@ public class boardActivity extends DrawerActivity {
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
                 Log.v("retrofit2", String.valueOf(response.body()));
-                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
-                String userinfo = sharedPreferences.getString("userinfo", "");
-                TextView username = (TextView) findViewById(R.id.username);
-                username.setText("환영합니다 " + userinfo + " 님");
-//                        processResponse(response);
-                container1.removeAllViews();
-                container2.removeAllViews();
-                container3.removeAllViews();
-                container4.removeAllViews();
-                container5.removeAllViews();
-                data1.clear();
-                data2.clear();
-                data3.clear();
-                data4.clear();
-                data5.clear();
-                key1.clear();
-                key2.clear();
-                key3.clear();
-                key4.clear();
-                key5.clear();
-//                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
-//                Log.v("TAG", response);
+                Log.e("지금부터",response.body());
                 try {
-                    JSONArray jsonArray = new JSONArray(response.body());
-                    Log.v("TAG", "zz" + jsonArray);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        Log.v("TAG", "원하는 json 배열 얻기" + jsonObject.getString("categorie").indexOf("비밀게시판"));
-                        if (jsonObject.getString("categorie_num").equals("1")) {
-                            data1.add((jsonArray.getJSONObject(i).getString("Title")));
-                            key1.add((jsonArray.getJSONObject(i).getString("post_num")));
+                    inflate.removeAllViews();
+                    mypostparent.removeAllViews();
+                    JSONObject response_data = new JSONObject(response.body());
+                    JSONArray post_data = new JSONArray(response_data.getString("post_data"));
+                    JSONArray data = new JSONArray(response_data.getString("data"));
+                    for(int i = 0;i < data.length(); i ++){
+                        JSONObject jsonObject = data.getJSONObject(i);
+                        child = getLayoutInflater().inflate(R.layout.board_inflate,null);
+                        child.setId(i);
+                        inflate.addView(child);
+                        view = inflate.findViewById(i);
+                        board_categorie = view.findViewById(R.id.board_categorie);
+                        board_categorie.setText(jsonObject.getString("categorie"));
+                        for(int a = 0; a < post_data.length(); a++){
+                            JSONObject jsonObject1 = post_data.getJSONObject(a);
+                            if(jsonObject.getString("categorie").equals(jsonObject1.getString("categorie"))){
+                                LinearLayout linearLayout = view.findViewById(R.id.board_title);
+                                textview(jsonObject1.getString("Title"),linearLayout,jsonObject1.getString("post_num"));
+                                if(jsonObject1.getString("writer").equals(userinfo)){
+                                    textview(jsonObject1.getString("Title"),mypostparent,jsonObject1.getString("post_num"));
+                                }
+                            }
                         }
-                        if (jsonObject.getString("categorie_num").equals("2")) {
-                            data2.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
-                            key2.add((jsonArray.getJSONObject(i).getString("post_num")));
-                        }
-                        if (jsonObject.getString("categorie_num").equals("3")) {
-                            data3.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
-                            key3.add((jsonArray.getJSONObject(i).getString("post_num")));
-                        }
-                        if (jsonObject.getString("categorie_num").equals("4")) {
-                            data4.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
-                            key4.add((jsonArray.getJSONObject(i).getString("post_num")));
-                        }
-                        if (jsonObject.getString("writer").indexOf(userinfo) == 0) {
-                            data5.add(String.valueOf(jsonArray.getJSONObject(i).getString("Title")));
-                            key5.add((jsonArray.getJSONObject(i).getString("post_num")));
-                        }
+
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (data1.size() > 3) {
-                    for (int i = 0; i < 3; i++) {
-                        textview(data1.get(i), container1, key1.get(i));
-                    }
-                } else {
-                    for (int i = 0; i < data1.size(); i++) {
-                        textview(data1.get(i), container1, key1.get(i));
-                    }
-                }
-                if (data2.size() > 3) {
-                    for (int i = 0; i < 3; i++) {
-                        textview(data2.get(i), container2, key2.get(i));
-                    }
-                } else {
-                    for (int i = 0; i < data2.size(); i++) {
-                        textview(data2.get(i), container2, key2.get(i));
-                    }
-                }
-                if (data3.size() > 3) {
-                    for (int i = 0; i < 3; i++) {
-                        textview(data3.get(i), container3, key3.get(i));
-                    }
-                } else {
-                    for (int i = 0; i < data3.size(); i++) {
-                        textview(data3.get(i), container1, key3.get(i));
-                    }
-                }
-                if (data4.size() > 3) {
-                    for (int i = 0; i < 3; i++) {
-                        textview(data4.get(i), container4, key4.get(i));
-                    }
-                } else {
-                    for (int i = 0; i < data4.size(); i++) {
-                        textview(data4.get(i), container4, key4.get(i));
-                    }
-                }
-                if (data5.size() > 3) {
-                    for (int i = 0; i < 3; i++) {
-                        textview(data5.get(i), container5, key5.get(i));
-                    }
-                } else {
-                    for (int i = 0; i < data5.size(); i++) {
-                        textview(data5.get(i), container5, key5.get(i));
-                    }
-                }
+                SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+                String userinfo = sharedPreferences.getString("userinfo", "");
+                TextView username = (TextView) findViewById(R.id.username);
+                username.setText("환영합니다 " + userinfo + " 님");
+
                 swipe_refresh_layout.setRefreshing(false);
 
 
-                Log.v("TAG", "json데이터 배열담기" + data1);
             }
 
             // 통신실패

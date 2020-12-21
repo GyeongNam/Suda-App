@@ -676,7 +676,7 @@ public class PostdetailActivity extends DrawerActivity {
                 HashMap<Integer, String> map = new HashMap<>();
                 username.setText("환영합니다 " + userinfo + " 님");
 //                        Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
-                Log.v("compact", response.body().toString());
+                Log.v("compact", String.valueOf(response.body()));
                 commentlist.clear();
 //                        postlist.invalidateViews();
                 try {
