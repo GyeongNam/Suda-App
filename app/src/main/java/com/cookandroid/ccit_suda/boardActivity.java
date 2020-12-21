@@ -177,6 +177,7 @@ public class boardActivity extends DrawerActivity {
                     JSONObject response_data = new JSONObject(response.body());
                     JSONArray post_data = new JSONArray(response_data.getString("post_data"));
                     JSONArray data = new JSONArray(response_data.getString("data"));
+                    JSONArray mypost = new JSONArray(response_data.getString("mypost"));
                     for(int i = 0;i < data.length(); i ++){
                         JSONObject jsonObject = data.getJSONObject(i);
                         child = getLayoutInflater().inflate(R.layout.board_inflate,null);
@@ -190,13 +191,12 @@ public class boardActivity extends DrawerActivity {
                             if(jsonObject.getString("categorie").equals(jsonObject1.getString("categorie"))){
                                 LinearLayout linearLayout = view.findViewById(R.id.board_title);
                                 textview(jsonObject1.getString("Title"),linearLayout,jsonObject1.getString("post_num"));
-                                if(jsonObject1.getString("writer").equals(userinfo)){
-                                    textview(jsonObject1.getString("Title"),mypostparent,jsonObject1.getString("post_num"));
-                                }
                             }
                         }
-
-
+                    }
+                    for(int i = 0; i < mypost.length();i++){
+                        JSONObject jsonObject = mypost.getJSONObject(i);
+                        textview(jsonObject.getString("Title"),mypostparent,jsonObject.getString("post_num"));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
