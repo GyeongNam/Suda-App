@@ -1,5 +1,6 @@
 package com.cookandroid.ccit_suda;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -43,6 +44,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 public class boardActivity extends DrawerActivity {
+    public  static Context context_board;
     private long backBtnTime = 0;
     private LinearLayout inflate;
     PullRefreshLayout swipe_refresh_layout;
@@ -60,11 +62,21 @@ public class boardActivity extends DrawerActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         echo.disconnect();
         Log.e("호출", "액티비티 파괴");
+    }
 
+    public void disecho(){
+        echo.disconnect();
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Gson gson = new Gson();
 
+                Log.e("쿼리문",gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
+                send_lately_chat_idx(gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
+            }
+        });
     }
 
     @Override
@@ -77,6 +89,7 @@ public class boardActivity extends DrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
+        context_board = this;
         mypostparent = findViewById(R.id.mypostparent);
         sendRequest();
         backPressCloseHandler = new BackPressCloseHandler(this);

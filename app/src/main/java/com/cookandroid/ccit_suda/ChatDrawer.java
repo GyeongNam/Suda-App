@@ -1,4 +1,4 @@
- package com.cookandroid.ccit_suda;
+package com.cookandroid.ccit_suda;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,14 +35,23 @@ import com.cookandroid.ccit_suda.room.Talk;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
 
+import net.mrbin99.laravelechoandroid.Echo;
+import net.mrbin99.laravelechoandroid.EchoCallback;
+import net.mrbin99.laravelechoandroid.EchoOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class ChatDrawer extends AppCompatActivity {
 
+public class ChatDrawer extends AppCompatActivity {
+    ApiInterface api;
     RecyclerView listrectclerView;
     Chatroom_UserList_Adapter chatroom_userList_adapter;
     RecyclerView.LayoutManager cLayoutManager;
@@ -52,6 +61,8 @@ public class ChatDrawer extends AppCompatActivity {
     private String room1;
     Button chat_close;
     Toolbar myToolbar;
+    TalkDatabase db;
+    User_listViewModel viewMode;
     private DrawerLayout drawerLayout;
     private View chatdrawer;
 
@@ -59,7 +70,8 @@ public class ChatDrawer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_toolbar);
-        TalkDatabase db = Room.databaseBuilder(this, TalkDatabase.class,"talk-db").allowMainThreadQueries().build();
+        db = Room.databaseBuilder(this, TalkDatabase.class, "talk-db").allowMainThreadQueries().build();
+        talkDatabase = TalkDatabase.getDatabase(this);
     }
 
     @Override
@@ -96,9 +108,6 @@ public class ChatDrawer extends AppCompatActivity {
             public void onClick(View v) {
                 drawerLayout.openDrawer(chatdrawer);
                 Toast.makeText(getApplicationContext(), "버튼으로 염", Toast.LENGTH_LONG).show();
-
-
-
             }
         });
         listrectclerView = findViewById(R.id.chat_p_list);
@@ -147,9 +156,12 @@ public class ChatDrawer extends AppCompatActivity {
                         //확인 버튼을 생성 및 클릭시 동작 구현.
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //"YES" Button Click
+                            disconnect();
 
-                            Toast.makeText(getApplicationContext(), "채팅방을 나갑니다.", Toast.LENGTH_LONG).show();
+                            boardActivity a = ((boardActivity)boardActivity.context_board);
+                            a.disecho();
+
+                            Toast.makeText(getApplicationContext(), "나갔어요", Toast.LENGTH_LONG).show();
                             finish();
 
                         }
@@ -176,5 +188,41 @@ public class ChatDrawer extends AppCompatActivity {
         public void onDrawerStateChanged(int newState) {
         }
     };
+    public void disconnect(){
+        String url = "disconnect_room"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
+        SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
+        userinfo = sharedPreferences.getString("userinfo", "");
+        api = HttpClient.getRetrofit().create( ApiInterface.class );
+        HashMap<String,String> params = new HashMap<>();
+
+        params.put("user1", userinfo);
+        params.put("room", room1);
+        Call<String> call = api.requestPost(url,params);
+
+        // 비동기로 백그라운드 쓰레드로 동작
+        call.enqueue(new Callback<String>() {
+            // 통신성공 후 텍스트뷰에 결과값 출력
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+//서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+
+                String flistArray = response.body();
+                Log.v("3",String.valueOf(response.body()));
+
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        talkDatabase.talkDao().delete_room__list(room1);
+                    }
+                });
+            }
+
+            // 통신실패
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+            }
+        });
+    }
 }
 

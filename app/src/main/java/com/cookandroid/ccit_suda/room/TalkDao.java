@@ -27,6 +27,9 @@ public interface TalkDao {
     @Query("DELETE FROM user_list")
     void deleteAll_user_list();
 
+    @Query("DELETE FROM room_list WHERE room_number = :room")
+    void delete_room__list(String room);
+
     @Query("DELETE FROM user_list WHERE user_name = :id")
     void delete_user_list(String id);
     @Insert
@@ -49,6 +52,7 @@ public interface TalkDao {
     @Insert
     void insert_room_list(Room_list room_list);
 
+
     @Query("SELECT user_name FROM room_list WHERE room_number = :username")
     LiveData<List<Room_list>> getAll_chat_user_list(String username);
 
@@ -57,6 +61,7 @@ public interface TalkDao {
 
     @Query("SELECT chat_room, chat_idx FROM talk_contents GROUP BY chat_room ORDER BY chat_idx DESC")
     List<Talk> get_lately_chat_list();
+
     @Query("SELECT EXISTS(SELECT * FROM talk_contents WHERE chat_idx = :idx)")
     boolean isRowIsExist_talk_list(String idx);
 }
