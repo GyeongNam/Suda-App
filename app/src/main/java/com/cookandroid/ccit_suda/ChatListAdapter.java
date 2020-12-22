@@ -50,6 +50,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             holder.nickname_textView.setVisibility(View.VISIBLE);
             holder.content_textView.setVisibility(View.VISIBLE);
             holder.date_textView.setVisibility(View.VISIBLE);
+            holder.chat_count_left.setVisibility(View.GONE);
         }
         else{
             holder.content_textView1.setText(list_itemArrayList.get(position).getChatlist());
@@ -61,6 +62,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             holder.nickname_textView.setVisibility(View.GONE);
             holder.content_textView.setVisibility(View.GONE);
             holder.date_textView.setVisibility(View.GONE);
+            holder.chat_count_right.setVisibility(View.GONE);
 
         }
 
@@ -81,6 +83,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         TextView nickname_textView1;
         TextView content_textView1;
         TextView date_textView1;
+        TextView chat_count_right,chat_count_left;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -90,6 +94,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             nickname_textView1 = itemView.findViewById(R.id.user_id2);
             content_textView1 = itemView.findViewById(R.id.chat2);
             date_textView1 = itemView.findViewById(R.id.message_time2);
+            chat_count_right = itemView.findViewById(R.id.chat_count_right);
+            chat_count_left = itemView.findViewById(R.id.chat_count_left);
         }
     }
 }
