@@ -359,68 +359,78 @@ public class boardActivity extends DrawerActivity {
                                             String user;
                                             String room_name;
                                             String chat_room;
+                                            String rooms;
                                             try {
                                                 JSONObject jsonObject = new JSONObject(args[1].toString());
-                                                user = jsonObject.getString("user");
-                                                chat_room = jsonObject.getString("message");
-                                                room_name = jsonObject.getString("room_name");
-                                                JSONArray jsonArray = new JSONArray(user);
-                                                for (int i = 0; i < jsonArray.length(); i++) {
-                                                    String a = jsonArray.getString(i);
-                                                    Log.e("jsonarray", a);
-                                                    Log.e("jsonarray", chat_room);
-                                                    Log.e("jsonarray", room_name);
-                                                    //초대된 방 roo_list 테이블에 데이터 insert
-                                                    Room_list room_list = new Room_list(null, a, chat_room, room_name);
-                                                    if (!talkDatabase.talkDao().isRowIsExist_user_room_list(a, chat_room)) {
-                                                        talkDatabase.talkDao().insert_room_list(room_list);
-                                                    }
 
+                                                if(jsonObject.getString("message").equals("SYSTEM")){
+                                                    user = jsonObject.getString("user");
+                                                    rooms = jsonObject.getString("room_name");
+                                                    Log.e("한번 보자1", user+ " // " + rooms);
+                                                    talkDatabase.talkDao().delete_room__lists(rooms,user);
                                                 }
-                                                Log.e("jsonarray", jsonArray.toString());
+                                                else{
+                                                    user = jsonObject.getString("user");
+                                                    chat_room = jsonObject.getString("message");
+                                                    room_name = jsonObject.getString("room_name");
+                                                    JSONArray jsonArray = new JSONArray(user);
+                                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                                        String a = jsonArray.getString(i);
+                                                        Log.e("jsonarray", a);
+                                                        Log.e("jsonarray", chat_room);
+                                                        Log.e("jsonarray", room_name);
+                                                        //초대된 방 roo_list 테이블에 데이터 insert
+                                                        Room_list room_list = new Room_list(null, a, chat_room, room_name);
+                                                        if (!talkDatabase.talkDao().isRowIsExist_user_room_list(a, chat_room)) {
+                                                            talkDatabase.talkDao().insert_room_list(room_list);
+                                                        }
+
+                                                    }
+                                                    Log.e("jsonarray", jsonArray.toString());
 
 
-                                                Echo echo2;
-                                                echo2 = new Echo(options);
-                                                echo2.connect(new EchoCallback() {
-                                                    @Override
-                                                    public void call(Object... args) {
-                                                        Log.d("Success", String.valueOf(args));
-                                                    }
-                                                }, new EchoCallback() {
-                                                    @Override
-                                                    public void call(Object... args) {
-                                                        Log.d("Error", String.valueOf(args));
-                                                    }
-                                                });
-                                                echo2.channel("laravel_database_" + chat_room)
-                                                        .listen("chartEvent", new EchoCallback() {
-                                                            @Override
-                                                            public void call(Object... args) {
-                                                                Log.d("웃기지마랄라", String.valueOf(args[1]));
-                                                                String user;
-                                                                String message;
-                                                                int channel;
-                                                                String chat_idx;
-                                                                String time;
-                                                                try {
-                                                                    JSONObject jsonObject = new JSONObject(args[1].toString());
-                                                                    user = jsonObject.getString("user");
-                                                                    message = jsonObject.getString("message");
-                                                                    channel = Integer.parseInt(jsonObject.getString("channel"));
-                                                                    chat_idx = jsonObject.getString("chat_idx");
-                                                                    time = jsonObject.getString("time");
-                                                                    Talk t = new Talk(null, user, message, channel,time, chat_idx);
-                                                                    Log.v("1", String.valueOf(t));
-                                                                    talkDatabase.talkDao().insert(t);
-                                                                } catch (JSONException e) {
-                                                                    e.printStackTrace();
+                                                    Echo echo2;
+                                                    echo2 = new Echo(options);
+                                                    echo2.connect(new EchoCallback() {
+                                                        @Override
+                                                        public void call(Object... args) {
+                                                            Log.d("Success", String.valueOf(args));
+                                                        }
+                                                    }, new EchoCallback() {
+                                                        @Override
+                                                        public void call(Object... args) {
+                                                            Log.d("Error", String.valueOf(args));
+                                                        }
+                                                    });
+                                                    echo2.channel("laravel_database_" + chat_room)
+                                                            .listen("chartEvent", new EchoCallback() {
+                                                                @Override
+                                                                public void call(Object... args) {
+                                                                    Log.d("웃기지마랄라", String.valueOf(args[1]));
+                                                                    String user;
+                                                                    String message;
+                                                                    int channel;
+                                                                    String chat_idx;
+                                                                    String time;
+                                                                    try {
+                                                                        JSONObject jsonObject = new JSONObject(args[1].toString());
+                                                                        user = jsonObject.getString("user");
+                                                                        message = jsonObject.getString("message");
+                                                                        channel = Integer.parseInt(jsonObject.getString("channel"));
+                                                                        chat_idx = jsonObject.getString("chat_idx");
+                                                                        time = jsonObject.getString("time");
+                                                                        Talk t = new Talk(null, user, message, channel, time, chat_idx);
+                                                                        Log.v("1", String.valueOf(t));
+                                                                        talkDatabase.talkDao().insert(t);
+                                                                    } catch (JSONException e) {
+                                                                        e.printStackTrace();
+                                                                    }
                                                                 }
-                                                            }
-                                                        });
+                                                            });
 //                                                Talk t = new Talk(null, user, message, channel, String.valueOf(now));
 //                                                Log.v("1", String.valueOf(t));
 //                                                talkDatabase.talkDao().insert(t);
+                                                }
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
                                             }
