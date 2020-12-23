@@ -50,68 +50,135 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * **/
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-
+//        if(key == "1"){
+//            nointent = new Intent(this,PostdetailActivity.class);
+//            nointent.putExtra("primarykey",key);
+//        }
+//        else if(key == "2"){
+//            nointent = new Intent(this, chatting.class);
+//            nointent.putExtra("room",key);
+//        }
         String title = remoteMessage.getData().get("title");
         String message = remoteMessage.getData().get("body");
-
+        String key = remoteMessage.getData().get("key");
+        String num = remoteMessage.getData().get("num");
+        Log.d("뭐냐 너", "onMessageReceived: "+ num + " // " + key);
 //        Intent intent = new Intent(this, MainActivity.class);
 //        intent.putExtra("test", test);
 
      //   PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if(key.equals("2") ){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            String channel = "ccit";
-            String channel_nm = "suda";
-
-
-
-            NotificationManager notichannel = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationChannel channelMessage = new NotificationChannel(channel, channel_nm,
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            channelMessage.setDescription("채널에 대한 설명.");
-            channelMessage.enableLights(true);
-            channelMessage.enableVibration(true);
-            channelMessage.setShowBadge(false);
-            channelMessage.setVibrationPattern(new long[]{1000, 1000});
-            notichannel.createNotificationChannel(channelMessage);
-
-            Intent nointent = new Intent(this, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, nointent,
-                    PendingIntent.FLAG_ONE_SHOT);
+                String channel = "ccit";
+                String channel_nm = "suda";
 
 
-            //푸시알림을 Builder를 이용하여 만듭니다.
-            NotificationCompat.Builder notificationBuilder =
-                    new NotificationCompat.Builder(this, channel)
-                            .setSmallIcon(R.drawable.ic_launcher_background)
-                            .setContentTitle(title)//푸시알림의 제목
-                            .setContentText(message)//푸시알림의 내용
-                            .setChannelId(channel)
-                            .setAutoCancel(true)//선택시 자동으로 삭제되도록 설정.
-                            .setContentIntent(pendingIntent)//알림을 눌렀을때 실행할 인텐트 설정.
-                            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
+                NotificationManager notichannel = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationChannel channelMessage = new NotificationChannel(channel, channel_nm,
+                        NotificationManager.IMPORTANCE_DEFAULT);
+                channelMessage.setDescription("채널에 대한 설명.");
+                channelMessage.enableLights(true);
+                channelMessage.enableVibration(true);
+                channelMessage.setShowBadge(false);
+                channelMessage.setVibrationPattern(new long[]{1000, 1000});
+                notichannel.createNotificationChannel(channelMessage);
+                Intent nointent = new Intent(this, chatting.class);
+                nointent.putExtra("room",num);
 
-            NotificationManager notificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, nointent,
+                        PendingIntent.FLAG_ONE_SHOT);
 
-            notificationManager.notify(9999, notificationBuilder.build());
 
-        } else {
-            NotificationCompat.Builder notificationBuilder =
-                    new NotificationCompat.Builder(this, "ccit")
-                            .setSmallIcon(R.drawable.ic_launcher_background)
-                            .setContentTitle(title)
-                            .setContentText(message)
-                            .setAutoCancel(true)
-         //                   .setContentIntent(pendingIntent)
-                            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
+                //푸시알림을 Builder를 이용하여 만듭니다.
+                NotificationCompat.Builder notificationBuilder =
+                        new NotificationCompat.Builder(this, channel)
+                                .setSmallIcon(R.drawable.ic_launcher_background)
+                                .setContentTitle(title)//푸시알림의 제목
+                                .setContentText(message)//푸시알림의 내용
+                                .setChannelId(channel)
+                                .setAutoCancel(true)//선택시 자동으로 삭제되도록 설정.
+                                .setContentIntent(pendingIntent)//알림을 눌렀을때 실행할 인텐트 설정.
+                                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
 
-            NotificationManager notificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            notificationManager.notify(9999, notificationBuilder.build());
+                notificationManager.notify(9999, notificationBuilder.build());
 
+            } else {
+                NotificationCompat.Builder notificationBuilder =
+                        new NotificationCompat.Builder(this, "ccit")
+                                .setSmallIcon(R.drawable.ic_launcher_background)
+                                .setContentTitle(title)
+                                .setContentText(message)
+                                .setAutoCancel(true)
+             //                   .setContentIntent(pendingIntent)
+                                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
+
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                notificationManager.notify(9999, notificationBuilder.build());
+
+            }
         }
+         else if(key.equals("1")){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                String channel = "ccit";
+                String channel_nm = "suda";
+
+
+                NotificationManager notichannel = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationChannel channelMessage = new NotificationChannel(channel, channel_nm,
+                        NotificationManager.IMPORTANCE_DEFAULT);
+                channelMessage.setDescription("채널에 대한 설명.");
+                channelMessage.enableLights(true);
+                channelMessage.enableVibration(true);
+                channelMessage.setShowBadge(false);
+                channelMessage.setVibrationPattern(new long[]{1000, 1000});
+                notichannel.createNotificationChannel(channelMessage);
+
+                Intent nointent = new Intent(this, PostdetailActivity.class);
+                nointent.putExtra("primarykey",num);
+
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, nointent,
+                        PendingIntent.FLAG_ONE_SHOT);
+
+
+                //푸시알림을 Builder를 이용하여 만듭니다.
+                NotificationCompat.Builder notificationBuilder =
+                        new NotificationCompat.Builder(this, channel)
+                                .setSmallIcon(R.drawable.ic_launcher_background)
+                                .setContentTitle(title)//푸시알림의 제목
+                                .setContentText(message)//푸시알림의 내용
+                                .setChannelId(channel)
+                                .setAutoCancel(true)//선택시 자동으로 삭제되도록 설정.
+                                .setContentIntent(pendingIntent)//알림을 눌렀을때 실행할 인텐트 설정.
+                                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
+
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                notificationManager.notify(9999, notificationBuilder.build());
+
+            } else {
+                NotificationCompat.Builder notificationBuilder =
+                        new NotificationCompat.Builder(this, "ccit")
+                                .setSmallIcon(R.drawable.ic_launcher_background)
+                                .setContentTitle(title)
+                                .setContentText(message)
+                                .setAutoCancel(true)
+                                //                   .setContentIntent(pendingIntent)
+                                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
+
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                notificationManager.notify(9999, notificationBuilder.build());
+
+            }
+         }
     }
 }
