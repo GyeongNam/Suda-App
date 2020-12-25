@@ -1,8 +1,10 @@
 package com.cookandroid.ccit_suda.friendroom;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,8 @@ import com.cookandroid.ccit_suda.R;
 import com.cookandroid.ccit_suda.chatting;
 import com.cookandroid.ccit_suda.room.Talk;
 import com.cookandroid.ccit_suda.room.TalkAndRoom_list;
+import com.cookandroid.ccit_suda.room.TalkDatabase;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +27,12 @@ import java.util.List;
 public class FriendroomAdapter extends RecyclerView.Adapter<FriendroomAdapter.ViewHolder> {
     List<TalkAndRoom_list> list = new ArrayList<>();
     Context context;
-
+    Activity activity;
 
     // 생성자에서 데이터 리스트 객체를 전달받음.
-    public FriendroomAdapter(Context context) {
+    public FriendroomAdapter(Context context,Activity activity) {
         this.context = context;
+        this.activity = activity;
     }
 
     // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
@@ -65,6 +70,27 @@ public class FriendroomAdapter extends RecyclerView.Adapter<FriendroomAdapter.Vi
         holder.textView1.setText(text);
         holder.textView2.setText(text2);
         holder.textView3.setText(text3);
+        TalkDatabase db;
+        db = TalkDatabase.getDatabase(context);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                String not_read_message = db.talkDao().not_read_chat_count(String.valueOf(list.get(position).talk.getChat_room()));
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        holder.textView4.setText(not_read_message);
+                        if(not_read_message.equals("0")){
+                            holder.textView4.setVisibility(View.GONE);
+                        }else {
+                            holder.textView4.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+            }
+        });
+
 
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +116,7 @@ public class FriendroomAdapter extends RecyclerView.Adapter<FriendroomAdapter.Vi
         TextView textView1 ;
         TextView textView2 ;
         TextView textView3 ;
+        TextView textView4 ;
         LinearLayout linearLayout;
         ViewHolder(View itemView) {
             super(itemView) ;
@@ -97,6 +124,7 @@ public class FriendroomAdapter extends RecyclerView.Adapter<FriendroomAdapter.Vi
             textView1 = itemView.findViewById(R.id.chat_item) ;
             textView2 = itemView.findViewById(R.id.chat_name) ;
             textView3 = itemView.findViewById(R.id.chat_tiem) ;
+            textView4 = itemView.findViewById(R.id.not_read_count) ;
             linearLayout = itemView.findViewById(R.id.linearLayout2) ;
         }
     }

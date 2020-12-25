@@ -184,20 +184,23 @@ public class FlistAdapter extends BaseAdapter {
                              .listen("chartEvent", new EchoCallback() {
                                  @Override
                                  public void call(Object... args) {
-                                     Date now = new Date();
+
                                      Log.d("웃기지마랄라", String.valueOf(args[1]));
                                      String qwe;
                                      String qwe1;
+                                     String time;
                                      int qwe2;
                                      String chat_idx;
+                                     String user_count;
                                      try {
                                          JSONObject jsonObject = new JSONObject(args[1].toString());
-                                         chat_list list = new chat_list(jsonObject.getString("user") ,now,jsonObject.getString("message"));
                                          qwe = jsonObject.getString("user");
                                          qwe1 = jsonObject.getString("message");
                                          qwe2 = Integer.parseInt(jsonObject.getString("channel"));
                                          chat_idx = jsonObject.getString("chat_idx");
-                                         Talk t = new Talk(null,qwe,qwe1,qwe2,String.valueOf(now),chat_idx);
+                                         time = jsonObject.getString("time");
+                                         user_count = jsonObject.getString("user_count");
+                                         Talk t = new Talk(null,qwe,qwe1,qwe2,time,chat_idx,"0",user_count);
                                          Log.v("1",String.valueOf(t));
                                          talkDatabse.talkDao().insert(t);
                                      } catch (JSONException e) {

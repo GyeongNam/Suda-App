@@ -63,12 +63,34 @@ public class Talk implements Serializable {
     @ColumnInfo(name = "date") private String date;
     @ColumnInfo(name = "chat_idx") private String chat_idx;
 
-    public Talk(Integer idx, String user, String chatlist, int chat_room, String date,String chat_idx) {
+    public String getCount() {
+        return count;
+    }
+
+    public void setCount(String count) {
+        this.count = count;
+    }
+
+    @ColumnInfo(name = "count") private String count;
+
+    public String getChat_read() {
+        return chat_read;
+    }
+
+    public void setChat_read(String chat_read) {
+        this.chat_read = chat_read;
+    }
+
+    @ColumnInfo(name = "chat_read") private String chat_read;
+
+    public Talk(Integer idx, String user, String chatlist, int chat_room, String date,String chat_idx,String chat_read,String count) {
         this.idx = idx;
         this.user = user;
         this.chatlist = chatlist;
         this.chat_room = chat_room;
         this.date = date;
         this.chat_idx = chat_idx;
+        this.chat_read = chat_read;
+        this.count = count;
     }
 }

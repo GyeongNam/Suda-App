@@ -61,7 +61,6 @@ public class ChatDrawer extends AppCompatActivity {
     private String room1;
     Button chat_close;
     Toolbar myToolbar;
-    TalkDatabase db;
     User_listViewModel viewMode;
     private DrawerLayout drawerLayout;
     private View chatdrawer;
@@ -70,7 +69,6 @@ public class ChatDrawer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_toolbar);
-        db = Room.databaseBuilder(this, TalkDatabase.class, "talk-db").allowMainThreadQueries().build();
         talkDatabase = TalkDatabase.getDatabase(this);
     }
 

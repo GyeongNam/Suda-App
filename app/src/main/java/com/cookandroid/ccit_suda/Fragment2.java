@@ -55,7 +55,7 @@ public class Fragment2 extends Fragment {
         listView = rootView.findViewById(R.id.RecyclerView);
         SharedPreferences sharedPreferences = context.getSharedPreferences("File",0);
         userinfo = sharedPreferences.getString("userinfo","");
-        FriendroomAdapter adapter = new FriendroomAdapter(context) ;
+        FriendroomAdapter adapter = new FriendroomAdapter(context,getActivity()) ;
 //        sendRequest();
         talkDatabse = TalkDatabase.getDatabase(context);
         viewModel = new ViewModelProvider(this).get(User_listViewModel.class);

@@ -1,38 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
+        android:layout_height="70dp"
+        android:orientation="vertical"
+        android:padding="5dp"
         app:layout_constraintBottom_toBottomOf="parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/chat_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="user_name"
+                tools:ignore="MissingConstraints" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/chat_tiem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="time"
+                tools:ignore="MissingConstraints" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/chat_item"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:maxWidth="370dp"
+                android:text="chat"
+                tools:ignore="MissingConstraints" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:textColor="@color/cardview_light_background"
+                android:id="@+id/not_read_count"
+                android:gravity="center"
+                android:background="@drawable/chat_indicate"
+                android:text="count"/>
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/chat_name"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/chat_item"
-            android:layout_width="210dp"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/chat_tiem"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            tools:ignore="MissingConstraints" />
+
+
 
 
     </LinearLayout>
@@ -44,4 +76,4 @@
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
         app:layout_constraintStart_toStartOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

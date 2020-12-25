@@ -1,8 +1,11 @@
 package com.cookandroid.ccit_suda;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cookandroid.ccit_suda.room.Talk;
+import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
 
 import java.util.ArrayList;
@@ -23,9 +27,13 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     Context context;
     List<Talk> list_itemArrayList = new ArrayList<>();
     ViewHolder viewholder;
+    TalkDatabase talkDatabase = TalkDatabase.getDatabase(context);
+    int room;
 
-    public ChatListAdapter(Context context) {
+    public ChatListAdapter(Context context, int room) {
         this.context = context;
+        this.room = room;
+
     }
 
     @NonNull
@@ -37,14 +45,25 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
         return new ViewHolder(view);
     }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         sharedPreferences = context.getSharedPreferences("File", 0);
         String userinfo = sharedPreferences.getString("userinfo", "");
-        if(sharedPreferences.getString("userinfo","").equals(list_itemArrayList.get(position).getUser())){
+        if (sharedPreferences.getString("userinfo", "").equals(list_itemArrayList.get(position).getUser())) {
             holder.content_textView.setText(list_itemArrayList.get(position).getChatlist());
             holder.nickname_textView.setText(list_itemArrayList.get(position).getUser());
             holder.date_textView.setText(String.valueOf(list_itemArrayList.get(position).getDate()));
+            holder.chat_count_right.setVisibility(View.VISIBLE);
+            if(list_itemArrayList.get(position).getCount().equals("0")){
+                holder.chat_count_right.setVisibility(View.GONE);
+            }
+            else {
+                holder.chat_count_right.setText(String.valueOf(list_itemArrayList.get(position).getCount()));
+            }
+
+            Log.e("방인원카운트", String.valueOf(talkDatabase.talkDao().room_user_list_count(room)));
+
             holder.nickname_textView1.setVisibility(View.GONE);
             holder.content_textView1.setVisibility(View.GONE);
             holder.content_textView3.setVisibility(View.GONE);
@@ -54,8 +73,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             holder.content_textView.setVisibility(View.VISIBLE);
             holder.date_textView.setVisibility(View.VISIBLE);
             holder.chat_count_left.setVisibility(View.GONE);
-        }
-        else if(list_itemArrayList.get(position).getUser().equals("SYSTEM")){
+
+        } else if (list_itemArrayList.get(position).getUser().equals("SYSTEM")) {
             holder.content_textView3.setText(list_itemArrayList.get(position).getChatlist());
             holder.nickname_textView1.setText(list_itemArrayList.get(position).getUser());
             holder.date_textView1.setText(String.valueOf(list_itemArrayList.get(position).getDate()));
@@ -69,11 +88,19 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             holder.chat_count_right.setVisibility(View.GONE);
             holder.chat_count_left.setVisibility(View.GONE);
             holder.chat_count_left3.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             holder.content_textView1.setText(list_itemArrayList.get(position).getChatlist());
             holder.nickname_textView1.setText(list_itemArrayList.get(position).getUser());
             holder.date_textView1.setText(String.valueOf(list_itemArrayList.get(position).getDate()));
+            holder.chat_count_left.setVisibility(View.VISIBLE);
+            if(list_itemArrayList.get(position).getCount().equals("0")){
+                holder.chat_count_left.setVisibility(View.GONE);
+            }
+            else {
+                holder.chat_count_left.setText(String.valueOf(list_itemArrayList.get(position).getCount()));
+            }
+            Log.e("방인원카운트", String.valueOf(talkDatabase.talkDao().room_user_list_count(room)));
+
             holder.nickname_textView1.setVisibility(View.VISIBLE);
             holder.content_textView1.setVisibility(View.VISIBLE);
             holder.date_textView1.setVisibility(View.VISIBLE);
@@ -86,10 +113,12 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         }
 
     }
-    public void getTalkList(List<Talk> list_itemArrayList){
-        this.list_itemArrayList =  list_itemArrayList;
+
+    public void getTalkList(List<Talk> list_itemArrayList) {
+        this.list_itemArrayList = list_itemArrayList;
         notifyDataSetChanged();
     }
+
     @Override
     public int getItemCount() {
         return list_itemArrayList.size();
@@ -102,7 +131,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         TextView nickname_textView1;
         TextView content_textView1;
         TextView date_textView1;
-        TextView chat_count_right,chat_count_left, chat_count_left3;
+        TextView chat_count_right, chat_count_left, chat_count_left3;
         TextView content_textView3;
 
         public ViewHolder(@NonNull View itemView) {

@@ -22,6 +22,19 @@ public class Room_list implements Serializable {
     @ColumnInfo(name = "room_name")
     private String room_name;
 
+    public String getLately_chat_idx() {
+        return lately_chat_idx;
+    }
+
+    public void setLately_chat_idx(String lately_chat_idx) {
+        this.lately_chat_idx = lately_chat_idx;
+    }
+
+    @ColumnInfo(name = "lately_chat_idx")
+    private String lately_chat_idx;
+
+
+
 
     public String getUser_name() {
         return user_name;
@@ -65,11 +78,13 @@ public class Room_list implements Serializable {
         this.room_number = room_number;
     }
     //생성자
-    public Room_list(Integer R_idx, String user_name, String room_number, String room_name) {
+    public Room_list(Integer R_idx, String user_name, String room_number, String room_name, String lately_chat_idx ) {
         R_idx = R_idx;
         this.user_name = user_name;
         this.room_number = room_number;
         this.room_name = room_name;
+        this.lately_chat_idx = lately_chat_idx;
+
     }
 
 

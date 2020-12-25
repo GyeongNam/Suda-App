@@ -133,7 +133,7 @@ public class InviteFriends extends AppCompatActivity  {
                         AsyncTask.execute(new Runnable() {
                             @Override
                             public void run() {
-                                room_list = new Room_list(null,user_name,chat_room,room_name);
+                                room_list = new Room_list(null,user_name,chat_room,room_name,"0");
                                 talkDatabse.talkDao().insert_room_list(room_list);
                             }
                         });
@@ -167,20 +167,20 @@ public class InviteFriends extends AppCompatActivity  {
                             .listen("chartEvent", new EchoCallback() {
                                 @Override
                                 public void call(Object... args) {
-                                    Date now = new Date();
                                     Log.d("웃기지마랄라", String.valueOf(args[1]));
                                     String user;
                                     String message;
                                     String chat_idx;
+                                    String time;
                                     int channel;
                                     try {
                                         JSONObject jsonObject = new JSONObject(args[1].toString());
-                                        chat_list list = new chat_list(jsonObject.getString("user") ,now,jsonObject.getString("message"));
                                         user = jsonObject.getString("user");
                                         message = jsonObject.getString("message");
                                         channel = Integer.parseInt(jsonObject.getString("channel"));
                                         chat_idx = jsonObject.getString("chat_idx");
-                                        Talk t = new Talk(null, user, message, channel, String.valueOf(now), chat_idx);
+                                        time = jsonObject.getString("time");
+                                        Talk t = new Talk(null, user, message, channel,time , chat_idx,"0","0");
                                         Log.v("1", String.valueOf(t));
                                         talkDatabase.talkDao().insert(t);
                                     } catch (JSONException e) {

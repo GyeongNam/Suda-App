@@ -16,6 +16,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.room.Room;
 
 import com.baoyz.widget.PullRefreshLayout;
@@ -44,21 +45,21 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 public class boardActivity extends DrawerActivity {
-    public  static Context context_board;
+    public static Context context_board;
     private long backBtnTime = 0;
     private LinearLayout inflate;
     PullRefreshLayout swipe_refresh_layout;
     ScrollView mainboard_scroll;
     EchoOptions options = new EchoOptions();
     Echo echo;
-    TalkDatabase db;
     ArrayList array = new ArrayList();
     ApiInterface api;
     TalkDatabase talkDatabase;
     private BackPressCloseHandler backPressCloseHandler;
-    View child,view;
+    View child, view;
     TextView board_categorie;
     LinearLayout mypostparent;
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -66,14 +67,14 @@ public class boardActivity extends DrawerActivity {
         Log.e("호출", "액티비티 파괴");
     }
 
-    public void disecho(){
+    public void disecho() {
         echo.disconnect();
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 Gson gson = new Gson();
 
-                Log.e("쿼리문",gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
+                Log.e("쿼리문", gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
                 send_lately_chat_idx(gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
             }
         });
@@ -95,7 +96,6 @@ public class boardActivity extends DrawerActivity {
         backPressCloseHandler = new BackPressCloseHandler(this);
         swipe_refresh_layout = findViewById(R.id.swipe_refresh_layout);
         mainboard_scroll = findViewById(R.id.mainboard_scroll);
-        db = Room.databaseBuilder(this, TalkDatabase.class, "talk-db").allowMainThreadQueries().build();
         talkDatabase = TalkDatabase.getDatabase(this);
 
         AsyncTask.execute(new Runnable() {
@@ -103,7 +103,7 @@ public class boardActivity extends DrawerActivity {
             public void run() {
                 Gson gson = new Gson();
 
-                Log.e("쿼리문",gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
+                Log.e("쿼리문", gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
                 send_lately_chat_idx(gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
             }
         });
@@ -183,7 +183,7 @@ public class boardActivity extends DrawerActivity {
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
                 Log.v("retrofit2", String.valueOf(response.body()));
-                Log.e("지금부터",response.body());
+                Log.e("지금부터", response.body());
                 try {
                     inflate.removeAllViews();
                     mypostparent.removeAllViews();
@@ -191,25 +191,25 @@ public class boardActivity extends DrawerActivity {
                     JSONArray post_data = new JSONArray(response_data.getString("post_data"));
                     JSONArray data = new JSONArray(response_data.getString("data"));
                     JSONArray mypost = new JSONArray(response_data.getString("mypost"));
-                    for(int i = 0;i < data.length(); i ++){
+                    for (int i = 0; i < data.length(); i++) {
                         JSONObject jsonObject = data.getJSONObject(i);
-                        child = getLayoutInflater().inflate(R.layout.board_inflate,null);
+                        child = getLayoutInflater().inflate(R.layout.board_inflate, null);
                         child.setId(i);
                         inflate.addView(child);
                         view = inflate.findViewById(i);
                         board_categorie = view.findViewById(R.id.board_categorie);
                         board_categorie.setText(jsonObject.getString("categorie"));
-                        for(int a = 0; a < post_data.length(); a++){
+                        for (int a = 0; a < post_data.length(); a++) {
                             JSONObject jsonObject1 = post_data.getJSONObject(a);
-                            if(jsonObject.getString("categorie").equals(jsonObject1.getString("categorie"))){
+                            if (jsonObject.getString("categorie").equals(jsonObject1.getString("categorie"))) {
                                 LinearLayout linearLayout = view.findViewById(R.id.board_title);
-                                textview(jsonObject1.getString("Title"),linearLayout,jsonObject1.getString("post_num"));
+                                textview(jsonObject1.getString("Title"), linearLayout, jsonObject1.getString("post_num"));
                             }
                         }
                     }
-                    for(int i = 0; i < mypost.length();i++){
+                    for (int i = 0; i < mypost.length(); i++) {
                         JSONObject jsonObject = mypost.getJSONObject(i);
-                        textview(jsonObject.getString("Title"),mypostparent,jsonObject.getString("post_num"));
+                        textview(jsonObject.getString("Title"), mypostparent, jsonObject.getString("post_num"));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -265,7 +265,9 @@ public class boardActivity extends DrawerActivity {
                         String user = room_list.getString("user");
                         String chat_room = room_list.getString("chat_room");
                         String room_name = room_list.getString("room_name");
-                        Room_list room_data = new Room_list(null, user, chat_room, room_name);
+                        String lately_chat_idx = room_list.getString("lately_chat_idx");
+                        Room_list room_data = new Room_list(null, user, chat_room, room_name,"0");
+
 
                         AsyncTask.execute(new Runnable() {
                             @Override
@@ -273,6 +275,12 @@ public class boardActivity extends DrawerActivity {
                                 if (!talkDatabase.talkDao().isRowIsExist_user_room_list(user, chat_room)) {
                                     talkDatabase.talkDao().insert_room_list(room_data);
                                 }
+                                if(!talkDatabase.talkDao().isRowIsExist_update_status(user,chat_room,lately_chat_idx)){
+                                    talkDatabase.talkDao().update_talk_contents_count(user,chat_room);
+//
+                                    talkDatabase.talkDao().update_lately_chat_idx(user,lately_chat_idx,chat_room);
+                                }
+
                             }
                         });
                     }
@@ -329,16 +337,26 @@ public class boardActivity extends DrawerActivity {
                                                 String message;
                                                 String chat_idx;
                                                 String time;
+                                                String user_count;
                                                 int channel;
                                                 try {
+                                                    Intent intent = new Intent("msg" + room_number);
+
                                                     JSONObject jsonObject = new JSONObject(args[1].toString());
                                                     user = jsonObject.getString("user");
                                                     message = jsonObject.getString("message");
                                                     channel = Integer.parseInt(jsonObject.getString("channel"));
                                                     chat_idx = jsonObject.getString("chat_idx");
                                                     time = jsonObject.getString("time");
-
-                                                    Talk t = new Talk(null, user, message, channel, time, chat_idx);
+                                                    user_count = jsonObject.getString("user_count");
+                                                    intent.putExtra("user", user);
+                                                    intent.putExtra("message", message);
+                                                    intent.putExtra("channel", String.valueOf(channel));
+                                                    intent.putExtra("chat_idx", chat_idx);
+                                                    intent.putExtra("time", time);
+                                                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+                                                    Log.e("유저 카운트",user_count);
+                                                    Talk t = new Talk(null, user, message, channel, time, chat_idx, "0", user_count);
                                                     Log.v("1", String.valueOf(t));
                                                     talkDatabase.talkDao().insert(t);
                                                 } catch (JSONException e) {
@@ -363,13 +381,28 @@ public class boardActivity extends DrawerActivity {
                                             try {
                                                 JSONObject jsonObject = new JSONObject(args[1].toString());
 
-                                                if(jsonObject.getString("message").equals("SYSTEM")){
+                                                if (jsonObject.getString("message").equals("SYSTEM")) {
                                                     user = jsonObject.getString("user");
                                                     rooms = jsonObject.getString("room_name");
-                                                    Log.e("한번 보자1", user+ " // " + rooms);
-                                                    talkDatabase.talkDao().delete_room__lists(rooms,user);
-                                                }
-                                                else{
+                                                    Log.e("한번 보자1", user + " // " + rooms);
+                                                    talkDatabase.talkDao().delete_room__lists(rooms, user);
+                                                } else if (jsonObject.getString("message").equals("UPDATE")) {
+                                                    Log.e("브로드캐스트 json user", jsonObject.getString("user"));
+                                                    Log.e("브로드캐스트 json user", jsonObject.getString("chat_idx"));
+                                                    Log.e("브로드캐스트 json user", jsonObject.getString("room_name"));
+                                                    user = jsonObject.getString("user");
+                                                    String lately_chat_idx = jsonObject.getString("chat_idx");
+                                                    String room_number = jsonObject.getString("room_name");
+                                                    //채팅방 읽음표시 먼저 업데이트
+                                                    if(user.equals(userinfo)){
+
+                                                    }
+                                                    else{
+                                                        talkDatabase.talkDao().update_talk_contents_count(user,room_number);
+                                                    }
+                                                    //후에 각 채팅방 유저마다 어디까지 읽었는지 업데이트
+                                                    talkDatabase.talkDao().update_lately_chat_idx(user,lately_chat_idx,room_number);
+                                                } else {
                                                     user = jsonObject.getString("user");
                                                     chat_room = jsonObject.getString("message");
                                                     room_name = jsonObject.getString("room_name");
@@ -380,7 +413,7 @@ public class boardActivity extends DrawerActivity {
                                                         Log.e("jsonarray", chat_room);
                                                         Log.e("jsonarray", room_name);
                                                         //초대된 방 roo_list 테이블에 데이터 insert
-                                                        Room_list room_list = new Room_list(null, a, chat_room, room_name);
+                                                        Room_list room_list = new Room_list(null, a, chat_room, room_name,"0");
                                                         if (!talkDatabase.talkDao().isRowIsExist_user_room_list(a, chat_room)) {
                                                             talkDatabase.talkDao().insert_room_list(room_list);
                                                         }
@@ -412,6 +445,7 @@ public class boardActivity extends DrawerActivity {
                                                                     int channel;
                                                                     String chat_idx;
                                                                     String time;
+                                                                    String user_count;
                                                                     try {
                                                                         JSONObject jsonObject = new JSONObject(args[1].toString());
                                                                         user = jsonObject.getString("user");
@@ -419,7 +453,8 @@ public class boardActivity extends DrawerActivity {
                                                                         channel = Integer.parseInt(jsonObject.getString("channel"));
                                                                         chat_idx = jsonObject.getString("chat_idx");
                                                                         time = jsonObject.getString("time");
-                                                                        Talk t = new Talk(null, user, message, channel, time, chat_idx);
+                                                                        user_count = jsonObject.getString("user_count");
+                                                                        Talk t = new Talk(null, user, message, channel, time, chat_idx, "0", user_count);
                                                                         Log.v("1", String.valueOf(t));
                                                                         talkDatabase.talkDao().insert(t);
                                                                     } catch (JSONException e) {
@@ -463,13 +498,13 @@ public class boardActivity extends DrawerActivity {
 
     public void send_lately_chat_idx(String data) {
         String url = "get_lately_chat_list"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
-        api = HttpClient.getRetrofit().create( ApiInterface.class );
-        HashMap<String,String> params = new HashMap<>();
+        api = HttpClient.getRetrofit().create(ApiInterface.class);
+        HashMap<String, String> params = new HashMap<>();
         SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
         String userinfo = sharedPreferences.getString("userinfo", "");
         params.put("key", data);
         params.put("user", userinfo);
-        Call<String> call = api.requestPost(url,params);
+        Call<String> call = api.requestPost(url, params);
 
         // 비동기로 백그라운드 쓰레드로 동작
         call.enqueue(new Callback<String>() {
@@ -477,31 +512,33 @@ public class boardActivity extends DrawerActivity {
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
-                
-                Log.e("retrofit2",String.valueOf(response.body()));
+
+                Log.e("retrofit2", String.valueOf(response.body()));
 
                 try {
                     JSONArray jsonArray = new JSONArray(response.body());
-                    Log.e("길이",String.valueOf(jsonArray.length()));
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            Log.e("하우ㅢ배열", String.valueOf(i));
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            String chatnum = jsonObject.getString("chatnum");
-                            String user = jsonObject.getString("user");
-                            String message = jsonObject.getString("message");
-                            String ch_idx = jsonObject.getString("ch_idx");
-                            String created_at = jsonObject.getString("created_at");
-                            Talk talk = new Talk(null, user, message, Integer.parseInt(ch_idx), created_at, chatnum);
+                    Log.e("길이", String.valueOf(jsonArray.length()));
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        Log.e("하우ㅢ배열", String.valueOf(i));
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        String chatnum = jsonObject.getString("chatnum");
+                        String user = jsonObject.getString("user");
+                        String message = jsonObject.getString("message");
+                        String ch_idx = jsonObject.getString("ch_idx");
+                        String created_at = jsonObject.getString("created_at");
+                        String user_count = jsonObject.getString("chat_status");
+                        Log.e("유저 카운트",user_count);
+                        Talk talk = new Talk(null, user, message, Integer.parseInt(ch_idx), created_at, chatnum, "0", user_count);
 
-                            AsyncTask.execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (!talkDatabase.talkDao().isRowIsExist_talk_list(chatnum)) {
-                                        talkDatabase.talkDao().insert(talk);
-                                    }
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!talkDatabase.talkDao().isRowIsExist_talk_list(chatnum)) {
+                                    talkDatabase.talkDao().insert(talk);
                                 }
-                            });
-                        }
+                            }
+                        });
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -513,7 +550,7 @@ public class boardActivity extends DrawerActivity {
             // 통신실패
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.v("retrofit2",String.valueOf("error : "+t.toString()));
+                Log.v("retrofit2", String.valueOf("error : " + t.toString()));
             }
         });
     }
