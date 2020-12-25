@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -266,7 +267,7 @@ public class boardActivity extends DrawerActivity {
                         String chat_room = room_list.getString("chat_room");
                         String room_name = room_list.getString("room_name");
                         String lately_chat_idx = room_list.getString("lately_chat_idx");
-                        Room_list room_data = new Room_list(null, user, chat_room, room_name,"0");
+                        Room_list room_data = new Room_list(null, user, chat_room, room_name, "0");
 
 
                         AsyncTask.execute(new Runnable() {
@@ -275,14 +276,24 @@ public class boardActivity extends DrawerActivity {
                                 if (!talkDatabase.talkDao().isRowIsExist_user_room_list(user, chat_room)) {
                                     talkDatabase.talkDao().insert_room_list(room_data);
                                 }
-                                if(!talkDatabase.talkDao().isRowIsExist_update_status(user,chat_room,lately_chat_idx)){
-                                    talkDatabase.talkDao().update_talk_contents_count(user,chat_room);
-//
-                                    talkDatabase.talkDao().update_lately_chat_idx(user,lately_chat_idx,chat_room);
+                                if (!talkDatabase.talkDao().isRowIsExist_update_status(user, chat_room, lately_chat_idx)) {
+                                    if(userinfo.equals(user)){
+
+                                    }
+                                    else{
+                                        talkDatabase.talkDao().update_talk_contents_count(user, chat_room);
+                                    }
+
+                                    talkDatabase.talkDao().update_lately_chat_idx(user, lately_chat_idx, chat_room);
                                 }
 
                             }
                         });
+
+
+
+
+
                     }
                     //insert end
 
@@ -355,7 +366,7 @@ public class boardActivity extends DrawerActivity {
                                                     intent.putExtra("chat_idx", chat_idx);
                                                     intent.putExtra("time", time);
                                                     LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-                                                    Log.e("유저 카운트",user_count);
+                                                    Log.e("유저 카운트", user_count);
                                                     Talk t = new Talk(null, user, message, channel, time, chat_idx, "0", user_count);
                                                     Log.v("1", String.valueOf(t));
                                                     talkDatabase.talkDao().insert(t);
@@ -394,14 +405,13 @@ public class boardActivity extends DrawerActivity {
                                                     String lately_chat_idx = jsonObject.getString("chat_idx");
                                                     String room_number = jsonObject.getString("room_name");
                                                     //채팅방 읽음표시 먼저 업데이트
-                                                    if(user.equals(userinfo)){
+                                                    if (user.equals(userinfo)) {
 
-                                                    }
-                                                    else{
-                                                        talkDatabase.talkDao().update_talk_contents_count(user,room_number);
+                                                    } else {
+                                                        talkDatabase.talkDao().update_talk_contents_count(user, room_number);
                                                     }
                                                     //후에 각 채팅방 유저마다 어디까지 읽었는지 업데이트
-                                                    talkDatabase.talkDao().update_lately_chat_idx(user,lately_chat_idx,room_number);
+                                                    talkDatabase.talkDao().update_lately_chat_idx(user, lately_chat_idx, room_number);
                                                 } else {
                                                     user = jsonObject.getString("user");
                                                     chat_room = jsonObject.getString("message");
@@ -413,7 +423,7 @@ public class boardActivity extends DrawerActivity {
                                                         Log.e("jsonarray", chat_room);
                                                         Log.e("jsonarray", room_name);
                                                         //초대된 방 roo_list 테이블에 데이터 insert
-                                                        Room_list room_list = new Room_list(null, a, chat_room, room_name,"0");
+                                                        Room_list room_list = new Room_list(null, a, chat_room, room_name, "0");
                                                         if (!talkDatabase.talkDao().isRowIsExist_user_room_list(a, chat_room)) {
                                                             talkDatabase.talkDao().insert_room_list(room_list);
                                                         }
@@ -527,7 +537,7 @@ public class boardActivity extends DrawerActivity {
                         String ch_idx = jsonObject.getString("ch_idx");
                         String created_at = jsonObject.getString("created_at");
                         String user_count = jsonObject.getString("chat_status");
-                        Log.e("유저 카운트",user_count);
+                        Log.e("유저 카운트", user_count);
                         Talk talk = new Talk(null, user, message, Integer.parseInt(ch_idx), created_at, chatnum, "0", user_count);
 
                         AsyncTask.execute(new Runnable() {

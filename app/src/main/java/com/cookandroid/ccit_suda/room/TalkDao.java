@@ -18,7 +18,7 @@ public interface TalkDao {
     @Insert
     void insert(Talk talk);
 
-    @Query("SELECT * FROM talk_contents WHERE chat_room = :room")
+    @Query("SELECT * FROM talk_contents WHERE chat_room = :room ORDER BY chat_idx")
     LiveData<List<Talk>> getAll_Talk(int room);
 
     @Query("SELECT * FROM user_list")
@@ -46,9 +46,9 @@ public interface TalkDao {
 
     @Query("SELECT * FROM " +
             "(SELECT * FROM talk_contents " +
-            "GROUP BY chat_room ORDER BY idx DESC) as b " +
+            "GROUP BY chat_room ORDER BY chat_idx DESC) as b " +
             "JOIN room_list as a  ON b.chat_room = a.room_number " +
-            "WHERE a.user_name != :userinfo  GROUP BY a.room_number ORDER BY b.idx DESC")
+            "WHERE a.user_name != :userinfo  GROUP BY a.room_number ORDER BY b.chat_idx DESC")
     LiveData<List<TalkAndRoom_list>> friendroom_user_list(String userinfo);
 
     //Room_list insert

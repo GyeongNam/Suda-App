@@ -58,7 +58,7 @@
                 android:id="@+id/not_read_count"
                 android:gravity="center"
                 android:background="@drawable/chat_indicate"
-                android:text="count"/>
+                android:text=""/>
         </LinearLayout>
 
 
