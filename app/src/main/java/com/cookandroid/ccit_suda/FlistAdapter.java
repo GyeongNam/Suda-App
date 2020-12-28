@@ -157,7 +157,7 @@ public class FlistAdapter extends BaseAdapter {
                     }
                 });
 
-
+//  http://219.254.37.73:6001 http://ccit2020.cafe24.com:6001
                 options.host = "http://ccit2020.cafe24.com:6001";
                 echo = new Echo(options);
                 echo.connect(new EchoCallback() {

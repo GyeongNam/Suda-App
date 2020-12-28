@@ -88,7 +88,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             holder.chat_count_right.setVisibility(View.GONE);
             holder.chat_count_left.setVisibility(View.GONE);
             holder.chat_count_left3.setVisibility(View.VISIBLE);
-        } else {
+        } else{
             holder.content_textView1.setText(list_itemArrayList.get(position).getChatlist());
             holder.nickname_textView1.setText(list_itemArrayList.get(position).getUser());
             holder.date_textView1.setText(String.valueOf(list_itemArrayList.get(position).getDate()));
@@ -107,6 +107,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             holder.nickname_textView.setVisibility(View.GONE);
             holder.content_textView.setVisibility(View.GONE);
             holder.date_textView.setVisibility(View.GONE);
+
             holder.chat_count_right.setVisibility(View.GONE);
             holder.chat_count_left3.setVisibility(View.GONE);
             holder.content_textView3.setVisibility(View.GONE);

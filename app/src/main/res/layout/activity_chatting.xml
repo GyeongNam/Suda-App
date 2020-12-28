@@ -45,6 +45,15 @@
                 android:background="@drawable/topborder"
                 android:orientation="horizontal">
 
+                <ImageButton
+                    android:id="@+id/image_pick"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="14"
+                    android:src="@android:drawable/ic_menu_gallery" />
+
                 <EditText
                     android:id="@+id/replytext"
                     android:layout_width="match_parent"
