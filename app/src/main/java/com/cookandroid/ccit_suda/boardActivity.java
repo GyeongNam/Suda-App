@@ -104,7 +104,7 @@ public class boardActivity extends DrawerActivity {
             public void run() {
                 Gson gson = new Gson();
 
-                Log.e("쿼리문", gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
+//                Log.e("쿼리문", gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
                 send_lately_chat_idx(gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
             }
         });
@@ -132,6 +132,18 @@ public class boardActivity extends DrawerActivity {
 
 //텍스트뷰 부모 리니어레이아웃
         inflate = findViewById(R.id.inflate);
+
+        String chfcm = getIntent().getStringExtra("room");
+//        String chfcm2 = getIntent().getExtras().getString("room");
+        if(chfcm != null){
+            Log.i("과연2", chfcm);
+            Intent intent = new Intent(getApplicationContext(), chatting.class);
+            intent.putExtra("room",chfcm);
+            startActivity(intent);
+        }
+//        Log.e("과연", chfcm);
+//        Log.e("과연2", chfcm2);
+
 
     }
 

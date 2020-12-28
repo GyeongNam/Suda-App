@@ -83,7 +83,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 channelMessage.setShowBadge(false);
                 channelMessage.setVibrationPattern(new long[]{1000, 1000});
                 notichannel.createNotificationChannel(channelMessage);
-                Intent nointent = new Intent(this, chatting.class);
+                Intent nointent = new Intent(this, boardActivity.class);
                 nointent.putExtra("room",num);
 
                 PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, nointent,
