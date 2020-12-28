@@ -135,10 +135,10 @@ public class boardActivity extends DrawerActivity {
 
         String chfcm = getIntent().getStringExtra("room");
 //        String chfcm2 = getIntent().getExtras().getString("room");
-        if(chfcm != null){
+        if (chfcm != null) {
             Log.i("과연2", chfcm);
             Intent intent = new Intent(getApplicationContext(), chatting.class);
-            intent.putExtra("room",chfcm);
+            intent.putExtra("room", chfcm);
             startActivity(intent);
         }
 //        Log.e("과연", chfcm);
@@ -289,10 +289,9 @@ public class boardActivity extends DrawerActivity {
                                     talkDatabase.talkDao().insert_room_list(room_data);
                                 }
                                 if (!talkDatabase.talkDao().isRowIsExist_update_status(user, chat_room, lately_chat_idx)) {
-                                    if(userinfo.equals(user)){
+                                    if (userinfo.equals(user)) {
 
-                                    }
-                                    else{
+                                    } else {
                                         talkDatabase.talkDao().update_talk_contents_count(user, chat_room);
                                     }
 
@@ -301,9 +300,6 @@ public class boardActivity extends DrawerActivity {
 
                             }
                         });
-
-
-
 
 
                     }
@@ -331,7 +327,7 @@ public class boardActivity extends DrawerActivity {
                     AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
-                            options.host = "http://http://ccit2020.cafe24.com:6001";
+                            options.host = "http://ccit2020.cafe24.com:6001";
                             echo = new Echo(options);
 
                             echo.connect(new EchoCallback() {
@@ -361,27 +357,31 @@ public class boardActivity extends DrawerActivity {
                                                 String chat_idx;
                                                 String time;
                                                 String user_count;
+                                                String image_status;
                                                 int channel;
                                                 try {
                                                     Intent intent = new Intent("msg" + room_number);
 
                                                     JSONObject jsonObject = new JSONObject(args[1].toString());
+                                                    image_status = jsonObject.getString("image_status");
+
                                                     user = jsonObject.getString("user");
                                                     message = jsonObject.getString("message");
                                                     channel = Integer.parseInt(jsonObject.getString("channel"));
                                                     chat_idx = jsonObject.getString("chat_idx");
                                                     time = jsonObject.getString("time");
                                                     user_count = jsonObject.getString("user_count");
+                                                    Talk t = new Talk(null, user, message, channel, time, chat_idx, "0", user_count, image_status);
+                                                    Log.v("1", String.valueOf(t));
+                                                    talkDatabase.talkDao().insert(t);
                                                     intent.putExtra("user", user);
                                                     intent.putExtra("message", message);
                                                     intent.putExtra("channel", String.valueOf(channel));
                                                     intent.putExtra("chat_idx", chat_idx);
                                                     intent.putExtra("time", time);
+                                                    intent.putExtra("image_status",image_status);
                                                     LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-                                                    Log.e("유저 카운트", user_count);
-                                                    Talk t = new Talk(null, user, message, channel, time, chat_idx, "0", user_count);
-                                                    Log.v("1", String.valueOf(t));
-                                                    talkDatabase.talkDao().insert(t);
+
                                                 } catch (JSONException e) {
                                                     e.printStackTrace();
                                                 }
@@ -468,6 +468,7 @@ public class boardActivity extends DrawerActivity {
                                                                     String chat_idx;
                                                                     String time;
                                                                     String user_count;
+                                                                    String image_status;
                                                                     try {
                                                                         JSONObject jsonObject = new JSONObject(args[1].toString());
                                                                         user = jsonObject.getString("user");
@@ -476,7 +477,8 @@ public class boardActivity extends DrawerActivity {
                                                                         chat_idx = jsonObject.getString("chat_idx");
                                                                         time = jsonObject.getString("time");
                                                                         user_count = jsonObject.getString("user_count");
-                                                                        Talk t = new Talk(null, user, message, channel, time, chat_idx, "0", user_count);
+                                                                        image_status = jsonObject.getString("image_status");
+                                                                        Talk t = new Talk(null, user, message, channel, time, chat_idx, "0", user_count,image_status);
                                                                         Log.v("1", String.valueOf(t));
                                                                         talkDatabase.talkDao().insert(t);
                                                                     } catch (JSONException e) {
@@ -549,8 +551,19 @@ public class boardActivity extends DrawerActivity {
                         String ch_idx = jsonObject.getString("ch_idx");
                         String created_at = jsonObject.getString("created_at");
                         String user_count = jsonObject.getString("chat_status");
+                        String img = jsonObject.getString("img");
+                        Talk talk;
+                        if(img.equals("null")){
+                            //이미지 널 일반채팅
+                            img = "0";
+                             talk = new Talk(null, user, message, Integer.parseInt(ch_idx), created_at, chatnum, "0", user_count,img);
+                        }
+                        else{
+                            //이미지 있을경우
+                             talk = new Talk(null, user, img, Integer.parseInt(ch_idx), created_at, chatnum, "0", user_count,"1");
+                        }
                         Log.e("유저 카운트", user_count);
-                        Talk talk = new Talk(null, user, message, Integer.parseInt(ch_idx), created_at, chatnum, "0", user_count);
+
 
                         AsyncTask.execute(new Runnable() {
                             @Override

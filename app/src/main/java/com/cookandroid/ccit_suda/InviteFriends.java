@@ -172,6 +172,7 @@ public class InviteFriends extends AppCompatActivity  {
                                     String message;
                                     String chat_idx;
                                     String time;
+                                    String image_status;
                                     int channel;
                                     try {
                                         JSONObject jsonObject = new JSONObject(args[1].toString());
@@ -180,7 +181,8 @@ public class InviteFriends extends AppCompatActivity  {
                                         channel = Integer.parseInt(jsonObject.getString("channel"));
                                         chat_idx = jsonObject.getString("chat_idx");
                                         time = jsonObject.getString("time");
-                                        Talk t = new Talk(null, user, message, channel,time , chat_idx,"0","0");
+                                        image_status = jsonObject.getString("image_status");
+                                        Talk t = new Talk(null, user, message, channel,time , chat_idx,"0","0",image_status);
                                         Log.v("1", String.valueOf(t));
                                         talkDatabase.talkDao().insert(t);
                                     } catch (JSONException e) {

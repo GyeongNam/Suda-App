@@ -157,7 +157,7 @@ public class FlistAdapter extends BaseAdapter {
                     }
                 });
 
-//  http://219.254.37.73:6001 http://ccit2020.cafe24.com:6001
+//  http://219.254.37.73:6001 http:// ccit2020.cafe24.com:6001
                 options.host = "http://ccit2020.cafe24.com:6001";
                 echo = new Echo(options);
                 echo.connect(new EchoCallback() {
@@ -192,6 +192,7 @@ public class FlistAdapter extends BaseAdapter {
                                      int qwe2;
                                      String chat_idx;
                                      String user_count;
+                                     String image_status;
                                      try {
                                          JSONObject jsonObject = new JSONObject(args[1].toString());
                                          qwe = jsonObject.getString("user");
@@ -200,7 +201,8 @@ public class FlistAdapter extends BaseAdapter {
                                          chat_idx = jsonObject.getString("chat_idx");
                                          time = jsonObject.getString("time");
                                          user_count = jsonObject.getString("user_count");
-                                         Talk t = new Talk(null,qwe,qwe1,qwe2,time,chat_idx,"0",user_count);
+                                         image_status = jsonObject.getString("image_status");
+                                         Talk t = new Talk(null,qwe,qwe1,qwe2,time,chat_idx,"0",user_count,image_status);
                                          Log.v("1",String.valueOf(t));
                                          talkDatabse.talkDao().insert(t);
                                      } catch (JSONException e) {

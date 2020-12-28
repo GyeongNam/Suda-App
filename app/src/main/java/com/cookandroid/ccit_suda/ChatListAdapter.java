@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cookandroid.ccit_suda.room.Talk;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     ViewHolder viewholder;
     TalkDatabase talkDatabase = TalkDatabase.getDatabase(context);
     int room;
+    String imgurl = "http://ccit2020.cafe24.com:8082/img/";
 
     public ChatListAdapter(Context context, int room) {
         this.context = context;
@@ -50,15 +54,23 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         sharedPreferences = context.getSharedPreferences("File", 0);
         String userinfo = sharedPreferences.getString("userinfo", "");
+
+        //내가 작성한 메시지 일때
         if (sharedPreferences.getString("userinfo", "").equals(list_itemArrayList.get(position).getUser())) {
-            holder.content_textView.setText(list_itemArrayList.get(position).getChatlist());
+            if (list_itemArrayList.get(position).getImage_status().equals("1")) {
+                //이미지 있을때
+                String image_file_name = list_itemArrayList.get(position).getChatlist();
+                Picasso.get().load(imgurl + image_file_name).into(holder.right_image);
+            } else {
+                //일반 메시지 일때
+                holder.content_textView.setText(list_itemArrayList.get(position).getChatlist());
+            }
             holder.nickname_textView.setText(list_itemArrayList.get(position).getUser());
             holder.date_textView.setText(String.valueOf(list_itemArrayList.get(position).getDate()));
             holder.chat_count_right.setVisibility(View.VISIBLE);
-            if(list_itemArrayList.get(position).getCount().equals("0")){
+            if (list_itemArrayList.get(position).getCount().equals("0")) {
                 holder.chat_count_right.setVisibility(View.GONE);
-            }
-            else {
+            } else {
                 holder.chat_count_right.setText(String.valueOf(list_itemArrayList.get(position).getCount()));
             }
 
@@ -73,6 +85,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             holder.content_textView.setVisibility(View.VISIBLE);
             holder.date_textView.setVisibility(View.VISIBLE);
             holder.chat_count_left.setVisibility(View.GONE);
+            holder.parent_right_chat.setVisibility(View.VISIBLE);
+            holder.parent_left_chat.setVisibility(View.GONE);
 
         } else if (list_itemArrayList.get(position).getUser().equals("SYSTEM")) {
             holder.content_textView3.setText(list_itemArrayList.get(position).getChatlist());
@@ -88,19 +102,30 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             holder.chat_count_right.setVisibility(View.GONE);
             holder.chat_count_left.setVisibility(View.GONE);
             holder.chat_count_left3.setVisibility(View.VISIBLE);
-        } else{
-            holder.content_textView1.setText(list_itemArrayList.get(position).getChatlist());
+            holder.parent_right_chat.setVisibility(View.GONE);
+            holder.parent_left_chat.setVisibility(View.GONE);
+
+        } else {
+            //상대방에게서 받은 메시지일때
+            if (list_itemArrayList.get(position).getImage_status().equals("1")) {
+                //이미지 있을때
+                String image_file_name = list_itemArrayList.get(position).getChatlist();
+                Picasso.get().load(imgurl + image_file_name).into(holder.left_image);
+            } else {
+                holder.content_textView1.setText(list_itemArrayList.get(position).getChatlist());
+            }
+
             holder.nickname_textView1.setText(list_itemArrayList.get(position).getUser());
             holder.date_textView1.setText(String.valueOf(list_itemArrayList.get(position).getDate()));
             holder.chat_count_left.setVisibility(View.VISIBLE);
-            if(list_itemArrayList.get(position).getCount().equals("0")){
+            if (list_itemArrayList.get(position).getCount().equals("0")) {
                 holder.chat_count_left.setVisibility(View.GONE);
-            }
-            else {
+            } else {
                 holder.chat_count_left.setText(String.valueOf(list_itemArrayList.get(position).getCount()));
             }
             Log.e("방인원카운트", String.valueOf(talkDatabase.talkDao().room_user_list_count(room)));
-
+            holder.parent_left_chat.setVisibility(View.VISIBLE);
+            holder.parent_right_chat.setVisibility(View.GONE);
             holder.nickname_textView1.setVisibility(View.VISIBLE);
             holder.content_textView1.setVisibility(View.VISIBLE);
             holder.date_textView1.setVisibility(View.VISIBLE);
@@ -134,6 +159,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         TextView date_textView1;
         TextView chat_count_right, chat_count_left, chat_count_left3;
         TextView content_textView3;
+        ImageView left_image, right_image;
+        LinearLayout parent_left_chat, parent_right_chat;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -147,6 +174,10 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             chat_count_left = itemView.findViewById(R.id.chat_count_left);
             content_textView3 = itemView.findViewById(R.id.chat3);
             chat_count_left3 = itemView.findViewById(R.id.chat_count_left3);
+            left_image = itemView.findViewById(R.id.left_image);
+            right_image = itemView.findViewById(R.id.right_image);
+            parent_left_chat = itemView.findViewById(R.id.parent_left_chat);
+            parent_right_chat = itemView.findViewById(R.id.parent_right_chat);
         }
     }
 }
