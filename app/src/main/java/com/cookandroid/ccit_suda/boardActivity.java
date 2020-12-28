@@ -331,7 +331,7 @@ public class boardActivity extends DrawerActivity {
                     AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
-                            options.host = "http://ccit2020.cafe24.com:6001";
+                            options.host = "http://http://ccit2020.cafe24.com:6001";
                             echo = new Echo(options);
 
                             echo.connect(new EchoCallback() {
