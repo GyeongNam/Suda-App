@@ -402,8 +402,10 @@ public class chatting extends ChatDrawer {
         String url = "sendimg"; //ex) 요청하고자 하는 주소가 http://10.0.2.2/login 이면 String url = login 형식으로 적으면 됨
         api = HttpClient.getRetrofit().create(ApiInterface.class);
         HashMap<String, String> params = new HashMap<>();
+        String other = "test";
+//        params.put("sendmsg", msgcheck);
         params.put("user", userinfo);
-
+        params.put("room", String.valueOf(room));
         //이미지 파일 추가
         MultipartBody.Part filepart = null;
         if (imgPath != null) {
