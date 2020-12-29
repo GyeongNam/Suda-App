@@ -1,5 +1,6 @@
 package com.cookandroid.ccit_suda;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -14,6 +15,8 @@ import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.List;
 
 /**
  * NOTE: There can only be one service in each app that receives FCM messages. If multiple
@@ -34,6 +37,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onNewToken(s);
         Log.d("Firebase", "FirebaseInstanceIDService : " + s);
     }
+
 
     @Override
 //    @Override
@@ -84,10 +88,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 channelMessage.setVibrationPattern(new long[]{1000, 1000});
                 notichannel.createNotificationChannel(channelMessage);
                 Intent nointent = new Intent(this, boardActivity.class);
+                nointent.setAction(Intent.ACTION_MAIN);
+                nointent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                nointent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+
+//                if(isAppRunning(((boardActivity)boardActivity.context_board))){
+//                    nointent = new Intent(this, chatting.class);
+//                }
                 nointent.putExtra("room",num);
 
                 PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, nointent,
-                        PendingIntent.FLAG_ONE_SHOT);
+                        PendingIntent.FLAG_UPDATE_CURRENT);
 
 
                 //푸시알림을 Builder를 이용하여 만듭니다.

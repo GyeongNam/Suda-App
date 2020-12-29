@@ -211,6 +211,7 @@ public class ChatDrawer extends AppCompatActivity {
                     @Override
                     public void run() {
                         talkDatabase.talkDao().delete_room__list(room1);
+                        talkDatabase.talkDao().delete_talk_list(room1);
                     }
                 });
             }

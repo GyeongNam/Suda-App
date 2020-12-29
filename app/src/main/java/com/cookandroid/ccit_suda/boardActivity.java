@@ -1,5 +1,6 @@
 package com.cookandroid.ccit_suda;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,6 +42,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -106,8 +108,18 @@ public class boardActivity extends DrawerActivity {
 
 //                Log.e("쿼리문", gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
                 send_lately_chat_idx(gson.toJson(talkDatabase.talkDao().get_lately_chat_list()));
+
+                String chfcm = getIntent().getStringExtra("room");
+                if (chfcm != null) {
+                    Log.i("과연2", chfcm);
+
+                    Intent intent = new Intent(getApplicationContext(), chatting.class);
+                    intent.putExtra("room", chfcm);
+                    startActivity(intent);
+                }
             }
         });
+
 
 //        echoconnet();
         mainboard_scroll.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
@@ -132,17 +144,6 @@ public class boardActivity extends DrawerActivity {
 
 //텍스트뷰 부모 리니어레이아웃
         inflate = findViewById(R.id.inflate);
-
-        String chfcm = getIntent().getStringExtra("room");
-//        String chfcm2 = getIntent().getExtras().getString("room");
-        if (chfcm != null) {
-            Log.i("과연2", chfcm);
-            Intent intent = new Intent(getApplicationContext(), chatting.class);
-            intent.putExtra("room", chfcm);
-            startActivity(intent);
-        }
-//        Log.e("과연", chfcm);
-//        Log.e("과연2", chfcm2);
 
 
     }
@@ -396,7 +397,7 @@ public class boardActivity extends DrawerActivity {
                                         @Override
                                         public void call(Object... args) {
                                             Date now = new Date();
-                                            Log.d("웃기지마랄라", String.valueOf(args[1]));
+                                            Log.d("웃기지마랄라 user", String.valueOf(args[1]));
                                             String user;
                                             String room_name;
                                             String chat_room;
