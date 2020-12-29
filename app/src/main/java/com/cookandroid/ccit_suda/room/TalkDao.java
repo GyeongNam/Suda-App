@@ -30,7 +30,7 @@ public interface TalkDao {
     @Query("DELETE FROM room_list WHERE room_number = :room")
     void delete_room__list(String room);
 
-    @Query("DELETE FROM room_list WHERE room_number = :room AND user_name = :user")
+    @Query("DELETE FROM room_list WHERE room_number = :room AND user_name = :user AND room_name != NULL")
     void delete_room__lists(String room, String user);
 
     @Query("DELETE FROM user_list WHERE user_name = :id")
