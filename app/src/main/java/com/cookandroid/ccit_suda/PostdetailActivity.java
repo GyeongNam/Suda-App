@@ -265,7 +265,7 @@ public class PostdetailActivity extends DrawerActivity {
             }
         });
 
-        Button post = (Button) findViewById(R.id.bt_postupload);
+        ImageButton post = (ImageButton) findViewById(R.id.bt_postupload);
 
         post.setOnClickListener(new View.OnClickListener() {
             @Override

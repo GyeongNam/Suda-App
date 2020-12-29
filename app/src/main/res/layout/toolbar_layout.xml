@@ -37,14 +37,16 @@
                 android:scaleType="fitXY"/>
 
 
-            <Button
+            <ImageButton
                 android:id="@+id/bt_postupload"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_gravity="right"
                 android:layout_marginRight="10dp"
-                android:text="글쓰기"
-                android:textColor="#FFFFFF"/>
+                android:background="@android:color/transparent"
+                android:scaleType="fitXY"
+                android:src="@drawable/pen"
+                app:tint="#FFFFFF" />
         </androidx.appcompat.widget.Toolbar>
 
         <FrameLayout
