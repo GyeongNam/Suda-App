@@ -70,6 +70,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //        Intent intent = new Intent(this, MainActivity.class);
 //        intent.putExtra("test", test);
 
+
      //   PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         if(key.equals("2") ){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -91,11 +92,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 nointent.setAction(Intent.ACTION_MAIN);
                 nointent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 nointent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-
-//                if(isAppRunning(((boardActivity)boardActivity.context_board))){
-//                    nointent = new Intent(this, chatting.class);
-//                }
                 nointent.putExtra("room",num);
 
                 PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, nointent,
