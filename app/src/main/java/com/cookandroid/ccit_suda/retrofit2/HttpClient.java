@@ -10,6 +10,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class HttpClient {
 
     private static Retrofit retrofit;
+    public static String url = "http://ccit2020.cafe24.com:6001";
 
     // Http 통신을 위한 Retrofit 객체반환
     public static Retrofit getRetrofit() {

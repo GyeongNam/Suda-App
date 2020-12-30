@@ -17,6 +17,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.cookandroid.ccit_suda.ViewModel_user_list.User_listViewModel;
+import com.cookandroid.ccit_suda.laravelechoandroid.Echo;
+import com.cookandroid.ccit_suda.laravelechoandroid.EchoCallback;
+import com.cookandroid.ccit_suda.laravelechoandroid.EchoOptions;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 import com.cookandroid.ccit_suda.room.Room_list;
@@ -24,9 +27,6 @@ import com.cookandroid.ccit_suda.room.Talk;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
 
-import net.mrbin99.laravelechoandroid.Echo;
-import net.mrbin99.laravelechoandroid.EchoCallback;
-import net.mrbin99.laravelechoandroid.EchoOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -148,7 +148,7 @@ public class InviteFriends extends AppCompatActivity  {
                     EchoOptions options = new EchoOptions();
                     Echo echo;
 
-                    options.host = "http://ccit2020.cafe24.com:6001";
+                    options.host = HttpClient.url;
                     echo = new Echo(options);
 
                     echo.connect(new EchoCallback() {

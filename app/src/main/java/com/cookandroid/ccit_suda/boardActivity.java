@@ -22,6 +22,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.room.Room;
 
 import com.baoyz.widget.PullRefreshLayout;
+import com.cookandroid.ccit_suda.laravelechoandroid.EchoCallback;
+import com.cookandroid.ccit_suda.laravelechoandroid.EchoOptions;
+import com.cookandroid.ccit_suda.laravelechoandroid.connector.SocketIOConnector;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.CallbackWithRetry;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
@@ -31,9 +34,7 @@ import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
 import com.google.gson.Gson;
 
-import net.mrbin99.laravelechoandroid.Echo;
-import net.mrbin99.laravelechoandroid.EchoCallback;
-import net.mrbin99.laravelechoandroid.EchoOptions;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,7 +55,7 @@ public class boardActivity extends DrawerActivity {
     PullRefreshLayout swipe_refresh_layout;
     ScrollView mainboard_scroll;
     EchoOptions options = new EchoOptions();
-    Echo echo;
+    SocketIOConnector echo;
     ArrayList array = new ArrayList();
     ApiInterface api;
     TalkDatabase talkDatabase;
@@ -337,8 +338,8 @@ public class boardActivity extends DrawerActivity {
                     AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
-                            options.host = "http://ccit2020.cafe24.com:6001";
-                            echo = new Echo(options);
+                            options.host = HttpClient.url;
+                            echo = new SocketIOConnector(options);
 
                             echo.connect(new EchoCallback() {
                                 @Override

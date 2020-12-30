@@ -55,9 +55,7 @@ import com.cookandroid.ccit_suda.room.TalkDao;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.google.gson.Gson;
 
-import net.mrbin99.laravelechoandroid.Echo;
-import net.mrbin99.laravelechoandroid.EchoCallback;
-import net.mrbin99.laravelechoandroid.EchoOptions;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -283,12 +281,6 @@ public class chatting extends ChatDrawer {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("받는지 ㅇㅇ", intent.toString());
-            Log.e("받는지 ㅇㅇ", intent.getStringExtra("user"));
-            Log.e("받는지 ㅇㅇ", intent.getStringExtra("message"));
-            Log.e("받는지 ㅇㅇ", intent.getStringExtra("channel"));
-            Log.e("받는지 ㅇㅇ", intent.getStringExtra("chat_idx"));
-            Log.e("받는지 ㅇㅇ", intent.getStringExtra("time"));
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
