@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity{
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
                 Log.v("retrofit2",String.valueOf(response.body()));
                 Log.v("retrofit2",String.valueOf(response));
-                Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "응답->" + response, Toast.LENGTH_SHORT).show();
                 if (response.body().equals("1")) {
                     SharedPreferences sharedPreferences = getSharedPreferences("File", 0);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity{
                     startActivity(intent);
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
                 }
 
             }

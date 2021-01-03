@@ -150,7 +150,7 @@ public class PostUploadActivity extends AppCompatActivity {
 
                 check(postName, postContent);
                 if (!(postName.isEmpty() || postContent.isEmpty())) {
-                    Toast.makeText(getApplicationContext(), "성공", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "성공", Toast.LENGTH_SHORT).show();
                     sendRequest();
                 } else {
                     Toast.makeText(getApplicationContext(), "공백이 있는지 확인해주세요", Toast.LENGTH_SHORT).show();
@@ -189,7 +189,7 @@ public class PostUploadActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            Toast.makeText(this, "RESULT_OK", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "RESULT_OK", Toast.LENGTH_SHORT).show();
             Uri uri = data.getData();
             if (uri != null) {
                 imageView.setImageURI(uri);
