@@ -222,7 +222,7 @@ public class CommentAdapter extends BaseAdapter {
         rereply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mContext.getApplicationContext(), "눌럿음" + item.getNum(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext.getApplicationContext(), "눌럿음" + item.getNum(), Toast.LENGTH_SHORT).show();
                 Log.v("TAG", "눌럿음" + item.getNum());
 //                Log.v("TAG","해당아이템"+commentlist.remove(position));
                 Number = item.getNum();
