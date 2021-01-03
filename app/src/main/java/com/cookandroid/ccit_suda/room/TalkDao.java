@@ -1,12 +1,10 @@
 package com.cookandroid.ccit_suda.room;
 
 import androidx.lifecycle.LiveData;
+import androidx.paging.DataSource;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.RawQuery;
-import androidx.room.Update;
-import androidx.sqlite.db.SupportSQLiteQuery;
 
 import java.util.List;
 
@@ -18,8 +16,9 @@ public interface TalkDao {
     @Insert
     void insert(Talk talk);
 
-    @Query("SELECT * FROM talk_contents WHERE chat_room = :room ORDER BY chat_idx")
+    @Query("SELECT * FROM talk_contents WHERE chat_room = :room ORDER BY chat_idx DESC")
     LiveData<List<Talk>> getAll_Talk(int room);
+//    DataSource.Factory<Integer, Talk> getAll_Talk(int room);
 
     @Query("SELECT * FROM user_list")
     LiveData<List<User_list>> getAll_user_list();
@@ -97,4 +96,6 @@ public interface TalkDao {
 
     @Query("SELECT EXISTS(SELECT * FROM room_list WHERE user_name = :id AND room_number = :room AND lately_chat_idx = :lately_chat_idx)")
     boolean isRowIsExist_update_status(String id, String room,String lately_chat_idx);
+
+
 }

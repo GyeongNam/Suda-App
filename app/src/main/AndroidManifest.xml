@@ -26,7 +26,8 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".ChatDrawer"></activity>
         <activity android:name=".chattingList" />
-        <activity android:name=".chatting" />
+        <activity android:name=".chatting"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".InviteFriends" />
         <activity android:name=".setting" />
         <activity android:name=".DrawerActivity" />

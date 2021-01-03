@@ -10,7 +10,10 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class HttpClient {
 
     private static Retrofit retrofit;
+    //에코서버 접근 url
     public static String url = "http://ccit2020.cafe24.com:6001";
+    //채팅시에 서버에서 가져오는 이미지 url 경로
+    public static String imageurl = "http://ccit2020.cafe24.com:8082/img/";
 
     // Http 통신을 위한 Retrofit 객체반환
     public static Retrofit getRetrofit() {

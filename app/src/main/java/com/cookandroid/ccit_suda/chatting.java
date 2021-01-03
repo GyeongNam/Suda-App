@@ -10,6 +10,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -23,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -42,10 +45,13 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.loader.content.CursorLoader;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.room.Room;
 
+import com.cookandroid.ccit_suda.UtilClass.UtilClass;
 import com.cookandroid.ccit_suda.ViewModel_user_list.User_listViewModel;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.CallbackWithRetry;
@@ -62,6 +68,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -76,12 +83,14 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 
+import static com.bumptech.glide.load.resource.bitmap.TransformationUtils.rotateImage;
+
 
 public class chatting extends ChatDrawer {
 
     RecyclerView recyclerView;
     ChatListAdapter chatListAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private LinearLayoutManager mLayoutManager;
     private String TAG = "MainActivity";
     Button sendBtn ;
     EditText replytext;
@@ -90,6 +99,7 @@ public class chatting extends ChatDrawer {
     SimpleDateFormat chat_time_format1 = new SimpleDateFormat("HH:mm");
     Date chat_date = new Date();
     String c_date = chat_time_format1.format(chat_date);
+    String flag;
 
     //이미지 올리기
     private final int GET_GALLERY_IMAGE = 200;
@@ -109,6 +119,7 @@ public class chatting extends ChatDrawer {
     User_listViewModel viewModel;
     String userinfo;
     int room_count;
+
 
     @Override
     protected void onDestroy() {
@@ -152,9 +163,25 @@ public class chatting extends ChatDrawer {
 //        });
         chatListAdapter = new ChatListAdapter(chatting.this,room);
         mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager.setStackFromEnd(true);
+        mLayoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(chatListAdapter);
-        recyclerView.addOnScrollListener(onScrollListener);
+        recyclerView.setHasFixedSize(true);
+        ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+//        recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+//            @Override
+//            public void onLayoutChange(View v,
+//                                       int left, int top, int right, int bottom,
+//                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+//                Log.e("언제되는지 궁금해성","bottom : "+ bottom + " oldBottom : " + oldBottom);
+//
+//                if (bottom < oldBottom) {
+//                            recyclerView.smoothScrollToPosition(0);
+//                }
+//            }
+//        });
+
 
 
 
@@ -180,15 +207,30 @@ public class chatting extends ChatDrawer {
             }
         });
         viewModel = new ViewModelProvider(this).get(User_listViewModel.class);
+//        viewModel.get_Talk_listViewModel(room).observe(this, chatListAdapter::submitList);
         viewModel.get_Talk_listViewModel(room).observe(this, new Observer<List<Talk>>() {
             @Override
             public void onChanged(List<Talk> talks) {
                 chatListAdapter.getTalkList(talks);
-                scrollDown();
+//                chatListAdapter.submitList(talks);
+                if(flag==null){
+                    flag = "1";
+                    recyclerView.scrollToPosition(0);
+                    recyclerView.getLayoutManager().scrollToPosition(0);
+
+                }
+                else{
+                    if(chatListAdapter.list_itemArraylist.get(0).getUser().equals(userinfo)){
+                        recyclerView.scrollToPosition(0);
+
+                    }
+                }
 
 
             }
+
         });
+
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -223,25 +265,28 @@ public class chatting extends ChatDrawer {
             }
         });
 
+
     }
 
     // 이미지 실험
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (resultCode == RESULT_OK) {
-            sendimg();
             Toast.makeText(this, "RESULT_OK", Toast.LENGTH_SHORT).show();
             Uri uri = data.getData();
             if (uri != null) {
-                img_upload.setImageURI(uri);
+//                img_upload.setImageURI(uri);
+
+
+
                 //갤러리앱에서 관리하는 DB정보가 있는데, 그것이 나온다 [실제 파일 경로가 아님!!]
                 //얻어온 Uri는 Gallery앱의 DB번호임. (content://-----/2854)
                 //업로드를 하려면 이미지의 절대경로(실제 경로: file:// -------/aaa.png 이런식)가 필요함
                 //Uri -->절대경로(String)로 변환
                 imgPath = getRealPathFromUri(uri);   //임의로 만든 메소드 (절대경로를 가져오는 메소드)
 
+                sendimg(imgPath);
                 //이미지 경로 uri 확인해보기
                 new AlertDialog.Builder(this).setMessage(uri.toString() + "\n" + imgPath).create().show();
             }
@@ -285,6 +330,7 @@ public class chatting extends ChatDrawer {
                 @Override
                 public void run() {
                     Gson gson = new Gson();
+                    talkDatabase.talkDao().update_read(room);
                     String data = gson.toJson(talkDatabase.talkDao().get_lately_chat_idx(room));
                     //첫 채팅 인덱스
 //                    String data1 = gson.toJson(talkDatabase.talkDao().get_first_chat_idx(room));
@@ -305,29 +351,21 @@ public class chatting extends ChatDrawer {
 
 
 
-    RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            Log.e("onScroll", "온스크롤리스너 실행?");
-            LinearLayoutManager layoutManager = LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
-            int totalItemCount = layoutManager.getItemCount();
-            int lastVisible = layoutManager.findLastCompletelyVisibleItemPosition();
-            if (lastVisible >= totalItemCount - 1) {
-                Log.e(TAG, "마지막위치를 잡는가?");
-            }
-        }
-    };
+//    RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+//        @Override
+//        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//            super.onScrolled(recyclerView, dx, dy);
+//            Log.e("onScroll", "온스크롤리스너 실행?");
+//            LinearLayoutManager layoutManager = LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
+//            int totalItemCount = layoutManager.getItemCount();
+//            int lastVisible = layoutManager.findLastCompletelyVisibleItemPosition();
+//            if (lastVisible >= totalItemCount - 1) {
+//                Log.e(TAG, "마지막위치를 잡는가?");
+//            }
+//        }
+//    };
 
-    //추가된 소스, ToolBar에 menu.xml을 인플레이트함
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        //return super.onCreateOptionsMenu(menu);
-//        MenuInflater menuInflater = getMenuInflater();
-//        menuInflater.inflate(R.menu.menu, menu);
-//        return true;
-//    }
-//    ToolBar에 추가된 항목 select 이벤트를 처리하는 함수
+
 
 
 
@@ -376,6 +414,7 @@ public class chatting extends ChatDrawer {
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
             //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
+//                recyclerView.scrollToPosition(chatListAdapter.getItemCount()-1);
                 Log.v("retrofit2",String.valueOf(response));
                 Log.v("retrofit2",String.valueOf(response.body()));
             }
@@ -387,7 +426,7 @@ public class chatting extends ChatDrawer {
         });
     }
 
-    public void sendimg() {
+    public void sendimg(String imgPath) {
 //        ImageView InputImageView = (ImageView) findViewById(R.id.);  //이미지 등록
 //        MultipartBody.Part body1 = prepareFilePart("image", imgPath);
         Log.e("통신은하니?",String.valueOf("아놀롤로"));
@@ -402,11 +441,11 @@ public class chatting extends ChatDrawer {
         MultipartBody.Part filepart = null;
         if (imgPath != null) {
             File file = new File(imgPath);
-
+            byte[] dd = UtilClass.getStreamByteFromImage(file);
             RequestBody requestFile =
                     RequestBody.create(
                             MediaType.parse(imgPath),
-                            file
+                            dd
                     );
             filepart = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
         }
@@ -446,7 +485,6 @@ public class chatting extends ChatDrawer {
         params.put("room", String.valueOf(room));
 //        params.put("first_chat_idx",data1);
         params.put("lately_chat_idx",data2);
-        talkDatabase.talkDao().update_read(room);
         Call<String> call = api.requestPost(url,params);
 
         // 비동기로 백그라운드 쓰레드로 동작
@@ -466,4 +504,5 @@ public class chatting extends ChatDrawer {
             }
         });
     }
+
 }

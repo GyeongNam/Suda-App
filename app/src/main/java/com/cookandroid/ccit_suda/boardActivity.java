@@ -369,6 +369,7 @@ public class boardActivity extends DrawerActivity {
                                                 String time;
                                                 String user_count;
                                                 String image_status;
+                                                String image_uri;
                                                 int channel;
                                                 try {
                                                     Intent intent = new Intent("msg" + room_number);
@@ -378,11 +379,15 @@ public class boardActivity extends DrawerActivity {
 
                                                     user = jsonObject.getString("user");
                                                     message = jsonObject.getString("message");
+                                                    image_uri = jsonObject.getString("message");
                                                     channel = Integer.parseInt(jsonObject.getString("channel"));
                                                     chat_idx = jsonObject.getString("chat_idx");
                                                     time = jsonObject.getString("time");
                                                     user_count = jsonObject.getString("user_count");
-                                                    Talk t = new Talk(null, user, message, channel, time, chat_idx, "0", user_count, image_status);
+                                                    if(image_status.equals("1")){
+                                                        message = "사진을 보냈습니다.";
+                                                    }
+                                                    Talk t = new Talk(null, user, message, channel, time, chat_idx, "0", user_count, image_status,image_uri);
                                                     Log.v("1", String.valueOf(t));
                                                     talkDatabase.talkDao().insert(t);
                                                     intent.putExtra("user", user);
@@ -566,12 +571,12 @@ public class boardActivity extends DrawerActivity {
                         Talk talk;
                         if(img.equals("null")){
                             //이미지 널 일반채팅
-                            img = "0";
-                             talk = new Talk(null, user, message, Integer.parseInt(ch_idx), created_at, chatnum, "0", user_count,img);
+
+                             talk = new Talk(null, user, message, Integer.parseInt(ch_idx), created_at, chatnum, "0", user_count,"0",img);
                         }
                         else{
                             //이미지 있을경우
-                             talk = new Talk(null, user, img, Integer.parseInt(ch_idx), created_at, chatnum, "0", user_count,"1");
+                             talk = new Talk(null, user, "사진을 보냈습니다.", Integer.parseInt(ch_idx), created_at, chatnum, "0", user_count,"1",img);
                         }
                         Log.e("유저 카운트", user_count);
 
