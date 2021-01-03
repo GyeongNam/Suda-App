@@ -200,7 +200,7 @@ public class PostUploadActivity extends AppCompatActivity {
                 imgPath = getRealPathFromUri(uri);   //임의로 만든 메소드 (절대경로를 가져오는 메소드)
 
                 //이미지 경로 uri 확인해보기
-                new AlertDialog.Builder(this).setMessage(uri.toString() + "\n" + imgPath).create().show();
+//                new AlertDialog.Builder(this).setMessage(uri.toString() + "\n" + imgPath).create().show();
             }
         } else {
             Toast.makeText(this, "이미지 선택을 하지 않았습니다.", Toast.LENGTH_SHORT).show();
@@ -325,7 +325,7 @@ public class PostUploadActivity extends AppCompatActivity {
                 Log.v("retrofit2", String.valueOf(response));
                 Log.v("retrofit2", String.valueOf(response.body()));
                 a.appendLog(date + "/" + "U" + "/PostUploadActivity/post_add");
-                new AlertDialog.Builder(PostUploadActivity.this).setMessage("응답:" + imgPath).create().show();
+//                new AlertDialog.Builder(PostUploadActivity.this).setMessage("응답:" + imgPath).create().show();
                 a.appendLog(date + "/" + "M" + "/boardActivity/0");
                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                 startActivity(intent);
