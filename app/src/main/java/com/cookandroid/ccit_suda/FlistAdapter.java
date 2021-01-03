@@ -205,6 +205,7 @@ public class FlistAdapter extends BaseAdapter {
                                             String chat_idx;
                                             String user_count;
                                             String image_status;
+                                            String image_uri;
                                             try {
                                                 Intent intent = new Intent("msg" + room_index);
 
@@ -216,7 +217,11 @@ public class FlistAdapter extends BaseAdapter {
                                                 time = jsonObject.getString("time");
                                                 user_count = jsonObject.getString("user_count");
                                                 image_status = jsonObject.getString("image_status");
-                                                Talk t = new Talk(null, qwe, qwe1, qwe2, time, chat_idx, "0", user_count, image_status);
+                                                image_uri = jsonObject.getString("message");
+                                                if(image_status.equals("1")){
+                                                    qwe1 = "사진을 보냈습니다.";
+                                                }
+                                                Talk t = new Talk(null, qwe, qwe1, qwe2, time, chat_idx, "0", user_count, image_status,image_uri);
                                                 Log.v("1", String.valueOf(t));
                                                 intent.putExtra("chat_idx", chat_idx);
                                                 talkDatabse.talkDao().insert(t);

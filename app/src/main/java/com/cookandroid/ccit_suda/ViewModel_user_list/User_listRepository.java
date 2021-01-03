@@ -3,6 +3,7 @@ package com.cookandroid.ccit_suda.ViewModel_user_list;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
+import androidx.paging.DataSource;
 
 import com.cookandroid.ccit_suda.room.Room_list;
 import com.cookandroid.ccit_suda.room.Talk;
@@ -20,10 +21,15 @@ public class User_listRepository {
     public LiveData<List<User_list>> getUser_list(){
         return talkDao.getAll_user_list();
     }
+//    public DataSource.Factory<Integer, Talk> getAll_talk(int room){
+//        return talkDao.getAll_Talk(room);
+//
+//    }
     public LiveData<List<Talk>> getAll_talk(int room){
         return talkDao.getAll_Talk(room);
 
     }
+
 
     public LiveData<List<TalkAndRoom_list>> getRoom_list(String userinfo){
         return talkDao.friendroom_user_list(userinfo);

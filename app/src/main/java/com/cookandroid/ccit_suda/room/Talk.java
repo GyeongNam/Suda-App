@@ -63,6 +63,16 @@ public class Talk implements Serializable {
     @ColumnInfo(name = "date") private String date;
     @ColumnInfo(name = "chat_idx") private String chat_idx;
 
+    public String getImage_uri() {
+        return image_uri;
+    }
+
+    public void setImage_uri(String image_uri) {
+        this.image_uri = image_uri;
+    }
+
+    @ColumnInfo(name = "image_uri") private String image_uri;
+
     public String getImage_status() {
         return image_status;
     }
@@ -93,7 +103,7 @@ public class Talk implements Serializable {
 
     @ColumnInfo(name = "chat_read") private String chat_read;
 
-    public Talk(Integer idx, String user, String chatlist, int chat_room, String date,String chat_idx,String chat_read,String count,String image_status) {
+    public Talk(Integer idx, String user, String chatlist, int chat_room, String date,String chat_idx,String chat_read,String count,String image_status,String image_uri) {
         this.idx = idx;
         this.user = user;
         this.chatlist = chatlist;
@@ -103,5 +113,6 @@ public class Talk implements Serializable {
         this.chat_read = chat_read;
         this.count = count;
         this.image_status = image_status;
+        this.image_uri = image_uri;
     }
 }
