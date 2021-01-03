@@ -11,9 +11,9 @@ public class HttpClient {
 
     private static Retrofit retrofit;
     //에코서버 접근 url
-    public static String url = "http://119.196.216.223:6001";
+    public static String url = "http://ccit2020.cafe24.com:6001";
     //채팅시에 서버에서 가져오는 이미지 url 경로
-    public static String imageurl = "http://119.196.216.223/img/";
+    public static String imageurl = "http://ccit2020.cafe24.com:8082/img/";
 
     // Http 통신을 위한 Retrofit 객체반환
     public static Retrofit getRetrofit() {
@@ -25,7 +25,7 @@ public class HttpClient {
                     .writeTimeout(15, TimeUnit.SECONDS)
                     .build();
             Retrofit.Builder builder = new Retrofit.Builder();
-            builder.baseUrl( "http://119.196.216.223/" );//http://ccit2020.cafe24.com:8082/http://10.0.2.2
+            builder.baseUrl( "http://ccit2020.cafe24.com:8082/" );//http://ccit2020.cafe24.com:8082/http://10.0.2.2
 //            builder.addConverterFactory( GsonConverterFactory.create() );  // 받아오는 Json 구조의 데이터를 객체 형태로 변환
             builder.addConverterFactory(ScalarsConverterFactory.create());  // String 등 처리시
             builder.client(okHttpClient);
