@@ -161,7 +161,7 @@ public class postmodified extends AppCompatActivity {
 
                 check(postName, postContent);
                 if (!(postName.isEmpty() || postContent.isEmpty())){
-                    Toast.makeText(getApplicationContext(), "성공", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "성공", Toast.LENGTH_SHORT).show();
                     sendPost();
                 }
                 else
@@ -281,7 +281,7 @@ public class postmodified extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode==RESULT_OK){
-            Toast.makeText(this, "RESULT_OK", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "RESULT_OK", Toast.LENGTH_SHORT).show();
             Uri uri= data.getData();
             if(uri!=null){
                 imageView.setImageURI(uri);
@@ -292,7 +292,7 @@ public class postmodified extends AppCompatActivity {
                 imgPath= getRealPathFromUri(uri);   //임의로 만든 메소드 (절대경로를 가져오는 메소드)
 
                 //이미지 경로 uri 확인해보기
-                new AlertDialog.Builder(this).setMessage(uri.toString()+"\n"+imgPath).create().show();
+//                new AlertDialog.Builder(this).setMessage(uri.toString()+"\n"+imgPath).create().show();
             }
         }else{
             Toast.makeText(this, "이미지 선택을 하지 않았습니다.", Toast.LENGTH_SHORT).show();
@@ -540,7 +540,7 @@ public class postmodified extends AppCompatActivity {
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
 //서버에서 넘겨주는 데이터는 response.body()로 접근하면 확인가능
                 Log.v("retrofit2",String.valueOf(response.body()));
-                new AlertDialog.Builder(postmodified.this).setMessage("응답:"+imgPath).create().show();
+//                new AlertDialog.Builder(postmodified.this).setMessage("응답:"+imgPath).create().show();
                 a.appendLog(date + "/U/postmodified/"+KEY);
                 Intent intent = new Intent(getApplicationContext(), boardActivity.class);
                 startActivity(intent);
