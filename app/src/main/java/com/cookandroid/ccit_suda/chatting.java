@@ -87,7 +87,7 @@ import static com.bumptech.glide.load.resource.bitmap.TransformationUtils.rotate
 
 
 public class chatting extends ChatDrawer {
-
+   public static Activity activity;
     RecyclerView recyclerView;
     ChatListAdapter chatListAdapter;
     private LinearLayoutManager mLayoutManager;
@@ -137,6 +137,7 @@ public class chatting extends ChatDrawer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
+        activity = chatting.this;
         talkDatabase = TalkDatabase.getDatabase(this);
         room = Integer.parseInt(getIntent().getExtras().getString("room"));
         IntentFilter intentFilter = new IntentFilter();
@@ -213,20 +214,22 @@ public class chatting extends ChatDrawer {
             public void onChanged(List<Talk> talks) {
                 chatListAdapter.getTalkList(talks);
 //                chatListAdapter.submitList(talks);
-                if(flag==null){
-                    flag = "1";
-                    recyclerView.scrollToPosition(0);
-                    recyclerView.getLayoutManager().scrollToPosition(0);
-
-                }
-                else{
-                    if(chatListAdapter.list_itemArraylist.get(0).getUser().equals(userinfo)){
+                try {
+                    if(flag==null){
+                        flag = "1";
                         recyclerView.scrollToPosition(0);
+                        recyclerView.getLayoutManager().scrollToPosition(0);
 
                     }
+                    else{
+                        if(chatListAdapter.list_itemArraylist.get(0).getUser().equals(userinfo)){
+                            recyclerView.scrollToPosition(0);
+
+                        }
+                    }
+                }catch (Exception e){
+
                 }
-
-
             }
 
         });
