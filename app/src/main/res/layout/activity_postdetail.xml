@@ -33,12 +33,7 @@
                     android:src="@drawable/delpost"
                     android:text="글 삭제" />
 
-                <TextView
-                    android:id="@+id/textView9"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="5dp"
-                    android:text="글 삭제" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -55,12 +50,7 @@
                     android:src="@drawable/editbtn"
                     android:text="수정하기" />
 
-                <TextView
-                    android:id="@+id/textView10"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="5dp"
-                    android:text="글 수정" />
+
             </LinearLayout>
 
         </LinearLayout>
