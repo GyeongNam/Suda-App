@@ -22,6 +22,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.room.Room;
 
 import com.baoyz.widget.PullRefreshLayout;
+import com.cookandroid.ccit_suda.laravelechoandroid.Echo;
 import com.cookandroid.ccit_suda.laravelechoandroid.EchoCallback;
 import com.cookandroid.ccit_suda.laravelechoandroid.EchoOptions;
 import com.cookandroid.ccit_suda.laravelechoandroid.connector.SocketIOConnector;
@@ -460,32 +461,59 @@ public class boardActivity extends DrawerActivity {
                                                     Log.e("jsonarray", jsonArray.toString());
 
 
-//                                                    Echo echo2;
-//                                                    echo2 = new Echo(options);
-//                                                    echo2.connect(new EchoCallback() {
-//                                                        @Override
-//                                                        public void call(Object... args) {
-//                                                            Log.d("Success", String.valueOf(args));
-//                                                        }
-//                                                    }, new EchoCallback() {
-//                                                        @Override
-//                                                        public void call(Object... args) {
-//                                                            Log.d("Error", String.valueOf(args));
-//                                                        }
-//                                                    });
-//                                                    echo2.channel("laravel_database_" + chat_room)
-//                                                            .listen("chartEvent", new EchoCallback() {
-//                                                                @Override
-//                                                                public void call(Object... args) {
-//                                                                    Log.d("웃기지마랄라 user 안", String.valueOf(args[1]));
-//                                                                    String user;
-//                                                                    String message;
-//                                                                    int channel;
-//                                                                    String chat_idx;
-//                                                                    String time;
-//                                                                    String user_count;
-//                                                                    String image_status;
-//                                                                    try {
+                                                    Echo echo2;
+                                                    echo2 = new Echo(options);
+                                                    echo2.connect(new EchoCallback() {
+                                                        @Override
+                                                        public void call(Object... args) {
+                                                            Log.d("Success", String.valueOf(args));
+                                                        }
+                                                    }, new EchoCallback() {
+                                                        @Override
+                                                        public void call(Object... args) {
+                                                            Log.d("Error", String.valueOf(args));
+                                                        }
+                                                    });
+                                                    echo2.channel("laravel_database_" + chat_room)
+                                                            .listen("chartEvent", new EchoCallback() {
+                                                                @Override
+                                                                public void call(Object... args) {
+                                                                    Log.d("웃기지마랄라 user 안", String.valueOf(args[1]));
+                                                                    String user;
+                                                                    String message;
+                                                                    int channel;
+                                                                    String chat_idx;
+                                                                    String time;
+                                                                    String user_count;
+                                                                    String image_status;
+                                                                    String image_uri;
+                                                                    try {
+                                                                        Intent intent = new Intent("msg" + chat_room);
+
+                                                                        JSONObject jsonObject = new JSONObject(args[1].toString());
+                                                                        image_status = jsonObject.getString("image_status");
+
+                                                                        user = jsonObject.getString("user");
+                                                                        message = jsonObject.getString("message");
+                                                                        image_uri = jsonObject.getString("message");
+                                                                        channel = Integer.parseInt(jsonObject.getString("channel"));
+                                                                        chat_idx = jsonObject.getString("chat_idx");
+                                                                        time = jsonObject.getString("time");
+                                                                        user_count = jsonObject.getString("user_count");
+                                                                        if(image_status.equals("1")){
+                                                                            message = "사진을 보냈습니다.";
+                                                                        }
+                                                                        Talk t = new Talk(null, user, message, channel, time, chat_idx, "0", user_count, image_status,image_uri);
+                                                                        Log.v("1", String.valueOf(t));
+                                                                        talkDatabase.talkDao().insert(t);
+                                                                        intent.putExtra("user", user);
+                                                                        intent.putExtra("message", message);
+                                                                        intent.putExtra("channel", String.valueOf(channel));
+                                                                        intent.putExtra("chat_idx", chat_idx);
+                                                                        intent.putExtra("time", time);
+                                                                        intent.putExtra("image_status",image_status);
+                                                                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+
 //                                                                        JSONObject jsonObject = new JSONObject(args[1].toString());
 //                                                                        user = jsonObject.getString("user");
 //                                                                        message = jsonObject.getString("message");
@@ -497,11 +525,11 @@ public class boardActivity extends DrawerActivity {
 //                                                                        Talk t = new Talk(null, user, message, channel, time, chat_idx, "0", user_count,image_status);
 //                                                                        Log.v("1", String.valueOf(t));
 //                                                                        talkDatabase.talkDao().insert(t);
-//                                                                    } catch (JSONException e) {
-//                                                                        e.printStackTrace();
-//                                                                    }
-//                                                                }
-//                                                            });
+                                                                    } catch (JSONException e) {
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                }
+                                                            });
 //                                                Talk t = new Talk(null, user, message, channel, String.valueOf(now));
 //                                                Log.v("1", String.valueOf(t));
 //                                                talkDatabase.talkDao().insert(t);
