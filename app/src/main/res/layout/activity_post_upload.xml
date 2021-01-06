@@ -64,7 +64,7 @@
             android:ems="10"
             android:hint="제목"
             android:inputType="textPersonName"
-            android:maxLength="20"
+            android:maxLength="70"
             android:textSize="15dp"/>
     </LinearLayout>
 

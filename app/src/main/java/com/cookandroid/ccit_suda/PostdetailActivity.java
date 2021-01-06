@@ -66,7 +66,7 @@ public class PostdetailActivity extends DrawerActivity {
     private String imgurl;
     InputMethodManager imm;
         ImageView refresh;//Notification,
-    Button del_post, md_post;
+    ImageButton del_post, md_post;
     String KEY;
     SharedPreferences sharedPreferences;
     String userinfo;
@@ -136,8 +136,8 @@ public class PostdetailActivity extends DrawerActivity {
                 post_like_button = (TextView) findViewById(R.id.post_like_button);
         post_like = (TextView) findViewById(R.id.post_like);
         post_writer = (TextView) findViewById(R.id.post_writer);
-        del_post = (Button) findViewById(R.id.del_post);
-        md_post = (Button) findViewById(R.id.md_post);
+        del_post = (ImageButton) findViewById(R.id.del_post);
+        md_post = (ImageButton) findViewById(R.id.md_post);
         ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
 
         sharedPreferences = getSharedPreferences("File", 0);
