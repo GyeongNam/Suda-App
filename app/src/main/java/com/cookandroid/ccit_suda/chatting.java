@@ -276,7 +276,7 @@ public class chatting extends ChatDrawer {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            Toast.makeText(this, "RESULT_OK", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "RESULT_OK", Toast.LENGTH_SHORT).show();
             Uri uri = data.getData();
             if (uri != null) {
 //                img_upload.setImageURI(uri);
@@ -291,7 +291,7 @@ public class chatting extends ChatDrawer {
 
                 sendimg(imgPath);
                 //이미지 경로 uri 확인해보기
-                new AlertDialog.Builder(this).setMessage(uri.toString() + "\n" + imgPath).create().show();
+//                new AlertDialog.Builder(this).setMessage(uri.toString() + "\n" + imgPath).create().show();
             }
         } else {
             Toast.makeText(this, "이미지 선택을 하지 않았습니다.", Toast.LENGTH_SHORT).show();
