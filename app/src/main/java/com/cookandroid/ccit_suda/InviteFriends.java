@@ -174,6 +174,7 @@ public class InviteFriends extends AppCompatActivity  {
                                     String time;
                                     String image_status;
                                     String image_uri;
+                                    String count;
                                     int channel;
                                     try {
                                         JSONObject jsonObject = new JSONObject(args[1].toString());
@@ -184,10 +185,11 @@ public class InviteFriends extends AppCompatActivity  {
                                         time = jsonObject.getString("time");
                                         image_status = jsonObject.getString("image_status");
                                         image_uri = jsonObject.getString("message");
+                                        count = jsonObject.getString("user_count");
                                         if(image_status.equals("1")){
                                             message = "사진을 보냈습니다.";
                                         }
-                                        Talk t = new Talk(null, user, message, channel,time , chat_idx,"0","0",image_status,image_uri);
+                                        Talk t = new Talk(null, user, message, channel,time , chat_idx,"0",count,image_status,image_uri);
                                         Log.v("1", String.valueOf(t));
                                         talkDatabase.talkDao().insert(t);
                                     } catch (JSONException e) {
