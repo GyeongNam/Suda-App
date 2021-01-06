@@ -37,6 +37,7 @@ import com.android.volley.Response;
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.SimpleMultiPartRequest;
 import com.android.volley.request.StringRequest;
+import com.cookandroid.ccit_suda.UtilClass.UtilClass;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.CallbackWithRetry;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
@@ -304,11 +305,11 @@ public class PostUploadActivity extends AppCompatActivity {
         MultipartBody.Part filepart = null;
         if (imgPath != null) {
             File file = new File(imgPath);
-
+            byte[] dd = UtilClass.getStreamByteFromImage(file);
             RequestBody requestFile =
                     RequestBody.create(
                             MediaType.parse(imgPath),
-                            file
+                            dd
                     );
             filepart = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
         }
