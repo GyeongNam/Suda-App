@@ -202,6 +202,7 @@ public class InviteFriends extends AppCompatActivity  {
                     intent.putExtra("room",chat_room);
                     startActivity(intent);
                     Log.e("Intent",intent.toString());
+                    finish();
 
                 } catch (JSONException e) {
                     e.printStackTrace();

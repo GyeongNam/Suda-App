@@ -1,13 +1,11 @@
 package com.cookandroid.ccit_suda;
 
-import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
 
@@ -15,8 +13,6 @@ import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-
-import java.util.List;
 
 /**
  * NOTE: There can only be one service in each app that receives FCM messages. If multiple
@@ -101,7 +97,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 //푸시알림을 Builder를 이용하여 만듭니다.
                 NotificationCompat.Builder notificationBuilder =
                         new NotificationCompat.Builder(this, channel)
-                                .setSmallIcon(R.drawable.ic_launcher_background)
+                                .setSmallIcon(R.drawable.sudaicon)
                                 .setContentTitle(title)//푸시알림의 제목
                                 .setContentText(message)//푸시알림의 내용
                                 .setChannelId(channel)
@@ -117,7 +113,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             } else {
                 NotificationCompat.Builder notificationBuilder =
                         new NotificationCompat.Builder(this, "ccit")
-                                .setSmallIcon(R.drawable.ic_launcher_background)
+                                .setSmallIcon(R.drawable.sudaicon)
                                 .setContentTitle(title)
                                 .setContentText(message)
                                 .setAutoCancel(true)
@@ -158,7 +154,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 //푸시알림을 Builder를 이용하여 만듭니다.
                 NotificationCompat.Builder notificationBuilder =
                         new NotificationCompat.Builder(this, channel)
-                                .setSmallIcon(R.drawable.ic_launcher_background)
+                                .setSmallIcon(R.drawable.sudaicon)
                                 .setContentTitle(title)//푸시알림의 제목
                                 .setContentText(message)//푸시알림의 내용
                                 .setChannelId(channel)
@@ -174,7 +170,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             } else {
                 NotificationCompat.Builder notificationBuilder =
                         new NotificationCompat.Builder(this, "ccit")
-                                .setSmallIcon(R.drawable.ic_launcher_background)
+                                .setSmallIcon(R.drawable.sudaicon)
                                 .setContentTitle(title)
                                 .setContentText(message)
                                 .setAutoCancel(true)
