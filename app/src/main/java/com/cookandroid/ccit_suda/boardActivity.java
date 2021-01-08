@@ -461,20 +461,20 @@ public class boardActivity extends DrawerActivity {
                                                     Log.e("jsonarray", jsonArray.toString());
 
 
-                                                    Echo echo2;
-                                                    echo2 = new Echo(options);
-                                                    echo2.connect(new EchoCallback() {
-                                                        @Override
-                                                        public void call(Object... args) {
-                                                            Log.d("Success", String.valueOf(args));
-                                                        }
-                                                    }, new EchoCallback() {
-                                                        @Override
-                                                        public void call(Object... args) {
-                                                            Log.d("Error", String.valueOf(args));
-                                                        }
-                                                    });
-                                                    echo2.channel("laravel_database_" + chat_room)
+//                                                    Echo echo2;
+//                                                    echo2 = new Echo(options);
+//                                                    echo2.connect(new EchoCallback() {
+//                                                        @Override
+//                                                        public void call(Object... args) {
+//                                                            Log.d("Success", String.valueOf(args));
+//                                                        }
+//                                                    }, new EchoCallback() {
+//                                                        @Override
+//                                                        public void call(Object... args) {
+//                                                            Log.d("Error", String.valueOf(args));
+//                                                        }
+//                                                    });
+                                                    echo.channel("laravel_database_" + chat_room)
                                                             .listen("chartEvent", new EchoCallback() {
                                                                 @Override
                                                                 public void call(Object... args) {
@@ -525,6 +525,7 @@ public class boardActivity extends DrawerActivity {
 //                                                                        Talk t = new Talk(null, user, message, channel, time, chat_idx, "0", user_count,image_status);
 //                                                                        Log.v("1", String.valueOf(t));
 //                                                                        talkDatabase.talkDao().insert(t);
+//                                                                        disecho();
                                                                     } catch (JSONException e) {
                                                                         e.printStackTrace();
                                                                     }

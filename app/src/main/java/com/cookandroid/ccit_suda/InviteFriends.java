@@ -144,60 +144,60 @@ public class InviteFriends extends AppCompatActivity  {
                     String chat_room = jsonObject.getString("chat_room");
                     String room_name = jsonObject.getString("room_name");
                     Log.e("Intent",chat_room);
-
-                    EchoOptions options = new EchoOptions();
-                    Echo echo;
-
-                    options.host = HttpClient.url;
-                    echo = new Echo(options);
-
-                    echo.connect(new EchoCallback() {
-                        @Override
-                        public void call(Object... args) {
-                            Log.d("Success", String.valueOf(args));
-                        }
-                    }, new EchoCallback() {
-                        @Override
-                        public void call(Object... args) {
-                            Log.d("Error", String.valueOf(args));
-                        }
-                    });
-
-                    echo.channel("laravel_database_"+chat_room)
-                            .listen("chartEvent", new EchoCallback() {
-                                @Override
-                                public void call(Object... args) {
-                                    Log.d("웃기지마랄라", String.valueOf(args[1]));
-                                    String user;
-                                    String message;
-                                    String chat_idx;
-                                    String time;
-                                    String image_status;
-                                    String image_uri;
-                                    String count;
-                                    int channel;
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(args[1].toString());
-                                        user = jsonObject.getString("user");
-                                        message = jsonObject.getString("message");
-                                        channel = Integer.parseInt(jsonObject.getString("channel"));
-                                        chat_idx = jsonObject.getString("chat_idx");
-                                        time = jsonObject.getString("time");
-                                        image_status = jsonObject.getString("image_status");
-                                        image_uri = jsonObject.getString("message");
-                                        count = jsonObject.getString("user_count");
-                                        if(image_status.equals("1")){
-                                            message = "사진을 보냈습니다.";
-                                        }
-                                        Talk t = new Talk(null, user, message, channel,time , chat_idx,"0",count,image_status,image_uri);
-                                        Log.v("1", String.valueOf(t));
-                                        talkDatabase.talkDao().insert(t);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
-
+//
+//                    EchoOptions options = new EchoOptions();
+//                    Echo echo;
+//
+//                    options.host = HttpClient.url;
+//                    echo = new Echo(options);
+//
+//                    echo.connect(new EchoCallback() {
+//                        @Override
+//                        public void call(Object... args) {
+//                            Log.d("Success", String.valueOf(args));
+//                        }
+//                    }, new EchoCallback() {
+//                        @Override
+//                        public void call(Object... args) {
+//                            Log.d("Error", String.valueOf(args));
+//                        }
+//                    });
+//
+//                    echo.channel("laravel_database_"+chat_room)
+//                            .listen("chartEvent", new EchoCallback() {
+//                                @Override
+//                                public void call(Object... args) {
+//                                    Log.d("웃기지마랄라", String.valueOf(args[1]));
+//                                    String user;
+//                                    String message;
+//                                    String chat_idx;
+//                                    String time;
+//                                    String image_status;
+//                                    String image_uri;
+//                                    String count;
+//                                    int channel;
+//                                    try {
+//                                        JSONObject jsonObject = new JSONObject(args[1].toString());
+//                                        user = jsonObject.getString("user");
+//                                        message = jsonObject.getString("message");
+//                                        channel = Integer.parseInt(jsonObject.getString("channel"));
+//                                        chat_idx = jsonObject.getString("chat_idx");
+//                                        time = jsonObject.getString("time");
+//                                        image_status = jsonObject.getString("image_status");
+//                                        image_uri = jsonObject.getString("message");
+//                                        count = jsonObject.getString("user_count");
+//                                        if(image_status.equals("1")){
+//                                            message = "사진을 보냈습니다.";
+//                                        }
+//                                        Talk t = new Talk(null, user, message, channel,time , chat_idx,"0",count,image_status,image_uri);
+//                                        Log.v("1", String.valueOf(t));
+//                                        talkDatabase.talkDao().insert(t);
+//                                    } catch (JSONException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                            });
+//
                     Intent intent = new Intent(getApplicationContext(), chatting.class);
                     intent.putExtra("room",chat_room);
                     startActivity(intent);
