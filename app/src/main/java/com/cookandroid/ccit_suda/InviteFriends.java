@@ -130,13 +130,13 @@ public class InviteFriends extends AppCompatActivity  {
                         String chat_room = jsonObject.getString("chat_room");
                         String room_name = jsonObject.getString("room_name");
 
-                        AsyncTask.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                room_list = new Room_list(null,user_name,chat_room,room_name,"0");
-                                talkDatabse.talkDao().insert_room_list(room_list);
-                            }
-                        });
+//                        AsyncTask.execute(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                room_list = new Room_list(null,user_name,chat_room,room_name,"0");
+//                                talkDatabse.talkDao().insert_room_list(room_list);
+//                            }
+//                        });
                     }
                     Log.v("TAG", "zz" + jsonArray);
 

@@ -418,6 +418,7 @@ public class boardActivity extends DrawerActivity {
                                             String room_name;
                                             String chat_room;
                                             String rooms;
+                                            int ft = 0;
                                             try {
                                                 JSONObject jsonObject = new JSONObject(args[1].toString());
 
@@ -430,6 +431,8 @@ public class boardActivity extends DrawerActivity {
                                                     Log.e("브로드캐스트 json user", jsonObject.getString("user"));
                                                     Log.e("브로드캐스트 json user", jsonObject.getString("chat_idx"));
                                                     Log.e("브로드캐스트 json user", jsonObject.getString("room_name"));
+
+
                                                     user = jsonObject.getString("user");
                                                     String lately_chat_idx = jsonObject.getString("chat_idx");
                                                     String room_number = jsonObject.getString("room_name");
@@ -441,22 +444,26 @@ public class boardActivity extends DrawerActivity {
                                                     }
                                                     //후에 각 채팅방 유저마다 어디까지 읽었는지 업데이트
                                                     talkDatabase.talkDao().update_lately_chat_idx(user, lately_chat_idx, room_number);
+
                                                 } else {
                                                     user = jsonObject.getString("user");
+                                                    Log.e("userjsonarray", user);
                                                     chat_room = jsonObject.getString("message");
                                                     room_name = jsonObject.getString("room_name");
                                                     JSONArray jsonArray = new JSONArray(user);
-                                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                                        String a = jsonArray.getString(i);
-                                                        Log.e("jsonarray", a);
-                                                        Log.e("jsonarray", chat_room);
-                                                        Log.e("jsonarray", room_name);
-                                                        //초대된 방 roo_list 테이블에 데이터 insert
-                                                        Room_list room_list = new Room_list(null, a, chat_room, room_name, "0");
-                                                        if (!talkDatabase.talkDao().isRowIsExist_user_room_list(a, chat_room)) {
-                                                            talkDatabase.talkDao().insert_room_list(room_list);
-                                                        }
+                                                    if(!jsonObject.getString("user").equals(userinfo)) {
+                                                        for (int i = 0; i < jsonArray.length(); i++) {
+                                                            String a = jsonArray.getString(i);
 
+                                                            Log.e("jsonarray", chat_room);
+                                                            Log.e("jsonarray", room_name);
+                                                            //초대된 방 roo_list 테이블에 데이터 insert
+                                                            Room_list room_list = new Room_list(null, a, chat_room, room_name, "0");
+
+                                                            if (!talkDatabase.talkDao().isRowIsExist_user_room_list(a, chat_room)) {
+                                                                talkDatabase.talkDao().insert_room_list(room_list);
+                                                            }
+                                                        }
                                                     }
                                                     Log.e("jsonarray", jsonArray.toString());
 
