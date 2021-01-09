@@ -8,20 +8,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.sqlite.db.SimpleSQLiteQuery;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.cookandroid.ccit_suda.ViewModel_user_list.User_listViewModel;
 import com.cookandroid.ccit_suda.friendroom.FriendroomAdapter;
 import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
 import com.cookandroid.ccit_suda.retrofit2.HttpClient;
+import com.cookandroid.ccit_suda.room.TalkAndRoom_list;
 import com.cookandroid.ccit_suda.room.TalkDatabase;
 import com.cookandroid.ccit_suda.room.User_list;
 
@@ -31,11 +32,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class Fragment2 extends Fragment {
+public class FragmentTwo extends Fragment {
 
     private Context context;
     private ApiInterface api;
@@ -46,11 +48,12 @@ public class Fragment2 extends Fragment {
     User_listViewModel viewModel;
     String userinfo;
     User_list user_list;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment2, container, false);
+
+
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_two, container, false);
         context = container.getContext();
         listView = rootView.findViewById(R.id.RecyclerView);
         SharedPreferences sharedPreferences = context.getSharedPreferences("File",0);
@@ -59,13 +62,20 @@ public class Fragment2 extends Fragment {
 //        sendRequest();
         talkDatabse = TalkDatabase.getDatabase(context);
         viewModel = new ViewModelProvider(this).get(User_listViewModel.class);
-
         viewModel.get_Romm_listViewModel(userinfo).observe(getViewLifecycleOwner(), user ->{
+            Log.e("몇개 들어있노",String.valueOf(user.size()));
+            Log.e("몇개 들어있노",String.valueOf(user));
+            Log.e("몇개 들어있노",String.valueOf(1));
+//            viewModel.mutableLiveData.postValue(user);
             adapter.setData(user);
+
         });
+        RecyclerView.ItemAnimator animator = listView.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }
+        adapter.setHasStableIds(true);
         listView.setHasFixedSize(true);
-
-
         listView.setLayoutManager(new LinearLayoutManager(context)) ;
         // 리사이클러뷰에 SimpleTextAdapter 객체 지정.
 

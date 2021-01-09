@@ -2,6 +2,7 @@ package com.cookandroid.ccit_suda.ViewModel_user_list;
 
 import android.app.Application;
 import android.util.Log;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ public class User_listViewModel extends AndroidViewModel {
     private LiveData<List<User_list>> user_list;
     public MediatorLiveData<PagedList<Talk>> mediatorLiveData;
     public LiveData<PagedList<Talk>> liveData;
+    public MutableLiveData<List<TalkAndRoom_list>> mutableLiveData;
 
 //    public MediatorLiveData<PagedList<Talk>> init(int room) {
 //        PagedList.Config pagedListConfig =
@@ -85,7 +87,12 @@ public class User_listViewModel extends AndroidViewModel {
 
     public LiveData<List<TalkAndRoom_list>> get_Romm_listViewModel(String userinfo) {
 
+//        return Transformations.switchMap(mutableLiveData,
+//                id-> user_listRepository.getRoom_list(userinfo));
+
+
         return user_listRepository.getRoom_list(userinfo);
+
     }
 
     public LiveData<List<Room_list>> get_Room_friend_list(String username) {
@@ -98,8 +105,13 @@ public class User_listViewModel extends AndroidViewModel {
         user_listRepository = new User_listRepository(application);
         user_list = user_listRepository.getUser_list();
         mediatorLiveData = new MediatorLiveData<>();
+        mutableLiveData = new MutableLiveData<>();
 
     }
+
+
+
+
 
 
 }

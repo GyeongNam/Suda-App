@@ -191,6 +191,7 @@ public class chatting extends ChatDrawer {
             public void run() {
                 talkDatabase.talkDao().update_read(room);
                 Log.e("최근 채팅 인덱스","실행은 하냐?");
+                Log.e("최근 방번호",String.valueOf(room));
                 Gson gson = new Gson();
                 try {
                     String data = gson.toJson(talkDatabase.talkDao().get_lately_chat_idx(room));
@@ -333,6 +334,7 @@ public class chatting extends ChatDrawer {
                 @Override
                 public void run() {
                     Gson gson = new Gson();
+                    Log.e("최근 방번호",String.valueOf(room));
                     talkDatabase.talkDao().update_read(room);
                     String data = gson.toJson(talkDatabase.talkDao().get_lately_chat_idx(room));
                     //첫 채팅 인덱스

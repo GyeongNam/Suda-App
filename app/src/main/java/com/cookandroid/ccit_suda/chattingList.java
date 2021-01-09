@@ -3,31 +3,17 @@ package com.cookandroid.ccit_suda;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TabHost;
 
-import com.cookandroid.ccit_suda.retrofit2.ApiInterface;
-import com.cookandroid.ccit_suda.retrofit2.HttpClient;
 import com.google.android.material.tabs.TabLayout;
-
-import java.util.HashMap;
-
-import retrofit2.Call;
-import retrofit2.Callback;
 
 public class chattingList extends AppCompatActivity {
 
     TabLayout tabs;
 
     Fragment1 fragment1;
-    Fragment2 fragment2;
+    FragmentTwo fragmentTwo;
     Fragment3 fragment3;
 
     @Override
@@ -37,7 +23,7 @@ public class chattingList extends AppCompatActivity {
         LinearLayout chatlayout = (LinearLayout)findViewById(R.id.c_content);
 
         fragment1 = new Fragment1();
-        fragment2 = new Fragment2();
+        fragmentTwo = new FragmentTwo();
         fragment3 = new Fragment3();
 
         getSupportFragmentManager().beginTransaction().add(R.id.container, fragment1).commit();
@@ -55,7 +41,7 @@ public class chattingList extends AppCompatActivity {
                 if(position == 0)
                     selected = fragment1;
                 else if(position == 1){
-                    selected = fragment2;
+                    selected = fragmentTwo;
 
                 }
 

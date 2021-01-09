@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.cookandroid.ccit_suda.laravelechoandroid.EchoCallback;
 import com.cookandroid.ccit_suda.laravelechoandroid.EchoOptions;
@@ -223,6 +224,7 @@ public class FlistAdapter extends BaseAdapter {
                                                 }
                                                 Talk t = new Talk(null, qwe, qwe1, qwe2, time, chat_idx, "0", user_count, image_status,image_uri);
                                                 Log.v("1", String.valueOf(t));
+                                                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                                                 intent.putExtra("chat_idx", chat_idx);
                                                 talkDatabse.talkDao().insert(t);
                                             } catch (JSONException e) {

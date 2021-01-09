@@ -28,6 +28,9 @@ android {
             resValue("string", "PORT_NUMBER", "8081")
         }
     }
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {

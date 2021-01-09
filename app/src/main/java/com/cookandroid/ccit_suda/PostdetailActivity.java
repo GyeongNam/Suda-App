@@ -138,6 +138,8 @@ public class PostdetailActivity extends DrawerActivity {
         post_writer = (TextView) findViewById(R.id.post_writer);
         del_post = (ImageButton) findViewById(R.id.del_post);
         md_post = (ImageButton) findViewById(R.id.md_post);
+        del_post.setVisibility(View.GONE);
+        md_post.setVisibility(View.GONE);
         ImageButton btn_open = (ImageButton) findViewById(R.id.btn_open);
 
         sharedPreferences = getSharedPreferences("File", 0);
@@ -450,11 +452,11 @@ public class PostdetailActivity extends DrawerActivity {
                         //중복검사
 
                     }
-                    if (!(userinfo).equals(postdata.getString("writer"))) {
-                        del_post.setVisibility(View.GONE);
+                    if ((userinfo).equals(postdata.getString("writer"))) {
+                        del_post.setVisibility(View.VISIBLE);
                     }
-                    if (!(userinfo).equals(postdata.getString("writer"))) {
-                        md_post.setVisibility(View.GONE);
+                    if ((userinfo).equals(postdata.getString("writer"))) {
+                        md_post.setVisibility(View.VISIBLE);
                     }
                     title.setText(postdata.getString("Title"));
                     text.setText(postdata.getString("Text"));
