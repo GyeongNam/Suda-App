@@ -332,7 +332,7 @@ Client
     where('chat_room.chat_room','=',$room)->
     get();
     FCMController::fcm($user, $message, $talktoken, "2", $room);    // FCM 알림보내기
-    broadcast(new \App\Events\chartEvent($request->user, $request->room, $request->sendmsg,null,$chatidx,$date->format('Y-m-d H:i:s'),$user_count,null)); // 웹소켓으로 실시간 데이터 보내기
+    broadcast(new \App\Events\chartEvent($request->user, $request->room, $request->sendmsg,null,$chatidx,$date->format('Y-m-d H:i:s'),$user_count,null)); // 실시간 데이터 보내기
     return $talktoken;
   }
   ```
@@ -376,7 +376,7 @@ Client
       where('chat_room.chat_room','=',$room)->
       get();
       FCMController::fcm($user, $message, $talktoken, "2", $room);  // FCM 알림 보내기
-      broadcast(new \App\Events\chartEvent($user, $room, $picture,null,$chatidx,$date->format('Y-m-d H:i:s'),$user_count,$image_status)); // 웹소켓으로 실시간 데이터 
+      broadcast(new \App\Events\chartEvent($user, $room, $picture,null,$chatidx,$date->format('Y-m-d H:i:s'),$user_count,$image_status)); //  실시간 데이터 보내기
       return $talktoken;
  }
   ```
