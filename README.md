@@ -216,7 +216,7 @@ Client
   }
   ```
   
-  웹소켓으로 DB 업데이트
+  실시간 DB 업데이트
   ```java
   echo = new SocketIOConnector(options);
 
