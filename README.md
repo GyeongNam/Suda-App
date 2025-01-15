@@ -9,7 +9,7 @@
 
 #### GitHub Link
 
-* [App](https://github.com/GyeongNam/Encore-Space-Back)
+* [App](https://github.com/GyeongNam/Suda-App)
 * [Server](https://github.com/GyeongNam/Suda-Back)
 
 <br>
